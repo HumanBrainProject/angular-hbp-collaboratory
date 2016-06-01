@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Namespace: clbError &mdash; angular-hbp-collaboratory 0.1.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="angular-hbp-collaboratory 0.1.5 documentation" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="namespace-clberror">
+<span id="undefined-clberror"></span><h1>Namespace: <code class="docutils literal"><span class="pre">clbError</span></code><a class="headerlink" href="#namespace-clberror" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="local-navigation">
+<p class="topic-title first">Local Navigation</p>
+<ul class="simple">
+<li><a class="reference internal" href="#children" id="id1">Children</a></li>
+<li><a class="reference internal" href="#description" id="id2">Description</a></li>
+<li><a class="reference internal" href="#function-error" id="id3">Function <code class="docutils literal"><span class="pre">error</span></code></a></li>
+<li><a class="reference internal" href="#function-httperror" id="id4">Function <code class="docutils literal"><span class="pre">httpError</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="children">
+<h2><a class="toc-backref" href="#id1">Children</a><a class="headerlink" href="#children" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+</div>
+<div class="section" id="description">
+<h2><a class="toc-backref" href="#id2">Description</a><a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">clbError</span></code> provides helper functions that all return an
+<code class="docutils literal"><span class="pre">ClbError</span></code> instance given a context object.</p>
+</div>
+<div class="section" id="function-error">
+<span id="module-clb-error-clberror-error"></span><h2><a class="toc-backref" href="#id3">Function <code class="docutils literal"><span class="pre">error</span></code></a><a class="headerlink" href="#function-error" title="Permalink to this headline">¶</a></h2>
+<p>Build an <code class="docutils literal"><span class="pre">ClbError</span></code> instance from the provided options.</p>
+<ul class="simple">
+<li>param  {Object} options argument passed to <code class="docutils literal"><span class="pre">ClbError</span></code> constructor</li>
+<li>return {ClbError} the resulting error</li>
+</ul>
+<dl class="function">
+<dt id="error">
+<code class="descname">error</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="headerlink" href="#error" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>options</strong> (<em>object</em>) &#8211; [description]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return object:</th><td class="field-body"><p class="first last">[description]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-httperror">
+<span id="module-clb-error-clberror-httperror"></span><h2><a class="toc-backref" href="#id4">Function <code class="docutils literal"><span class="pre">httpError</span></code></a><a class="headerlink" href="#function-httperror" title="Permalink to this headline">¶</a></h2>
+<p>return a <cite>ClbError</cite> instance built from a HTTP response.</p>
+<p>In an ideal case, the response contains json data with an error object.
+It also fallback to a reason field and fill default error message for
+standard HTTP status error.</p>
+<dl class="function">
+<dt id="httpError">
+<code class="descname">httpError</code><span class="sig-paren">(</span><em>response</em><span class="sig-paren">)</span><a class="headerlink" href="#httpError" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>response</strong> (<em>HttpResponse</em>) &#8211; Angular $http Response object</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Return ClbError:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first last">a valid ClbError</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Namespace: <code class="docutils literal"><span class="pre">clbError</span></code></a><ul>
+<li><a class="reference internal" href="#children">Children</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#function-error">Function <code class="docutils literal"><span class="pre">error</span></code></a></li>
+<li><a class="reference internal" href="#function-httperror">Function <code class="docutils literal"><span class="pre">httpError</span></code></a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/module-clb-error.clbError_.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, .
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/module-clb-error.clbError_.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

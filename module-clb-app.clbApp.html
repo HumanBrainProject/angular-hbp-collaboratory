@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Namespace: clbApp &mdash; angular-hbp-collaboratory 0.1.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="angular-hbp-collaboratory 0.1.5 documentation" href="index.html" />
+    <link rel="up" title="Module: clb-app" href="module-clb-app.html" />
+    <link rel="next" title="Module: hbpCollaboratoryAppToolkit" href="module-hbpCollaboratoryAppToolkit.html" />
+    <link rel="prev" title="Module: clb-app" href="module-clb-app.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="namespace-clbapp">
+<span id="module-clb-app-clbapp"></span><h1>Namespace: <code class="docutils literal"><span class="pre">clbApp</span></code><a class="headerlink" href="#namespace-clbapp" title="Permalink to this headline">¶</a></h1>
+<p>Member Of <a class="reference internal" href="module-clb-app.html"><em>Module: clb-app</em></a></p>
+<div class="contents local topic" id="local-navigation">
+<p class="topic-title first">Local Navigation</p>
+<ul class="simple">
+<li><a class="reference internal" href="#children" id="id1">Children</a></li>
+<li><a class="reference internal" href="#description" id="id2">Description</a><ul>
+<li><a class="reference internal" href="#usage" id="id3">Usage</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#function-emit" id="id4">Function <code class="docutils literal"><span class="pre">emit</span></code></a></li>
+<li><a class="reference internal" href="#function-context" id="id5">Function <code class="docutils literal"><span class="pre">context</span></code></a></li>
+<li><a class="reference internal" href="#examples" id="id6">Examples</a></li>
+</ul>
+</div>
+<div class="section" id="children">
+<h2><a class="toc-backref" href="#id1">Children</a><a class="headerlink" href="#children" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+</div>
+<div class="section" id="description">
+<h2><a class="toc-backref" href="#id2">Description</a><a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>An AngularJS service to interface a web application with the HBP Collaboratory.
+This library provides a few helper to work within the Collaboratory environment.</p>
+<div class="section" id="usage">
+<h3><a class="toc-backref" href="#id3">Usage</a><a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><a class="reference internal" href="#module-clb-app-clbapp-context"><span>Function context</span></a> is used to set and retrieve
+the current context.</li>
+<li><a class="reference internal" href="#module-clb-app-clbapp-emit"><span>Function emit</span></a> is used to send a command
+to the HBP Collaboratory and wait for its answer.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="function-emit">
+<span id="module-clb-app-clbapp-emit"></span><h2><a class="toc-backref" href="#id4">Function <code class="docutils literal"><span class="pre">emit</span></code></a><a class="headerlink" href="#function-emit" title="Permalink to this headline">¶</a></h2>
+<p>Send a message to the HBP Collaboratory.</p>
+<dl class="function">
+<dt id="emit">
+<code class="descname">emit</code><span class="sig-paren">(</span><em>name</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#emit" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; name of the event to be propagated</li>
+<li><strong>data</strong> (<em>object</em>) &#8211; corresponding data to be sent alongside the event</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">resolve with the message response</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-context">
+<span id="module-clb-app-clbapp-context"></span><h2><a class="toc-backref" href="#id5">Function <code class="docutils literal"><span class="pre">context</span></code></a><a class="headerlink" href="#function-context" title="Permalink to this headline">¶</a></h2>
+<p>Asynchronously retrieve the current HBP Collaboratory Context, including
+the mode, the ctx UUID and the application state if any.</p>
+<dl class="function">
+<dt id="context">
+<code class="descname">context</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#context" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>object</em>) &#8211; new values to send to HBP Collaboratory frontend</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">resolve to the context</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="examples">
+<h2><a class="toc-backref" href="#id6">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="literal-block-wrapper container" id="retrieve-the-current-context-object">
+<div class="code-block-caption"><span class="caption-text">Retrieve the current context object</span><a class="headerlink" href="#retrieve-the-current-context-object" title="Permalink to this code">¶</a></div>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">clbApp</span><span class="p">.</span><span class="nx">context</span><span class="p">()</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">context</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="nx">context</span><span class="p">.</span><span class="nx">collab</span><span class="p">);</span>
+<span class="p">})</span>
+<span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Cannot set the state</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper container" id="set-the-current-state-in-order-for-a-user-to-be-able-to-copy-paste-its-current-url-and-reopen-the-same-collab-with-your-app-loaded-at-the-same-place">
+<div class="code-block-caption"><span class="caption-text">Set the current state in order for a user to be able to copy-paste its current URL and reopen the same collab with your app loaded at the same place.</span><a class="headerlink" href="#set-the-current-state-in-order-for-a-user-to-be-able-to-copy-paste-its-current-url-and-reopen-the-same-collab-with-your-app-loaded-at-the-same-place" title="Permalink to this code">¶</a></div>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">clbApp</span><span class="p">.</span><span class="nx">context</span><span class="p">({</span><span class="nx">state</span><span class="o">:</span> <span class="s1">&#39;lorem ipsum&#39;</span><span class="p">})</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">context</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="nx">context</span><span class="p">.</span><span class="nx">collab</span><span class="p">);</span>
+<span class="p">})</span>
+<span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Cannot set the state</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Namespace: <code class="docutils literal"><span class="pre">clbApp</span></code></a><ul>
+<li><a class="reference internal" href="#children">Children</a></li>
+<li><a class="reference internal" href="#description">Description</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#function-emit">Function <code class="docutils literal"><span class="pre">emit</span></code></a></li>
+<li><a class="reference internal" href="#function-context">Function <code class="docutils literal"><span class="pre">context</span></code></a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="module-clb-app.html">Module: <code class="docutils literal"><span class="pre">clb-app</span></code></a><ul>
+      <li>Previous: <a href="module-clb-app.html" title="previous chapter">Module: <code class="docutils literal"><span class="pre">clb-app</span></code></a></li>
+      <li>Next: <a href="module-hbpCollaboratoryAppToolkit.html" title="next chapter">Module: <code class="docutils literal"><span class="pre">hbpCollaboratoryAppToolkit</span></code></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/module-clb-app.clbApp.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, .
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/module-clb-app.clbApp.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Namespace: Tasks &mdash; angular-hbp-collaboratory 0.1.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="angular-hbp-collaboratory 0.1.5 documentation" href="index.html" />
+    <link rel="up" title="Module: clb-automator" href="module-clb-automator.html" />
+    <link rel="next" title="Namespace: clbAutomator" href="module-clb-automator.clbAutomator.html" />
+    <link rel="prev" title="Module: clb-automator" href="module-clb-automator.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="namespace-tasks">
+<span id="module-clb-automator-tasks"></span><h1>Namespace: <code class="docutils literal"><span class="pre">Tasks</span></code><a class="headerlink" href="#namespace-tasks" title="Permalink to this headline">¶</a></h1>
+<p>Member Of <a class="reference internal" href="module-clb-automator.html"><em>Module: clb-automator</em></a></p>
+<div class="contents local topic" id="local-navigation">
+<p class="topic-title first">Local Navigation</p>
+<ul class="simple">
+<li><a class="reference internal" href="#children" id="id1">Children</a></li>
+<li><a class="reference internal" href="#description" id="id2">Description</a></li>
+<li><a class="reference internal" href="#function-createcollab" id="id3">Function <code class="docutils literal"><span class="pre">createCollab</span></code></a></li>
+<li><a class="reference internal" href="#function-createnavitem" id="id4">Function <code class="docutils literal"><span class="pre">createNavItem</span></code></a></li>
+<li><a class="reference internal" href="#function-storage" id="id5">Function <code class="docutils literal"><span class="pre">storage</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="children">
+<h2><a class="toc-backref" href="#id1">Children</a><a class="headerlink" href="#children" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+</div>
+<div class="section" id="description">
+<h2><a class="toc-backref" href="#id2">Description</a><a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>Document a list of available tasks.</p>
+</div>
+<div class="section" id="function-createcollab">
+<span id="module-clb-automator-tasks-createcollab"></span><h2><a class="toc-backref" href="#id3">Function <code class="docutils literal"><span class="pre">createCollab</span></code></a><a class="headerlink" href="#function-createcollab" title="Permalink to this headline">¶</a></h2>
+<p>Create a collab defined by the given options.</p>
+<dl class="function">
+<dt id="createCollab">
+<code class="descname">createCollab</code><span class="sig-paren">(</span><em>descriptor, descriptor.name, descriptor.description[, descriptor.privacy][, after]</em><span class="sig-paren">)</span><a class="headerlink" href="#createCollab" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>descriptor</strong> (<em>object</em>) &#8211; Parameters to create the collab</li>
+<li><strong>descriptor.name</strong> (<em>string</em>) &#8211; Name of the collab</li>
+<li><strong>descriptor.description</strong> (<em>string</em>) &#8211; Description in less than 140 characters
+of the collab</li>
+<li><strong>descriptor.privacy</strong> (<em>string</em>) &#8211; &#8216;private&#8217; or &#8216;public&#8217;. Notes that only
+HBP Members can create private collab</li>
+<li><strong>after</strong> (<em>Array</em>) &#8211; descriptor of subtasks</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><ul class="first last simple">
+<li>promise of a collab</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-createnavitem">
+<span id="module-clb-automator-tasks-createnavitem"></span><h2><a class="toc-backref" href="#id4">Function <code class="docutils literal"><span class="pre">createNavItem</span></code></a><a class="headerlink" href="#function-createnavitem" title="Permalink to this headline">¶</a></h2>
+<p>Create a new nav item.</p>
+<dl class="function">
+<dt id="createNavItem">
+<code class="descname">createNavItem</code><span class="sig-paren">(</span><em>descriptor, descriptor.name, descriptor.collabId, descriptor.app[, context][, context.collab]</em><span class="sig-paren">)</span><a class="headerlink" href="#createNavItem" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>descriptor</strong> (<em>object</em>) &#8211; a descriptor description</li>
+<li><strong>descriptor.name</strong> (<em>string</em>) &#8211; name of the nav item</li>
+<li><strong>descriptor.collabId</strong> (<em>Collab</em>) &#8211; collab in which to add the item in.</li>
+<li><strong>descriptor.app</strong> (<em>string</em>) &#8211; app name linked to the nav item</li>
+<li><strong>context</strong> (<em>object</em>) &#8211; the current run context</li>
+<li><strong>context.collab</strong> (<em>object</em>) &#8211; a collab instance created previously</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">promise of a NavItem instance</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-storage">
+<span id="module-clb-automator-tasks-storage"></span><h2><a class="toc-backref" href="#id5">Function <code class="docutils literal"><span class="pre">storage</span></code></a><a class="headerlink" href="#function-storage" title="Permalink to this headline">¶</a></h2>
+<p>Copy files and folders to the destination collab storage.</p>
+<dl class="function">
+<dt id="storage">
+<code class="descname">storage</code><span class="sig-paren">(</span><em>descriptor</em>, <em>descriptor.storage</em>, <span class="optional">[</span><em>descriptor.collab</em>, <span class="optional">]</span><em>context</em><span class="optional">[</span>, <em>context.collab</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#storage" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>descriptor</strong> (<em>object</em>) &#8211; the task configuration</li>
+<li><strong>descriptor.storage</strong> (<em>object</em>) &#8211; a object where keys are the file path in the
+new collab and value are the UUID of the
+entity to copy at this path.</li>
+<li><strong>descriptor.collab</strong> (<em>object</em>) &#8211; id of the collab</li>
+<li><strong>context</strong> (<em>object</em>) &#8211; the current task context</li>
+<li><strong>context.collab</strong> (<em>object</em>) &#8211; the collab in which entities will be copied</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return object:</th><td class="field-body"><p class="first last">created entities where keys are the same as provided in
+config.storage</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Namespace: <code class="docutils literal"><span class="pre">Tasks</span></code></a><ul>
+<li><a class="reference internal" href="#children">Children</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#function-createcollab">Function <code class="docutils literal"><span class="pre">createCollab</span></code></a></li>
+<li><a class="reference internal" href="#function-createnavitem">Function <code class="docutils literal"><span class="pre">createNavItem</span></code></a></li>
+<li><a class="reference internal" href="#function-storage">Function <code class="docutils literal"><span class="pre">storage</span></code></a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="module-clb-automator.html">Module: <code class="docutils literal"><span class="pre">clb-automator</span></code></a><ul>
+      <li>Previous: <a href="module-clb-automator.html" title="previous chapter">Module: <code class="docutils literal"><span class="pre">clb-automator</span></code></a></li>
+      <li>Next: <a href="module-clb-automator.clbAutomator.html" title="next chapter">Namespace: <code class="docutils literal"><span class="pre">clbAutomator</span></code></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/module-clb-automator.Tasks.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, .
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/module-clb-automator.Tasks.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

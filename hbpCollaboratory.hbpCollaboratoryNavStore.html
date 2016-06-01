@@ -1,0 +1,284 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Namespace: hbpCollaboratoryNavStore &mdash; angular-hbp-collaboratory 0.1.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="angular-hbp-collaboratory 0.1.5 documentation" href="index.html" />
+    <link rel="up" title="Namespace: hbpCollaboratory" href="hbpCollaboratory.html" />
+    <link rel="next" title="Class: NavItem" href="hbpCollaboratory.hbpCollaboratoryNavStore.NavItem.html" />
+    <link rel="prev" title="Class: App" href="hbpCollaboratory.hbpCollaboratoryAppStore.App.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="namespace-hbpcollaboratorynavstore">
+<span id="hbpcollaboratory-hbpcollaboratorynavstore"></span><h1>Namespace: <code class="docutils literal"><span class="pre">hbpCollaboratoryNavStore</span></code><a class="headerlink" href="#namespace-hbpcollaboratorynavstore" title="Permalink to this headline">¶</a></h1>
+<p>Member Of <a class="reference internal" href="hbpCollaboratory.html"><em>Namespace: hbpCollaboratory</em></a></p>
+<div class="contents local topic" id="local-navigation">
+<p class="topic-title first">Local Navigation</p>
+<ul class="simple">
+<li><a class="reference internal" href="#children" id="id1">Children</a></li>
+<li><a class="reference internal" href="#description" id="id2">Description</a></li>
+<li><a class="reference internal" href="#function-getroot" id="id3">Function <code class="docutils literal"><span class="pre">getRoot</span></code></a></li>
+<li><a class="reference internal" href="#function-getnode" id="id4">Function <code class="docutils literal"><span class="pre">getNode</span></code></a></li>
+<li><a class="reference internal" href="#function-getnodefromcontext" id="id5">Function <code class="docutils literal"><span class="pre">getNodeFromContext</span></code></a></li>
+<li><a class="reference internal" href="#function-addnode" id="id6">Function <code class="docutils literal"><span class="pre">addNode</span></code></a></li>
+<li><a class="reference internal" href="#function-deletenode" id="id7">Function <code class="docutils literal"><span class="pre">deleteNode</span></code></a></li>
+<li><a class="reference internal" href="#function-update" id="id8">Function <code class="docutils literal"><span class="pre">update</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="children">
+<h2><a class="toc-backref" href="#id1">Children</a><a class="headerlink" href="#children" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hbpCollaboratory.hbpCollaboratoryNavStore.NavItem.html">Class: <code class="docutils literal"><span class="pre">NavItem</span></code></a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="description">
+<h2><a class="toc-backref" href="#id2">Description</a><a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>hbpCollaboratoryNavStore provides tools to create and manage</dt>
+<dd>navigation items.</dd>
+</dl>
+</div>
+<div class="section" id="function-getroot">
+<span id="hbpcollaboratory-hbpcollaboratorynavstore-getroot"></span><h2><a class="toc-backref" href="#id3">Function <code class="docutils literal"><span class="pre">getRoot</span></code></a><a class="headerlink" href="#function-getroot" title="Permalink to this headline">¶</a></h2>
+<p>Retrieve the root item of the given collab.</p>
+<dl class="function">
+<dt id="getRoot">
+<code class="descname">getRoot</code><span class="sig-paren">(</span><em>collabId</em><span class="sig-paren">)</span><a class="headerlink" href="#getRoot" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>collabId</strong> (<em>number</em>) &#8211; collab ID</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">promise the root nav item</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-getnode">
+<span id="hbpcollaboratory-hbpcollaboratorynavstore-getnode"></span><h2><a class="toc-backref" href="#id4">Function <code class="docutils literal"><span class="pre">getNode</span></code></a><a class="headerlink" href="#function-getnode" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="getNode">
+<code class="descname">getNode</code><span class="sig-paren">(</span><em>collabId</em>, <em>nodeId</em><span class="sig-paren">)</span><a class="headerlink" href="#getNode" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>collabId</strong> (<em>number</em>) &#8211; collab ID</li>
+<li><strong>nodeId</strong> (<em>number</em>) &#8211; node ID</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return NavItem:</th><td class="field-body"><p class="first last">the matching nav item</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-getnodefromcontext">
+<span id="hbpcollaboratory-hbpcollaboratorynavstore-getnodefromcontext"></span><h2><a class="toc-backref" href="#id5">Function <code class="docutils literal"><span class="pre">getNodeFromContext</span></code></a><a class="headerlink" href="#function-getnodefromcontext" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="getNodeFromContext">
+<code class="descname">getNodeFromContext</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#getNodeFromContext" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>ctx</strong> (<em>str</em>) &#8211; The context UUID</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">The promise of a NavItem</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-addnode">
+<span id="hbpcollaboratory-hbpcollaboratorynavstore-addnode"></span><h2><a class="toc-backref" href="#id6">Function <code class="docutils literal"><span class="pre">addNode</span></code></a><a class="headerlink" href="#function-addnode" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="addNode">
+<code class="descname">addNode</code><span class="sig-paren">(</span><em>collabId</em>, <em>navItem</em><span class="sig-paren">)</span><a class="headerlink" href="#addNode" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>collabId</strong> (<em>number</em>) &#8211; collab ID</li>
+<li><strong>navItem</strong> (<em>number</em>) &#8211; the NavItem instance to add to the navigation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">promise of the added NavItem instance</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-deletenode">
+<span id="hbpcollaboratory-hbpcollaboratorynavstore-deletenode"></span><h2><a class="toc-backref" href="#id7">Function <code class="docutils literal"><span class="pre">deleteNode</span></code></a><a class="headerlink" href="#function-deletenode" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="deleteNode">
+<code class="descname">deleteNode</code><span class="sig-paren">(</span><em>collabId</em>, <em>navItem</em><span class="sig-paren">)</span><a class="headerlink" href="#deleteNode" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>collabId</strong> (<em>number</em>) &#8211; collab ID</li>
+<li><strong>navItem</strong> (<em>NavItem</em>) &#8211; the NavItem instance to remove from the navigation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">promise of an undefined item at the end</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-update">
+<span id="hbpcollaboratory-hbpcollaboratorynavstore-update"></span><h2><a class="toc-backref" href="#id8">Function <code class="docutils literal"><span class="pre">update</span></code></a><a class="headerlink" href="#function-update" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>collabId</em>, <em>navItem</em><span class="sig-paren">)</span><a class="headerlink" href="#update" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>collabId</strong> (<em>number</em>) &#8211; collab ID</li>
+<li><strong>navItem</strong> (<em>NavItem</em>) &#8211; the instance to update</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">promise the updated instance</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Namespace: <code class="docutils literal"><span class="pre">hbpCollaboratoryNavStore</span></code></a><ul>
+<li><a class="reference internal" href="#children">Children</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#function-getroot">Function <code class="docutils literal"><span class="pre">getRoot</span></code></a></li>
+<li><a class="reference internal" href="#function-getnode">Function <code class="docutils literal"><span class="pre">getNode</span></code></a></li>
+<li><a class="reference internal" href="#function-getnodefromcontext">Function <code class="docutils literal"><span class="pre">getNodeFromContext</span></code></a></li>
+<li><a class="reference internal" href="#function-addnode">Function <code class="docutils literal"><span class="pre">addNode</span></code></a></li>
+<li><a class="reference internal" href="#function-deletenode">Function <code class="docutils literal"><span class="pre">deleteNode</span></code></a></li>
+<li><a class="reference internal" href="#function-update">Function <code class="docutils literal"><span class="pre">update</span></code></a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="hbpCollaboratory.html">Namespace: <code class="docutils literal"><span class="pre">hbpCollaboratory</span></code></a><ul>
+      <li>Previous: <a href="hbpCollaboratory.hbpCollaboratoryAppStore.App.html" title="previous chapter">Class: <code class="docutils literal"><span class="pre">App</span></code></a></li>
+      <li>Next: <a href="hbpCollaboratory.hbpCollaboratoryNavStore.NavItem.html" title="next chapter">Class: <code class="docutils literal"><span class="pre">NavItem</span></code></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/hbpCollaboratory.hbpCollaboratoryNavStore.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, .
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/hbpCollaboratory.hbpCollaboratoryNavStore.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
