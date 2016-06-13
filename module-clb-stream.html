@@ -56,6 +56,7 @@
 <li><a class="reference internal" href="#">Module: <code class="docutils literal"><span class="pre">clb-stream</span></code></a><ul>
 <li><a class="reference internal" href="#children">Children</a></li>
 <li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#function-registerurlhandler">Function: <code class="docutils literal"><span class="pre">registerUrlHandler</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -115,6 +116,7 @@
 <ul class="simple">
 <li><a class="reference internal" href="#children" id="id1">Children</a></li>
 <li><a class="reference internal" href="#description" id="id2">Description</a></li>
+<li><a class="reference internal" href="#function-registerurlhandler" id="id3">Function: <code class="docutils literal"><span class="pre">registerUrlHandler</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="children">
@@ -130,6 +132,42 @@
 <p>The <cite>clb-stream</cite> module contains a service and a few directives to retrieve
 and display the HBP Collaboratory stream provided
 by the various applications.</p>
+</div>
+<div class="section" id="function-registerurlhandler">
+<span id="undefined-registerurlhandler"></span><h2><a class="toc-backref" href="#id3">Function: <code class="docutils literal"><span class="pre">registerUrlHandler</span></code></a><a class="headerlink" href="#function-registerurlhandler" title="Permalink to this headline">¶</a></h2>
+<p>Add a function that can generate URL for some types of object reference.</p>
+<p>The function should return a string representing the URL.
+Any other response means that the handler is not able to generate a proper
+URL for this type of object.</p>
+<p>The function signature is <code class="docutils literal"><span class="pre">function(objectReference)</span> <span class="pre">{</span> <span class="pre">return</span> <span class="pre">'url'</span> <span class="pre">//</span> <span class="pre">or</span> <span class="pre">nothing}</span></code></p>
+<dl class="function">
+<dt id="registerUrlHandler">
+<code class="descname">registerUrlHandler</code><span class="sig-paren">(</span><em>handler</em><span class="sig-paren">)</span><a class="headerlink" href="#registerUrlHandler" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>handler</strong> (<em>function</em>) &#8211; a function that can generate URL string for some objects</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Return provider:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first last">The provider, for chaining.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p id="undefined-clbactivity">Member: <code class="docutils literal"><span class="pre">clbActivity</span></code>: <code class="docutils literal"><span class="pre">clb-activity</span></code> directive is displays an activity retrieved by
+the HBP Stream service in a common way.</p>
+<p>It try to look up for a detailled description of the event and fallback
+to the summary if he cannot.</p>
+<p id="undefined-clbfeed">Member: <code class="docutils literal"><span class="pre">clbFeed</span></code>: <code class="docutils literal"><span class="pre">clb-feed</span></code> directive displays a feed of activity retrieved by
+the HBP Stream service. It handles scrolling and loading of activities.
+Each activity is rendered using the <code class="docutils literal"><span class="pre">clb-activity</span></code> directive.</p>
+<p id="undefined-clbresourcelocator">Member: <code class="docutils literal"><span class="pre">clbResourceLocator</span></code>: resourceLocator service</p>
 </div>
 </div>
 

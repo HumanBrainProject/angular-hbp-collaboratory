@@ -57,8 +57,6 @@
 <li><a class="reference internal" href="#">Namespace: <code class="docutils literal"><span class="pre">clbResultSet</span></code></a><ul>
 <li><a class="reference internal" href="#children">Children</a></li>
 <li><a class="reference internal" href="#description">Description</a></li>
-<li><a class="reference internal" href="#function-resultseteol">Function <code class="docutils literal"><span class="pre">ResultSetEOL</span></code></a></li>
-<li><a class="reference internal" href="#function-get">Function <code class="docutils literal"><span class="pre">get</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -124,8 +122,6 @@
 <ul class="simple">
 <li><a class="reference internal" href="#children" id="id1">Children</a></li>
 <li><a class="reference internal" href="#description" id="id2">Description</a></li>
-<li><a class="reference internal" href="#function-resultseteol" id="id3">Function <code class="docutils literal"><span class="pre">ResultSetEOL</span></code></a></li>
-<li><a class="reference internal" href="#function-get" id="id4">Function <code class="docutils literal"><span class="pre">get</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="children">
@@ -138,50 +134,12 @@
 </div>
 <div class="section" id="description">
 <h2><a class="toc-backref" href="#id2">Description</a><a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="function-resultseteol">
-<span id="module-clb-rest-clbresultset-resultseteol"></span><h2><a class="toc-backref" href="#id3">Function <code class="docutils literal"><span class="pre">ResultSetEOL</span></code></a><a class="headerlink" href="#function-resultseteol" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt>error thrown when hbpUtil.ResultSet is crawled when at an</dt>
+<dl class="docutils" id="module-clb-rest-clbresultset-resultseteol">
+<dt>Member: <code class="docutils literal"><span class="pre">ResultSetEOL</span></code>: error thrown when hbpUtil.ResultSet is crawled when at an</dt>
 <dd>extremity.</dd>
 </dl>
-<dl class="function">
-<dt id="ResultSetEOL">
-<code class="descname">ResultSetEOL</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ResultSetEOL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="section" id="function-get">
-<span id="module-clb-rest-clbresultset-get"></span><h2><a class="toc-backref" href="#id4">Function <code class="docutils literal"><span class="pre">get</span></code></a><a class="headerlink" href="#function-get" title="Permalink to this headline">¶</a></h2>
-<p>Return a promise that will resolve once the result set first page is loaded.</p>
+<p id="module-clb-rest-clbresultset-get">Member: <code class="docutils literal"><span class="pre">get</span></code>: Return a promise that will resolve once the result set first page is loaded.</p>
 <p>The promise contains the <cite>instance</cite> of the result set as well.</p>
-<dl class="function">
-<dt id="get">
-<code class="descname">get</code><span class="sig-paren">(</span><em>res[, options][, options.nextUrlKey][, options.previousUrlKey][, options.resultKey][, options.countKey][, options.resultsFactory]</em><span class="sig-paren">)</span><a class="headerlink" href="#get" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
-<li><strong>res</strong> (<em>Object</em>) &#8211; a HTTPResponse or a promise which resolve to a HTTPResponse</li>
-<li><strong>options</strong> (<em>Object</em>) &#8211; configuration</li>
-<li><strong>options.nextUrlKey</strong> (<em>string</em>) &#8211; name of (or dot notation path to) the attribute containing the URL to fetch next results</li>
-<li><strong>options.previousUrlKey</strong> (<em>string</em>) &#8211; name of (or dot notation path to) the attribute containing the URL to fetch previous results</li>
-<li><strong>options.resultKey</strong> (<em>string</em>) &#8211; name of (or dot notation path to) the attribute containing an array with all the results</li>
-<li><strong>options.countKey</strong> (<em>string</em>) &#8211; name of (or dot notation path to) the attribute containing the number of results returned</li>
-<li><strong>options.resultsFactory</strong> (<em>function</em>) &#8211; a function to which a new array of results is passed.
-The function can return <cite>undefined</cite>, a <cite>promise</cite> or an <cite>array</cite> as result.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Return ResultSet:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first last">a new instance of ResultSet</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </div>
 </div>
 

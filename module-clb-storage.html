@@ -56,6 +56,10 @@
 <li><a class="reference internal" href="#">Module: <code class="docutils literal"><span class="pre">clb-storage</span></code></a><ul>
 <li><a class="reference internal" href="#children">Children</a></li>
 <li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#typedef-entitydescriptor">Typedef: <code class="docutils literal"><span class="pre">EntityDescriptor</span></code></a><ul>
+<li><a class="reference internal" href="#properties">Properties</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -115,6 +119,10 @@
 <ul class="simple">
 <li><a class="reference internal" href="#children" id="id1">Children</a></li>
 <li><a class="reference internal" href="#description" id="id2">Description</a></li>
+<li><a class="reference internal" href="#typedef-entitydescriptor" id="id3">Typedef: <code class="docutils literal"><span class="pre">EntityDescriptor</span></code></a><ul>
+<li><a class="reference internal" href="#properties" id="id4">Properties</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="section" id="children">
@@ -127,6 +135,25 @@
 </div>
 <div class="section" id="description">
 <h2><a class="toc-backref" href="#id2">Description</a><a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">clb-storage</span></code> module contains tools needed to access and work with the
+HBP Document Service. It is targeted to integrate easily with the HBP
+Collaboratory, even if the service is more generic.</p>
+</div>
+<div class="section" id="typedef-entitydescriptor">
+<span id="module-clb-storage-entitydescriptor"></span><h2><a class="toc-backref" href="#id3">Typedef: <code class="docutils literal"><span class="pre">EntityDescriptor</span></code></a><a class="headerlink" href="#typedef-entitydescriptor" title="Permalink to this headline">¶</a></h2>
+<p>Describe an arbitrary entity in the storage stytem. The principal types are</p>
+<ul class="simple">
+<li><cite>file</cite>: the entity is a file whose content can be retrieved</li>
+<li><cite>folder</cite>: the entity is a folder and can be the parent of other entities</li>
+<li><cite>project</cite>: First level folder. It behave like a folder but also defines the ACL for all the children</li>
+</ul>
+<div class="section" id="properties">
+<h3><a class="toc-backref" href="#id4">Properties</a><a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">UUID</span> <span class="pre">_uuid</span></code>: The entity UUID</li>
+<li><code class="docutils literal"><span class="pre">string</span> <span class="pre">_entityType</span></code>: The entity type (e.g.: <code class="docutils literal"><span class="pre">file</span></code>, <code class="docutils literal"><span class="pre">folder</span></code>, <code class="docutils literal"><span class="pre">project</span></code>)</li>
+</ul>
+</div>
 </div>
 </div>
 

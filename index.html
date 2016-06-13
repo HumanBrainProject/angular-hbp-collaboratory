@@ -127,14 +127,16 @@
 </div>
 <div class="section" id="readme">
 <h2>README<a class="headerlink" href="#readme" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div></div></blockquote>
+<hr class="docutils" />
 <a class="reference external image-reference" href="https://travis-ci.org/HumanBrainProject/angular-hbp-collaboratory"><img alt="https://travis-ci.org/HumanBrainProject/angular-hbp-collaboratory.svg?branch=master" src="https://travis-ci.org/HumanBrainProject/angular-hbp-collaboratory.svg?branch=master" /></a>
 <p>angular-hbp-collaboratory is a collection of AngularJS module to
 develop applications for the HBP Collaboratory.</p>
 </div>
 <div class="section" id="install-using-bower">
 <h2>Install Using Bower<a class="headerlink" href="#install-using-bower" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash"><div class="highlight"><pre>bower install angular-hbp-collaboratory
+</pre></div>
+</div>
 <ul class="simple">
 <li><cite>angular-hbp-collaboratory.js</cite> provides all the needed AngularJS module</li>
 <li><cite>angular-hbp-collaboratory.css</cite> provides styles for the visual components</li>
@@ -167,6 +169,22 @@ bower install
 </div>
 <div class="section" id="migration-from-angular-hbp-common">
 <h3>Migration from angular-hbp-common<a class="headerlink" href="#migration-from-angular-hbp-common" title="Permalink to this headline">¶</a></h3>
+<p>Here is a quick (and incomplete) checklist of refactoring to operate to your
+project if you want to migrate from angular-hbp-common to this cleaner library:</p>
+<div class="highlight-python"><div class="highlight"><pre>Add dependency &#39;hbpCollaboratory&#39;
+hbpUtil.ferr -&gt; clbError.rejectHttpError (from clb-error module)
+hbpErrorService -&gt; clbError              (from clb-error module)
+hbpUtil.paginatedResultSet -&gt; clbResultSet.get (from clb-rest module)
+hbpIdentityUserDirectory -&gt; clbUser      (from clb-identity module)
+hbpCollabStore -&gt; clbCollab              (from clb-collab module)
+hbpCollabStore.context -&gt; clbContext     (from clb-collab module)
+hbpCollaboratoryNavStore -&gt; clbCollabNav (from clb-collab module)
+hbpCollaboratoryAppStore -&gt; clbCollabApp (from clb-collab module)
+clbCollabApp -&gt; clbCollabApp (from clb-collab module)
+
+At some point, you can remove &#39;hbpCommon&#39; Angular dependency
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="license">
