@@ -1,0 +1,406 @@
+
+
+
+<!DOCTYPE html>
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Namespace: clbUser &mdash; angular-hbp-collaboratory 0.1.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/hbpdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/hbpdoc.js"></script>
+    <link rel="top" title="angular-hbp-collaboratory 0.1.5 documentation" href="index.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  </head>
+  <body role="document">
+<div class="hbpdoc-page">
+    <section class="hbpdoc-title page-header">
+        <a class="project-title" href="index.html">angular-hbp-collaboratory</a>
+
+        <a class="hbpdoc-toc-toggle pull-right" href>
+            <span class="zmdi zmdi-menu"></span> <span class="sr-only icon-text">Menu</span>
+        </a>
+    </section>
+    <section class="hbpdoc-main">
+        <nav class="hbpdoc-sidebar hbpdoc-container">
+            <a class="hbpdoc-toc-toggle pull-right" href>
+                <span class="zmdi zmdi-menu"></span> <span class="sr-only icon-text">Menu</span>
+            </a>
+            
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Namespace: <code class="docutils literal"><span class="pre">clbUser</span></code></a><ul>
+<li><a class="reference internal" href="#children">Children</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#function-get">Function <code class="docutils literal"><span class="pre">get</span></code></a></li>
+<li><a class="reference internal" href="#function-isgroupmember">Function <code class="docutils literal"><span class="pre">isGroupMember</span></code></a></li>
+<li><a class="reference internal" href="#function-getcurrentuser">Function <code class="docutils literal"><span class="pre">getCurrentUser</span></code></a></li>
+<li><a class="reference internal" href="#function-create">Function <code class="docutils literal"><span class="pre">create</span></code></a></li>
+<li><a class="reference internal" href="#function-update">Function <code class="docutils literal"><span class="pre">update</span></code></a></li>
+<li><a class="reference internal" href="#function-list">Function <code class="docutils literal"><span class="pre">list</span></code></a></li>
+<li><a class="reference internal" href="#function-search">Function <code class="docutils literal"><span class="pre">search</span></code></a></li>
+<li><a class="reference internal" href="#function-ishbpmember">Function <code class="docutils literal"><span class="pre">isHbpMember</span></code></a></li>
+<li><a class="reference internal" href="#function-getcurrentuseronly">Function <code class="docutils literal"><span class="pre">getCurrentUserOnly</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/module-clb-identity.clbUser.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+        </nav>
+
+        <article class="hbpdoc-content">
+
+            <div class="content">
+                
+
+                <aside class="hbpdoc-hnav hbpdoc-hnav-top">
+                    
+                    
+                </aside>
+
+                <div class="section" id="namespace-clbuser">
+<span id="undefined-clbuser"></span><h1>Namespace: <code class="docutils literal"><span class="pre">clbUser</span></code><a class="headerlink" href="#namespace-clbuser" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="local-navigation">
+<p class="topic-title first">Local Navigation</p>
+<ul class="simple">
+<li><a class="reference internal" href="#children" id="id1">Children</a></li>
+<li><a class="reference internal" href="#description" id="id2">Description</a></li>
+<li><a class="reference internal" href="#function-get" id="id3">Function <code class="docutils literal"><span class="pre">get</span></code></a></li>
+<li><a class="reference internal" href="#function-isgroupmember" id="id4">Function <code class="docutils literal"><span class="pre">isGroupMember</span></code></a></li>
+<li><a class="reference internal" href="#function-getcurrentuser" id="id5">Function <code class="docutils literal"><span class="pre">getCurrentUser</span></code></a></li>
+<li><a class="reference internal" href="#function-create" id="id6">Function <code class="docutils literal"><span class="pre">create</span></code></a></li>
+<li><a class="reference internal" href="#function-update" id="id7">Function <code class="docutils literal"><span class="pre">update</span></code></a></li>
+<li><a class="reference internal" href="#function-list" id="id8">Function <code class="docutils literal"><span class="pre">list</span></code></a></li>
+<li><a class="reference internal" href="#function-search" id="id9">Function <code class="docutils literal"><span class="pre">search</span></code></a></li>
+<li><a class="reference internal" href="#function-ishbpmember" id="id10">Function <code class="docutils literal"><span class="pre">isHbpMember</span></code></a></li>
+<li><a class="reference internal" href="#function-getcurrentuseronly" id="id11">Function <code class="docutils literal"><span class="pre">getCurrentUserOnly</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="children">
+<h2><a class="toc-backref" href="#id1">Children</a><a class="headerlink" href="#children" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+</div>
+<div class="section" id="description">
+<h2><a class="toc-backref" href="#id2">Description</a><a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">clbUser</span></code> service let you retrieve and edit user and groups.</p>
+</div>
+<div class="section" id="function-get">
+<span id="module-clb-identity-clbuser-get"></span><h2><a class="toc-backref" href="#id3">Function <code class="docutils literal"><span class="pre">get</span></code></a><a class="headerlink" href="#function-get" title="Permalink to this headline">¶</a></h2>
+<p>Return a promise that will resolve to a list of groups and users
+based on the given array of <code class="docutils literal"><span class="pre">ids</span></code>.</p>
+<p>In case of error, the promise is rejected with a <code class="docutils literal"><span class="pre">ClbError</span></code> instance.</p>
+<p>Return a promise with an map of id-&gt;userInfo based on the
+provided list of IDs.</p>
+<dl class="function">
+<dt id="get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>ids</em><span class="sig-paren">)</span><a class="headerlink" href="#get" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>ids</strong> (<em>array</em>) &#8211; Array of ID</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">Resolve to a map of ID/UserInfo</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-isgroupmember">
+<span id="module-clb-identity-clbuser-isgroupmember"></span><h2><a class="toc-backref" href="#id4">Function <code class="docutils literal"><span class="pre">isGroupMember</span></code></a><a class="headerlink" href="#function-isgroupmember" title="Permalink to this headline">¶</a></h2>
+<p>Return a promise that will resolve to true if the current user is a member of one of the groups in input.</p>
+<p><cite>groups</cite> can be either a string or an array.</p>
+<dl class="function">
+<dt id="isGroupMember">
+<code class="descname">isGroupMember</code><span class="sig-paren">(</span><em>groups</em><span class="sig-paren">)</span><a class="headerlink" href="#isGroupMember" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>groups</strong> (<em>array</em>) &#8211; A list of groups</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">Resolve to a boolean</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-getcurrentuser">
+<span id="module-clb-identity-clbuser-getcurrentuser"></span><h2><a class="toc-backref" href="#id5">Function <code class="docutils literal"><span class="pre">getCurrentUser</span></code></a><a class="headerlink" href="#function-getcurrentuser" title="Permalink to this headline">¶</a></h2>
+<p>Return a promise that will resolve to the current user.</p>
+<p>In case of error, the promise is rejected with a <cite>HbpError</cite> instance.</p>
+<dl class="function">
+<dt id="getCurrentUser">
+<code class="descname">getCurrentUser</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#getCurrentUser" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return Promise:</th><td class="field-body">Resolve to the Current User</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-create">
+<span id="module-clb-identity-clbuser-create"></span><h2><a class="toc-backref" href="#id6">Function <code class="docutils literal"><span class="pre">create</span></code></a><a class="headerlink" href="#function-create" title="Permalink to this headline">¶</a></h2>
+<p>Create the given <cite>user</cite>.</p>
+<p>The method return a promise that will resolve to the created user instance.
+In case of error, a <cite>HbpError</cite> instance is retrieved.</p>
+<dl class="function">
+<dt id="create">
+<code class="descname">create</code><span class="sig-paren">(</span><em>user</em><span class="sig-paren">)</span><a class="headerlink" href="#create" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>user</strong> (<em>object</em>) &#8211; Data to build the user from</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">Resolve to the new User</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-update">
+<span id="module-clb-identity-clbuser-update"></span><h2><a class="toc-backref" href="#id7">Function <code class="docutils literal"><span class="pre">update</span></code></a><a class="headerlink" href="#function-update" title="Permalink to this headline">¶</a></h2>
+<p>Update the described <cite>user</cite> with the given <cite>data</cite>.</p>
+<p>If data is omitted, <cite>user</cite> is assumed to be the updated user object that
+should be persisted. When data is present, user can be either a <cite>User</cite>
+instance or the user id.</p>
+<p>The method return a promise that will resolve to the updated user instance.
+Note that this instance is a copy of the user. If you own a user instance
+already, you cannot assume this method will update it.</p>
+<dl class="function">
+<dt id="update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>user</em><span class="optional">[</span>, <em>data</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#update" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>user</strong> (<em>object</em>) &#8211; User to update</li>
+<li><strong>data</strong> (<em>object</em>) &#8211; Data to update the user with if not already in <code class="docutils literal"><span class="pre">user</span></code> instance</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">Resolve to the User instance</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-list">
+<span id="module-clb-identity-clbuser-list"></span><h2><a class="toc-backref" href="#id8">Function <code class="docutils literal"><span class="pre">list</span></code></a><a class="headerlink" href="#function-list" title="Permalink to this headline">¶</a></h2>
+<p>Retrieves a list of users filtered, sorted and paginated according to the options.</p>
+<p>The returned promise will be resolved with the list of fetched user profiles
+and 2 fuctions (optional) to load next page and/or previous page.
+{{next}} and {{prev}} returns a promise that will be resolved with an object
+like the one returned by the current function.</p>
+<p>Return object example:
+{</p>
+<blockquote>
+<div>results: [...],
+next: function() {},
+prev: function() {}</div></blockquote>
+<p>}</p>
+<p>Available options:</p>
+<ul>
+<li><p class="first">sort: property to sort on. prepend &#8216;-&#8216; to reverse order.</p>
+</li>
+<li><p class="first">page: page to be loaded (default: 0)</p>
+</li>
+<li><p class="first">pageSize: max number or items to be loaded (default: 10, when 0 all records are loaded)</p>
+</li>
+<li><dl class="first docutils">
+<dt>filter: an Object containing the field name as key and</dt>
+<dd><p class="first last">the query as a String or an Array of strings</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">managedOnly: returns only the users managed by the current logged in user</p>
+</li>
+</ul>
+<p>Supported filter values:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">'displayName'</span></code></li>
+<li><code class="docutils literal"><span class="pre">'email'</span></code></li>
+<li><code class="docutils literal"><span class="pre">'id'</span></code></li>
+<li><code class="docutils literal"><span class="pre">'username'</span></code></li>
+<li><code class="docutils literal"><span class="pre">'accountType'</span></code></li>
+</ul>
+<dl class="function">
+<dt id="list">
+<code class="descname">list</code><span class="sig-paren">(</span><em>[options][, options.sort][, options.filter][, options.factory][, options.pageSize][, options.page]</em><span class="sig-paren">)</span><a class="headerlink" href="#list" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>options</strong> (<em>object</em>) &#8211; Parameters to use</li>
+<li><strong>options.sort</strong> (<em>string</em>) &#8211; Attribute to sort the user with (default to <code class="docutils literal"><span class="pre">'familyName'</span></code>)</li>
+<li><strong>options.filter</strong> (<em>string</em>) &#8211; Object containing query filters</li>
+<li><strong>options.factory</strong> (<em>function</em>) &#8211; A function that accept an array of user data and build object from them</li>
+<li><strong>options.pageSize</strong> (<em>int</em>) &#8211; The number of result per page ; if 0, load all results</li>
+<li><strong>options.page</strong> (<em>int</em>) &#8211; The result page to retrieve</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">Resolve to the user ResultSet instance</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-search">
+<span id="module-clb-identity-clbuser-search"></span><h2><a class="toc-backref" href="#id9">Function <code class="docutils literal"><span class="pre">search</span></code></a><a class="headerlink" href="#function-search" title="Permalink to this headline">¶</a></h2>
+<p>Promise a list of users who matched the given query string.</p>
+<dl class="function">
+<dt id="search">
+<code class="descname">search</code><span class="sig-paren">(</span><em>queryString[, options][, options.pageSize][, options.factory]</em><span class="sig-paren">)</span><a class="headerlink" href="#search" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>queryString</strong> (<em>string</em>) &#8211; the search query</li>
+<li><strong>options</strong> (<em>object</em>) &#8211; query options</li>
+<li><strong>options.pageSize</strong> (<em>int</em>) &#8211; the number of result to retrieve</li>
+<li><strong>options.factory</strong> (<em>function</em>) &#8211; the factory function to use</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">will return a ResultSet containing the results</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-ishbpmember">
+<span id="module-clb-identity-clbuser-ishbpmember"></span><h2><a class="toc-backref" href="#id10">Function <code class="docutils literal"><span class="pre">isHbpMember</span></code></a><a class="headerlink" href="#function-ishbpmember" title="Permalink to this headline">¶</a></h2>
+<p>Return a promise that will resolve to true if the current user is a
+HBP member.</p>
+<dl class="function">
+<dt id="isHbpMember">
+<code class="descname">isHbpMember</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#isHbpMember" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return Promise:</th><td class="field-body">Resolve to a boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-getcurrentuseronly">
+<span id="module-clb-identity-clbuser-getcurrentuseronly"></span><h2><a class="toc-backref" href="#id11">Function <code class="docutils literal"><span class="pre">getCurrentUserOnly</span></code></a><a class="headerlink" href="#function-getcurrentuseronly" title="Permalink to this headline">¶</a></h2>
+<p>Return a promise that will resolve to the current user, NOT including group
+info.</p>
+<p>In case of error, the promise is rejected with a <cite>HbpError</cite> instance.</p>
+<dl class="function">
+<dt id="getCurrentUserOnly">
+<code class="descname">getCurrentUserOnly</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#getCurrentUserOnly" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return Promise:</th><td class="field-body">Resolve to the current user</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+            </div>
+
+            <aside class="hbpdoc-hnav hbpdoc-hnav-bottom">
+                
+                
+            </aside>
+        </article>
+    </section>
+
+
+    <div class="hbpdoc-footer">
+        angular-hbp-collaboratory <small>0.1.5</small> 
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, .
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+    </div>
+</div>
+
+  </body>
+</html>
