@@ -23,11 +23,10 @@ Description
 given a user, a collab or a specific context.
 
 
-.. _module-clb-stream.clbStream.getStream:
 
 
-Function: ``getStream``
-=======================
+Function ``getStream``
+======================
 
 Get a feed of activities regarding an item type and id.
 
@@ -38,7 +37,4 @@ Get a feed of activities regarding an item type and id.
     :param string|int id: The id of the object to get the feed for
     :return Promise: resolve to the feed of activities
     
-
-
-
 

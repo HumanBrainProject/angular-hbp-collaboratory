@@ -1,3 +1,5 @@
+.. _module-clb-form:
+
 ====================
 Module: ``clb-form``
 ====================
@@ -19,9 +21,6 @@ Description
 ===========
 
 clb-form provides directive to ease creation of forms.
-
-
-
 
 
 

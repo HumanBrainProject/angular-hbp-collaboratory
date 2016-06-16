@@ -22,11 +22,10 @@ Description
 Document a list of available tasks.
 
 
-.. _module-clb-automator.Tasks.createCollab:
 
 
-Function: ``createCollab``
-==========================
+Function ``createCollab``
+=========================
 
 Create a collab defined by the given options.
 
@@ -42,11 +41,10 @@ Create a collab defined by the given options.
     :param Array after: descriptor of subtasks
     :return Promise: - promise of a collab
     
-.. _module-clb-automator.Tasks.createNavItem:
 
 
-Function: ``createNavItem``
-===========================
+Function ``createNavItem``
+==========================
 
 Create a new nav item.
 
@@ -61,11 +59,10 @@ Create a new nav item.
     :param object context.collab: a collab instance created previously
     :return Promise: promise of a NavItem instance
     
-.. _module-clb-automator.Tasks.overview:
 
 
-Function: ``overview``
-======================
+Function ``overview``
+=====================
 
 Set the content of the overview page.
 If an 'entity' is specified, it will use the content of that storage file
@@ -89,11 +86,10 @@ collab object in `context.collab`.
     :return object: created entities where keys are the same as provided in
                      config.storage
     
-.. _module-clb-automator.Tasks.storage:
 
 
-Function: ``storage``
-=====================
+Function ``storage``
+====================
 
 Copy files and folders to the destination collab storage.
 
@@ -110,7 +106,4 @@ Copy files and folders to the destination collab storage.
     :return object: created entities where keys are the same as provided in
                      config.storage
     
-
-
-
 

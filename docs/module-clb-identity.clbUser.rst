@@ -1,4 +1,4 @@
-.. _undefined.clbUser:
+.. _module-clb-identity.clbUser:
 
 ======================
 Namespace: ``clbUser``
@@ -21,11 +21,10 @@ Description
 ``clbUser`` service let you retrieve and edit user and groups.
 
 
-.. _module-clb-identity.clbUser.get:
 
 
-Function: ``get``
-=================
+Function ``get``
+================
 
 Return a promise that will resolve to a list of groups and users
 based on the given array of ``ids``.
@@ -41,11 +40,10 @@ provided list of IDs.
     :param array ids: Array of ID
     :return Promise: Resolve to a map of ID/UserInfo
     
-.. _module-clb-identity.clbUser.isGroupMember:
 
 
-Function: ``isGroupMember``
-===========================
+Function ``isGroupMember``
+==========================
 
 Return a promise that will resolve to true if the current user is a member of one of the groups in input.
 
@@ -57,11 +55,10 @@ Return a promise that will resolve to true if the current user is a member of on
     :param array groups: A list of groups
     :return Promise: Resolve to a boolean
     
-.. _module-clb-identity.clbUser.getCurrentUser:
 
 
-Function: ``getCurrentUser``
-============================
+Function ``getCurrentUser``
+===========================
 
 Return a promise that will resolve to the current user.
 
@@ -72,11 +69,10 @@ In case of error, the promise is rejected with a `HbpError` instance.
     
     :return Promise: Resolve to the Current User
     
-.. _module-clb-identity.clbUser.create:
 
 
-Function: ``create``
-====================
+Function ``create``
+===================
 
 Create the given `user`.
 
@@ -89,11 +85,10 @@ In case of error, a `HbpError` instance is retrieved.
     :param object user: Data to build the user from
     :return Promise: Resolve to the new User
     
-.. _module-clb-identity.clbUser.update:
 
 
-Function: ``update``
-====================
+Function ``update``
+===================
 
 Update the described `user` with the given `data`.
 
@@ -112,11 +107,10 @@ already, you cannot assume this method will update it.
     :param object data: Data to update the user with if not already in ``user`` instance
     :return Promise: Resolve to the User instance
     
-.. _module-clb-identity.clbUser.list:
 
 
-Function: ``list``
-==================
+Function ``list``
+=================
 
 Retrieves a list of users filtered, sorted and paginated according to the options.
 
@@ -160,11 +154,10 @@ Supported filter values:
     :param int options.page: The result page to retrieve
     :return Promise: Resolve to the user ResultSet instance
     
-.. _module-clb-identity.clbUser.search:
 
 
-Function: ``search``
-====================
+Function ``search``
+===================
 
 Promise a list of users who matched the given query string.
 
@@ -177,11 +170,10 @@ Promise a list of users who matched the given query string.
     :param function options.factory: the factory function to use
     :return Promise: will return a ResultSet containing the results
     
-.. _module-clb-identity.clbUser.isHbpMember:
 
 
-Function: ``isHbpMember``
-=========================
+Function ``isHbpMember``
+========================
 
 Return a promise that will resolve to true if the current user is a
 HBP member.
@@ -192,13 +184,18 @@ HBP member.
     :return Promise: Resolve to a boolean
     
 
-.. _module-clb-identity.clbUser.getCurrentUserOnly:
 
-Member: ``getCurrentUserOnly``: Return a promise that will resolve to the current user, NOT including group
+
+Function ``getCurrentUserOnly``
+===============================
+
+Return a promise that will resolve to the current user, NOT including group
 info.
 
 In case of error, the promise is rejected with a `HbpError` instance.
 
+.. js:function:: getCurrentUserOnly()
 
-
-
+    
+    :return Promise: Resolve to the current user
+    

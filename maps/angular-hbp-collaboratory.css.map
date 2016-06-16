@@ -1,1 +1,1 @@
-{"version":3,"sources":["main.scss"],"names":[],"mappings":"AAAA","file":"angular-hbp-collaboratory.css","sourcesContent":["@import './stream/activity.directive';\n@import './stream/feed.directive';\n"],"sourceRoot":"/source/"}
+{"version":3,"sources":["stream/feed.directive.scss"],"names":[],"mappings":"AAAA,AAAE,EAAA,kBAAkB,CAAA;EAClB,cAAc,EAAE,GAAI,GACrB","file":"angular-hbp-collaboratory.css","sourcesContent":["li.clb-activity-item{\n  padding-bottom: 5px;\n}"],"sourceRoot":"/source/"}

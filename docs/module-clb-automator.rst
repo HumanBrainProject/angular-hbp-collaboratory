@@ -1,3 +1,5 @@
+.. _module-clb-automator:
+
 =========================
 Module: ``clb-automator``
 =========================
@@ -25,9 +27,6 @@ either concurrently or sequentially.
 
 It is used for example to script the creation of new custom collab in
 the `Create New Collab` functionality in `collaboratory-extension-core`.
-
-
-
 
 
 

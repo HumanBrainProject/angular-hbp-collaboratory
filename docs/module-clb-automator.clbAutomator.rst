@@ -42,11 +42,10 @@ you write a descriptor and run it.
    gulp example
 
 
-.. _module-clb-automator.clbAutomator.task:
 
 
-Function: ``task``
-==================
+Function ``task``
+=================
 
 Instantiate a new Task intance that will run the code describe for
 a handlers with the give ``name``.
@@ -66,11 +65,10 @@ can be given at load time and it will be fed with the result of each parent
     :param object context: a default context to run the task with
     :return Task: - the new task instance
     
-.. _module-clb-automator.clbAutomator.run:
 
 
-Function: ``run``
-=================
+Function ``run``
+================
 
 Directly generate tasks from given description and run them.
 
@@ -81,11 +79,10 @@ Directly generate tasks from given description and run them.
     :param object context: the initial context
     :return Promise: promise of the top level task result
     
-.. _module-clb-automator.clbAutomator.createSubtasks:
 
 
-Function: ``createSubtasks``
-============================
+Function ``createSubtasks``
+===========================
 
 Create an array of tasks given an array containing object where
 the key is the task name to run and the value is the descriptor
@@ -97,11 +94,10 @@ parameter.
     :param object after: the content of ``descriptor.after``
     :return Array/Task: array of subtasks
     
-.. _module-clb-automator.clbAutomator.missingDataError:
 
 
-Function: ``missingDataError``
-==============================
+Function ``missingDataError``
+=============================
 
 Return a HbpError when a parameter is missing.
 
@@ -112,11 +108,10 @@ Return a HbpError when a parameter is missing.
     :param object config: the invalid configuration object
     :return HbpError: a HbpError instance
     
-.. _module-clb-automator.clbAutomator.ensureParameters:
 
 
-Function: ``ensureParameters``
-==============================
+Function ``ensureParameters``
+=============================
 
 Ensure that all parameters listed after config are presents.
 
@@ -126,11 +121,10 @@ Ensure that all parameters listed after config are presents.
     :param object config: task descriptor
     :return object: created entities
     
-.. _module-clb-automator.clbAutomator.extractAttributes:
 
 
-Function: ``extractAttributes``
-===============================
+Function ``extractAttributes``
+==============================
 
 Return an object that only contains attributes
 from the `attrs` list.
@@ -143,9 +137,6 @@ from the `attrs` list.
     :return object: key-value store containing only keys from attrs
                             found in `config`
     
-
-
-
 
 Examples
 ========

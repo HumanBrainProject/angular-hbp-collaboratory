@@ -1,9 +1,10 @@
-.. _undefined.clbFormControlFocus:
+.. _module-clb-form.clbFormControlFocus:
 
 ==================================
 Namespace: ``clbFormControlFocus``
 ==================================
 
+Member Of :doc:`module-clb-form`
 
 .. contents:: Local Navigation
    :local:
@@ -20,9 +21,6 @@ Description
 
 The ``clbFormControlFocus`` Directive mark a form element as the one that
 should receive the focus first.
-
-
-
 
 
 

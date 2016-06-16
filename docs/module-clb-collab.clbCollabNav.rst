@@ -1,9 +1,10 @@
-.. _undefined.clbCollabNav:
+.. _module-clb-collab.clbCollabNav:
 
 ===========================
 Namespace: ``clbCollabNav``
 ===========================
 
+Member Of :doc:`module-clb-collab`
 
 .. contents:: Local Navigation
    :local:
@@ -23,11 +24,10 @@ clbCollabNav provides tools to create and manage
       navigation items.
 
 
-.. _module-clb-collab.clbCollabNav.getRoot:
 
 
-Function: ``getRoot``
-=====================
+Function ``getRoot``
+====================
 
 Retrieve the root item of the given collab.
 
@@ -37,11 +37,10 @@ Retrieve the root item of the given collab.
     :param number collabId: collab ID
     :return Promise: promise the root nav item
     
-.. _module-clb-collab.clbCollabNav.getNode:
 
 
-Function: ``getNode``
-=====================
+Function ``getNode``
+====================
 
 
 
@@ -52,11 +51,10 @@ Function: ``getNode``
     :param number nodeId: node ID
     :return NavItem: the matching nav item
     
-.. _module-clb-collab.clbCollabNav.getNodeFromContext:
 
 
-Function: ``getNodeFromContext``
-================================
+Function ``getNodeFromContext``
+===============================
 
 
 
@@ -66,11 +64,10 @@ Function: ``getNodeFromContext``
     :param str ctx: The context UUID
     :return Promise: The promise of a NavItem
     
-.. _module-clb-collab.clbCollabNav.addNode:
 
 
-Function: ``addNode``
-=====================
+Function ``addNode``
+====================
 
 
 
@@ -81,11 +78,10 @@ Function: ``addNode``
     :param number navItem: the NavItem instance to add to the navigation
     :return Promise: promise of the added NavItem instance
     
-.. _module-clb-collab.clbCollabNav.deleteNode:
 
 
-Function: ``deleteNode``
-========================
+Function ``deleteNode``
+=======================
 
 
 
@@ -96,11 +92,10 @@ Function: ``deleteNode``
     :param NavItem navItem: the NavItem instance to remove from the navigation
     :return Promise: promise of an undefined item at the end
     
-.. _module-clb-collab.clbCollabNav.update:
 
 
-Function: ``update``
-====================
+Function ``update``
+===================
 
 
 
@@ -111,11 +106,10 @@ Function: ``update``
     :param NavItem navItem: the instance to update
     :return Promise: promise the updated instance
     
-.. _module-clb-collab.clbCollabNav.insertNode:
 
 
-Function: ``insertNode``
-========================
+Function ``insertNode``
+=======================
 
 Insert node in the three.
 
@@ -132,7 +126,4 @@ on a single client.
     :return Promise: a promise that will
                              return the update nav item
     
-
-
-
 

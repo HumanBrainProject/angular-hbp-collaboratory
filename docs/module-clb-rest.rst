@@ -1,3 +1,5 @@
+.. _module-clb-rest:
+
 ====================
 Module: ``clb-rest``
 ====================
@@ -18,9 +20,6 @@ Description
 ===========
 
 ``clb-rest`` module contains util for simplifying access to Rest service.
-
-
-
 
 
 

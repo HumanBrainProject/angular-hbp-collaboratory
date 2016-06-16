@@ -1,9 +1,10 @@
-.. _undefined.App:
+.. _module-clb-collab.App:
 
 ==============
 Class: ``App``
 ==============
 
+Member Of :doc:`module-clb-collab`
 
 .. contents:: Local Navigation
    :local:
@@ -21,11 +22,10 @@ Description
 client representation of an application
 
 
-.. _module-clb-collab.App.toJson:
 
 
-Function: ``toJson``
-====================
+Function ``toJson``
+===================
 
 Transform an App instance into an object reprensentation compatible with
 the backend schema. This object can then be easily converted to a JSON
@@ -36,11 +36,10 @@ string.
     
     :return object: server representation of an App instance
     
-.. _module-clb-collab.App.App.fromJson:
 
 
-Function: ``App.fromJson``
-==========================
+Function ``App.fromJson``
+=========================
 
 Create an app instance from a server representation.
 
@@ -50,7 +49,4 @@ Create an app instance from a server representation.
     :param object json: converted from the server JSON string
     :return App: the new App instance
     
-
-
-
 

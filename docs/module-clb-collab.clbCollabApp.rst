@@ -1,9 +1,10 @@
-.. _undefined.clbCollabApp:
+.. _module-clb-collab.clbCollabApp:
 
 ===========================
 Namespace: ``clbCollabApp``
 ===========================
 
+Member Of :doc:`module-clb-collab`
 
 .. contents:: Local Navigation
    :local:
@@ -22,11 +23,10 @@ clbCollabApp can be used to find and work with the
 registered HBP Collaboratory applications.
 
 
-.. _module-clb-collab.clbCollabApp.list:
 
 
-Function: ``list``
-==================
+Function ``list``
+=================
 
 
 
@@ -35,11 +35,10 @@ Function: ``list``
     
     :return Promise: promise of the list of all applications
     
-.. _module-clb-collab.clbCollabApp.getById:
 
 
-Function: ``getById``
-=====================
+Function ``getById``
+====================
 
 Retrieve an App instance from its id.
 
@@ -49,11 +48,10 @@ Retrieve an App instance from its id.
     :param number id: the app id
     :return Promise: promise of an app instance
     
-.. _module-clb-collab.clbCollabApp.findOne:
 
 
-Function: ``findOne``
-=====================
+Function ``findOne``
+====================
 
 
 
@@ -63,7 +61,4 @@ Function: ``findOne``
     :param object params: query parameters
     :return Promise: promise of an App instance
     
-
-
-
 

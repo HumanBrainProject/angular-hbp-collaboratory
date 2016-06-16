@@ -31,11 +31,10 @@ Usage
   to the HBP Collaboratory and wait for its answer.
 
 
-.. _module-clb-app.clbApp.emit:
 
 
-Function: ``emit``
-==================
+Function ``emit``
+=================
 
 Send a message to the HBP Collaboratory.
 
@@ -46,11 +45,10 @@ Send a message to the HBP Collaboratory.
     :param object data: corresponding data to be sent alongside the event
     :return Promise: resolve with the message response
     
-.. _module-clb-app.clbApp.context:
 
 
-Function: ``context``
-=====================
+Function ``context``
+====================
 
 Asynchronously retrieve the current HBP Collaboratory Context, including
 the mode, the ctx UUID and the application state if any.
@@ -61,23 +59,6 @@ the mode, the ctx UUID and the application state if any.
     :param object data: new values to send to HBP Collaboratory frontend
     :return Promise: resolve to the context
     
-
-
-
-.. _module-clb-app.clbApp.HbpCollaboratoryContext:
-
-
-Typedef: ``HbpCollaboratoryContext``
-====================================
-
-
-
-Properties
-----------
-- ``string mode``: the current mode, either 'run' or 'edit'
-- ``string ctx``: the UUID of the current context
-- ``string state``: an application defined state string
-
 
 Examples
 ========

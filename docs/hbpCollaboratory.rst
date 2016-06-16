@@ -1,3 +1,5 @@
+.. _hbpCollaboratory:
+
 ===============================
 Namespace: ``hbpCollaboratory``
 ===============================
@@ -25,9 +27,6 @@ Description
 - :doc:`clb-automator <module:clb-automator>` to automate a serie of
   Collaboratory actions.
 - :doc:`clb-feed <module:clb-feed>` retrieve and display stream of activities.
-
-
-
 
 
 

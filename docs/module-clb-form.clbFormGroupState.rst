@@ -1,9 +1,10 @@
-.. _undefined.clbFormGroupState:
+.. _module-clb-form.clbFormGroupState:
 
 ================================
 Namespace: ``clbFormGroupState``
 ================================
 
+Member Of :doc:`module-clb-form`
 
 .. contents:: Local Navigation
    :local:
@@ -21,9 +22,6 @@ Description
 ``clbFormGroupState`` directive flag the current form group with
 the class has-error or has-success depending on its form field
 current state.
-
-
-
 
 
 

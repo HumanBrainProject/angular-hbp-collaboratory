@@ -1,4 +1,4 @@
-.. _undefined.ClbError:
+.. _module-clb-error.ClbError:
 
 ===================
 Class: ``ClbError``
@@ -36,9 +36,6 @@ The ClbError extends the native Javascript Error instance so it also provides:
 
 Only ``type``, ``message``, and ``code`` should be considered to be present.
 They receive default values when not specified by the situation.
-
-
-
 
 
 

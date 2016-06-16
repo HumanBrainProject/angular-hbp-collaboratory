@@ -24,7 +24,7 @@ Contents
 README
 ======
 
-------------------------
+   ------------------------
 
 .. image:: https://travis-ci.org/HumanBrainProject/angular-hbp-collaboratory.svg?branch=master
    :target: https://travis-ci.org/HumanBrainProject/angular-hbp-collaboratory
