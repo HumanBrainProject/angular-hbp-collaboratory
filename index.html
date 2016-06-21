@@ -117,10 +117,13 @@
 <li class="toctree-l1"><a class="reference internal" href="module-clb-automator.html">Module: <code class="docutils literal"><span class="pre">clb-automator</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-collab.html">Module: <code class="docutils literal"><span class="pre">clb-collab</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-env.html">Module: <code class="docutils literal"><span class="pre">clb-env</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="module-clb-form.html">Module: <code class="docutils literal"><span class="pre">clb-form</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-rest.html">Module: <code class="docutils literal"><span class="pre">clb-rest</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-storage.html">Module: <code class="docutils literal"><span class="pre">clb-storage</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-stream.html">Module: <code class="docutils literal"><span class="pre">clb-stream</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-clb-ui-error.html">Module: <code class="docutils literal"><span class="pre">clb-ui-error</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-clb-ui-file-browser.html">Module: <code class="docutils literal"><span class="pre">clb-ui-file-browser</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-clb-ui-form.html">Module: <code class="docutils literal"><span class="pre">clb-ui-form</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-clb-ui-stream.html">Module: <code class="docutils literal"><span class="pre">clb-ui-stream</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="hbpCollaboratory.html">Namespace: <code class="docutils literal"><span class="pre">hbpCollaboratory</span></code></a></li>
 </ul>
 </div>
@@ -180,11 +183,26 @@ hbpCollabStore -&gt; clbCollab              (from clb-collab module)
 hbpCollabStore.context -&gt; clbContext     (from clb-collab module)
 hbpCollaboratoryNavStore -&gt; clbCollabNav (from clb-collab module)
 hbpCollaboratoryAppStore -&gt; clbCollabApp (from clb-collab module)
-clbCollabApp -&gt; clbCollabApp (from clb-collab module)
-
-At some point, you can remove &#39;hbpCommon&#39; Angular dependency
+clbCollabApp -&gt; clbCollabApp             (from clb-collab module)
+hbpEntityStore -&gt; clbStorage             (from clb-storage module)
+hbpFileStore -&gt; clbStorage               (from clb-storage module)
+hbpProjectStore -&gt; clbStorage            (from clb-storage module)
+hbp-file-browser -&gt; clb-ui-file-browser     (from clb-ui-file-browser module)
 </pre></div>
 </div>
+<p>Once the refactoring of module is done, there is the refactoring of methods:</p>
+<div class="highlight-python"><div class="highlight"><pre>clbStorage.getEntityByContext(ctx) -&gt; clbStorage.getEntity({ctx: ctx})
+clbStorage.get( -&gt; clbStorage.getEntity(
+clbStorage.getChildren now return a ResultSet like other services
+</pre></div>
+</div>
+<p>You can also use the directives provided by this package.
+Please be sure to check the change in the directive attributes prefix as well.:</p>
+<div class="highlight-python"><div class="highlight"><pre>hbp-file-browser -&gt; clb-file-browser
+hbp-error-message -&gt; clb-error-message
+</pre></div>
+</div>
+<p>At some point, you can remove &#8216;hbpCommon&#8217; Angular dependency</p>
 </div>
 </div>
 <div class="section" id="license">
