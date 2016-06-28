@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Namespace: clbFormGroupState &mdash; angular-hbp-collaboratory 0.1.5 documentation</title>
+    <title>Module: clb-ui-loading &mdash; angular-hbp-collaboratory 0.1.5 documentation</title>
     
     <link rel="stylesheet" href="_static/hbpdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -29,9 +29,8 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="_static/hbpdoc.js"></script>
     <link rel="top" title="angular-hbp-collaboratory 0.1.5 documentation" href="index.html" />
-    <link rel="up" title="Module: clb-ui-form" href="module-clb-ui-form.html" />
-    <link rel="next" title="Module: clb-ui-identity" href="module-clb-ui-identity.html" />
-    <link rel="prev" title="Namespace: clbFormControlFocus" href="module-clb-ui-form.clbFormControlFocus.html" />
+    <link rel="next" title="Module: clb-ui-storage" href="module-clb-ui-storage.html" />
+    <link rel="prev" title="Namespace: clbUserAvatar" href="module-clb-ui-identity.clbUserAvatar.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
   </head>
@@ -54,24 +53,27 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Namespace: <code class="docutils literal"><span class="pre">clbFormGroupState</span></code></a><ul>
+<li><a class="reference internal" href="#">Module: <code class="docutils literal"><span class="pre">clb-ui-loading</span></code></a><ul>
 <li><a class="reference internal" href="#children">Children</a></li>
 <li><a class="reference internal" href="#description">Description</a></li>
-<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#function-clbloading">Function: <code class="docutils literal"><span class="pre">clbLoading</span></code></a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="module-clb-ui-form.clbFormControlFocus.html"
-                        title="previous chapter">Namespace: <code class="docutils literal"><span class="pre">clbFormControlFocus</span></code></a></p>
+  <p class="topless"><a href="module-clb-ui-identity.clbUserAvatar.html"
+                        title="previous chapter">Namespace: <code class="docutils literal"><span class="pre">clbUserAvatar</span></code></a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="module-clb-ui-identity.html"
-                        title="next chapter">Module: <code class="docutils literal"><span class="pre">clb-ui-identity</span></code></a></p>
+  <p class="topless"><a href="module-clb-ui-storage.html"
+                        title="next chapter">Module: <code class="docutils literal"><span class="pre">clb-ui-storage</span></code></a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/module-clb-ui-form.clbFormGroupState.txt"
+      <li><a href="_sources/module-clb-ui-loading.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -96,56 +98,65 @@
 
             <div class="content">
                 
-                <div class="breadcrumb breadcrumb-meta expand">
-                    
-                    <a href="module-clb-ui-form.html">Module: <code class="docutils literal"><span class="pre">clb-ui-form</span></code></a>
-                    
-                </div>
-                
 
                 <aside class="hbpdoc-hnav hbpdoc-hnav-top">
                     
                     <span class="hbpdoc-hnav-previous">
-                        previous: <a class="hbpdoc-hnav-link" href="module-clb-ui-form.clbFormControlFocus.html">Namespace: <code class="docutils literal"><span class="pre">clbFormControlFocus</span></code></a>
+                        previous: <a class="hbpdoc-hnav-link" href="module-clb-ui-identity.clbUserAvatar.html">Namespace: <code class="docutils literal"><span class="pre">clbUserAvatar</span></code></a>
                     </span>
                     
                     
                     <span class="hbpdoc-hnav-next">
-                        next: <a class="hbpdoc-hnav-link" href="module-clb-ui-identity.html">Module: <code class="docutils literal"><span class="pre">clb-ui-identity</span></code></a>
+                        next: <a class="hbpdoc-hnav-link" href="module-clb-ui-storage.html">Module: <code class="docutils literal"><span class="pre">clb-ui-storage</span></code></a>
                     </span>
                     
                 </aside>
 
-                <div class="section" id="namespace-clbformgroupstate">
-<span id="undefined-clbformgroupstate"></span><h1>Namespace: <code class="docutils literal"><span class="pre">clbFormGroupState</span></code><a class="headerlink" href="#namespace-clbformgroupstate" title="Permalink to this headline">¶</a></h1>
+                <div class="section" id="module-clb-ui-loading">
+<h1>Module: <code class="docutils literal"><span class="pre">clb-ui-loading</span></code><a class="headerlink" href="#module-clb-ui-loading" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="local-navigation">
 <p class="topic-title first">Local Navigation</p>
 <ul class="simple">
-<li><a class="reference internal" href="#children" id="id1">Children</a></li>
-<li><a class="reference internal" href="#description" id="id2">Description</a></li>
-<li><a class="reference internal" href="#examples" id="id3">Examples</a></li>
+<li><a class="reference internal" href="#children" id="id3">Children</a></li>
+<li><a class="reference internal" href="#description" id="id4">Description</a></li>
+<li><a class="reference internal" href="#function-clbloading" id="id5">Function: <code class="docutils literal"><span class="pre">clbLoading</span></code></a><ul>
+<li><a class="reference internal" href="#attributes" id="id6">Attributes</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="section" id="children">
-<h2><a class="toc-backref" href="#id1">Children</a><a class="headerlink" href="#children" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Children</a><a class="headerlink" href="#children" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul class="simple">
 </ul>
 </div>
 </div>
 <div class="section" id="description">
-<h2><a class="toc-backref" href="#id2">Description</a><a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">clbFormGroupState</span></code> directive flag the current form group with
-the class has-error or has-success depending on its form field
-current state.</p>
+<h2><a class="toc-backref" href="#id4">Description</a><a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>Provides a simple loading directive.</p>
 </div>
-<div class="section" id="examples">
-<h2><a class="toc-backref" href="#id3">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
-<div class="literal-block-wrapper container" id="track-a-field-validity-at-the-form-group-level">
-<div class="code-block-caption"><span class="caption-text">Track a field validity at the <code class="docutils literal"><span class="pre">.form-group</span></code> level</span><a class="headerlink" href="#track-a-field-validity-at-the-form-group-level" title="Permalink to this code">¶</a></div>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;exampleApp&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;hbpCollaboratory&#39;</span><span class="p">]);</span>
-</pre></div>
-</div>
+<div class="section" id="function-clbloading">
+<span id="undefined-clbloading"></span><h2><a class="toc-backref" href="#id5">Function: <code class="docutils literal"><span class="pre">clbLoading</span></code></a><a class="headerlink" href="#function-clbloading" title="Permalink to this headline">¶</a></h2>
+<p>The directive clbLoading displays a simple loading message. If a promise
+is given, the loading indicator will disappear once it is resolved.</p>
+<div class="section" id="attributes">
+<h3><a class="toc-backref" href="#id6">Attributes</a><a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h3>
+<p>{Promise} [clb-promise]  Hide the loading message upon fulfilment.
+{string} [clb-message]   Displayed loading string (default=``&#8217;loading...&#8217;<a href="#id1"><span class="problematic" id="id2">``</span></a>)</p>
+<dl class="function">
+<dt id="clbLoading">
+<code class="descname">clbLoading</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#clbLoading" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return object:</th><td class="field-body">Angular directive descriptor</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 </div>
 </div>
@@ -155,12 +166,12 @@ current state.</p>
             <aside class="hbpdoc-hnav hbpdoc-hnav-bottom">
                 
                 <span class="hbpdoc-hnav-previous">
-                    previous: <a class="hbpdoc-hnav-link" href="module-clb-ui-form.clbFormControlFocus.html">Namespace: <code class="docutils literal"><span class="pre">clbFormControlFocus</span></code></a>
+                    previous: <a class="hbpdoc-hnav-link" href="module-clb-ui-identity.clbUserAvatar.html">Namespace: <code class="docutils literal"><span class="pre">clbUserAvatar</span></code></a>
                 </span>
                 
                 
                 <span class="hbpdoc-hnav-next">
-                    next: <a class="hbpdoc-hnav-link" href="module-clb-ui-identity.html">Module: <code class="docutils literal"><span class="pre">clb-ui-identity</span></code></a>
+                    next: <a class="hbpdoc-hnav-link" href="module-clb-ui-storage.html">Module: <code class="docutils literal"><span class="pre">clb-ui-storage</span></code></a>
                 </span>
                 
             </aside>

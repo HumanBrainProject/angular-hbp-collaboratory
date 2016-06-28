@@ -1,0 +1,54 @@
+.. _module-clb-env.clbEnv:
+
+=====================
+Namespace: ``clbEnv``
+=====================
+
+Member Of :doc:`module-clb-env`
+
+.. contents:: Local Navigation
+   :local:
+
+Children
+========
+
+.. toctree::
+   :maxdepth: 1
+   
+   
+Description
+===========
+
+Get environement information using dotted notation with the `clbEnv` provider
+or service.
+
+
+.. _module-clb-env.clbEnv.get:
+
+
+Function: ``get``
+=================
+
+``get(key, [defaultValue])`` provides configuration value loaded at
+the application bootstrap.
+
+Accept a key and an optional default
+value. If the key cannot be found in the configurations, it will return
+the provided default value. If the defaultValue is undefied, it will
+throw an error.
+
+To ensures that those data are available when angular bootstrap the
+application, use angular.clbBootstrap(module, options).
+
+.. js:function:: get(key[, defaultValue])
+
+    
+    :param string key: the environment variable to retrieve, using a key.
+    :param any defaultValue: an optional default value.
+    :return any: the value or ``defaultValue`` if the asked for configuration
+                  is not defined.
+    
+
+
+
+

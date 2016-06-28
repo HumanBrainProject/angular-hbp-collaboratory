@@ -57,7 +57,11 @@
 <li><a class="reference internal" href="#readme">README</a></li>
 <li><a class="reference internal" href="#install-using-bower">Install Using Bower</a></li>
 <li><a class="reference internal" href="#contributing">Contributing</a><ul>
-<li><a class="reference internal" href="#migration-from-angular-hbp-common">Migration from angular-hbp-common</a></li>
+<li><a class="reference internal" href="#migration-from-angular-hbp-common">Migration from angular-hbp-common</a><ul>
+<li><a class="reference internal" href="#service-refactoring">Service Refactoring</a></li>
+<li><a class="reference internal" href="#ui-refactoring">UI Refactoring</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#license">LICENSE</a></li>
@@ -117,14 +121,16 @@
 <li class="toctree-l1"><a class="reference internal" href="module-clb-automator.html">Module: <code class="docutils literal"><span class="pre">clb-automator</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-collab.html">Module: <code class="docutils literal"><span class="pre">clb-collab</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-env.html">Module: <code class="docutils literal"><span class="pre">clb-env</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-hbpCommonCompat.html">Module: <code class="docutils literal"><span class="pre">hbpCommonCompat</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-rest.html">Module: <code class="docutils literal"><span class="pre">clb-rest</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-storage.html">Module: <code class="docutils literal"><span class="pre">clb-storage</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-stream.html">Module: <code class="docutils literal"><span class="pre">clb-stream</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-ui-error.html">Module: <code class="docutils literal"><span class="pre">clb-ui-error</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="module-clb-ui-file-browser.html">Module: <code class="docutils literal"><span class="pre">clb-ui-file-browser</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-ui-form.html">Module: <code class="docutils literal"><span class="pre">clb-ui-form</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-clb-ui-identity.html">Module: <code class="docutils literal"><span class="pre">clb-ui-identity</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-clb-ui-loading.html">Module: <code class="docutils literal"><span class="pre">clb-ui-loading</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-clb-ui-storage.html">Module: <code class="docutils literal"><span class="pre">clb-ui-storage</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-ui-stream.html">Module: <code class="docutils literal"><span class="pre">clb-ui-stream</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="hbpCollaboratory.html">Namespace: <code class="docutils literal"><span class="pre">hbpCollaboratory</span></code></a></li>
 </ul>
 </div>
 </div>
@@ -174,6 +180,14 @@ bower install
 <h3>Migration from angular-hbp-common<a class="headerlink" href="#migration-from-angular-hbp-common" title="Permalink to this headline">¶</a></h3>
 <p>Here is a quick (and incomplete) checklist of refactoring to operate to your
 project if you want to migrate from angular-hbp-common to this cleaner library:</p>
+<div class="section" id="service-refactoring">
+<h4>Service Refactoring<a class="headerlink" href="#service-refactoring" title="Permalink to this headline">¶</a></h4>
+<p>First, rely on the services from angular-hbp-collaboratory. For this, you need
+to depends on the <code class="docutils literal"><span class="pre">hbpCollaboratoryCore</span></code> module.</p>
+<p>If you use bower to install, it will ask you to resolve a conflict about the
+angular-bootstrap version. Stick to the angular-hbp-common declaration at
+this point. At this point, your code should still work, that will let you
+progressively refactor to use the new library instead of the old one:</p>
 <div class="highlight-python"><div class="highlight"><pre>Add dependency &#39;hbpCollaboratory&#39;
 hbpUtil.ferr -&gt; clbError.rejectHttpError (from clb-error module)
 hbpErrorService -&gt; clbError              (from clb-error module)
@@ -187,22 +201,122 @@ clbCollabApp -&gt; clbCollabApp             (from clb-collab module)
 hbpEntityStore -&gt; clbStorage             (from clb-storage module)
 hbpFileStore -&gt; clbStorage               (from clb-storage module)
 hbpProjectStore -&gt; clbStorage            (from clb-storage module)
-hbp-file-browser -&gt; clb-ui-file-browser     (from clb-ui-file-browser module)
+hbp-file-browser -&gt; clb-ui-storage     (from clb-ui-storage module)
 </pre></div>
 </div>
+<p>In fact, <code class="docutils literal"><span class="pre">hbpCollaboratoryCore</span></code> is a shell module that will require many
+sub-modules as an easy way to migrate and import everything.
+It would be even better if your application require only the needed sub-modules
+as indicated by the refactoring list above.</p>
 <p>Once the refactoring of module is done, there is the refactoring of methods:</p>
 <div class="highlight-python"><div class="highlight"><pre>clbStorage.getEntityByContext(ctx) -&gt; clbStorage.getEntity({ctx: ctx})
 clbStorage.get( -&gt; clbStorage.getEntity(
 clbStorage.getChildren now return a ResultSet like other services
 </pre></div>
 </div>
-<p>You can also use the directives provided by this package.
-Please be sure to check the change in the directive attributes prefix as well.:</p>
-<div class="highlight-python"><div class="highlight"><pre>hbp-file-browser -&gt; clb-file-browser
-hbp-error-message -&gt; clb-error-message
+<p>clbUser.isHbpMember is no more because the accreditation multiply. You should
+instead make a call like:</p>
+<blockquote>
+<div>clbUser.isHbpMember() -&gt; clbUser.isGroupMember([&#8216;hbp-accred-sga1&#8217;]);</div></blockquote>
+<p>At this point, your javascript code should rely only on
+<code class="docutils literal"><span class="pre">angular-hbp-collaboratory</span></code>, with the exception of the UI. Your application
+should work as previously. If you were not using any directive from the
+beforementioned module, you are done and you can remove the old module import,
+as well as their reference in <code class="docutils literal"><span class="pre">bower.json</span></code></p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="c1">// If there is no UI components in use</span>
+
+<span class="c1">// before</span>
+<span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;myModule&#39;</span><span class="p">,</span> <span class="p">[</span>
+  <span class="s1">&#39;hbpCollaboratoryCore&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;hbpCommon&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;bbpDocumentClient&#39;</span>
+<span class="p">]);</span>
+
+<span class="c1">// after</span>
+<span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;myModule&#39;</span><span class="p">,</span> <span class="p">[</span> <span class="c1">// some of the following:</span>
+  <span class="s1">&#39;clb-app&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-automator&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-collab&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-env&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-error&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-identity&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-rest&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-storage&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-stream&#39;</span>
+<span class="p">]);</span>
 </pre></div>
 </div>
-<p>At some point, you can remove &#8216;hbpCommon&#8217; Angular dependency</p>
+<p>If your code is using some of the directive from angular-hbp-common or
+angular-hbp-document-client, you need to refactor them as well before being
+able to cut the old dependencies.</p>
+</div>
+<div class="section" id="ui-refactoring">
+<h4>UI Refactoring<a class="headerlink" href="#ui-refactoring" title="Permalink to this headline">¶</a></h4>
+<p>UI Bootstrap has been upgraded to the next major version and the components are
+now prefixed. This means you cannot use the UI part of angular-hbp-common with
+angular-hbp-collaboratory. At this point, you should entirely remove
+angular-hbp-common from your dependencies and require the UI package from
+angular-hbp-collaboratory.</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="c1">// before</span>
+<span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;myModule&#39;</span><span class="p">,</span> <span class="p">[</span>
+  <span class="s1">&#39;hbpCollaboratoryCore&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;hbpCommon&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;bbpDocumentClient&#39;</span>
+<span class="p">]);</span>
+
+<span class="c1">// after</span>
+<span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;myModule&#39;</span><span class="p">,</span> <span class="p">[</span>
+  <span class="s1">&#39;hbpCollaboratoryCore&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;hbpCollaboratoryUI&#39;</span><span class="p">,</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+<p>You now need to run <code class="docutils literal"><span class="pre">bower</span> <span class="pre">update</span></code> and resolve the conflict on <code class="docutils literal"><span class="pre">angular-bootsrap</span></code>
+by choosing the version in <code class="docutils literal"><span class="pre">angular-hbp-collaboratory</span></code>.</p>
+<p>If your code is using directives from this library, please refer to the angular-bootstrap
+<span class="target" id="migration-guide-https-github-com-angular-ui-bootstrap-wiki-migration-guide-for-prefixes">Migration Guide &lt;https://github.com/angular-ui/bootstrap/wiki/Migration-guide-for-prefixes&gt;</span>.</p>
+<p>You can also use the directives provided by this package.
+Please be sure to check the change in the directive attributes prefix as well.:</p>
+<div class="highlight-python"><div class="highlight"><pre>hbp-file-browser -&gt; clb-file-browser (root -&gt; clb-root, entity -&gt; clb-entity)
+hbp-error-message -&gt; clb-error-message (hbp-promise -&gt; clb-promise, hbp-message -&gt; clb-message)
+hbp-usercard -&gt; clb-usercard (hbp-user -&gt; clb-user, hbp-template -&gt; clb-template)
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">hbpDialogFactory</span></code> has been removed, with the exception of <code class="docutils literal"><span class="pre">hbpDialogFactory.error</span></code> which
+is now <code class="docutils literal"><span class="pre">clbErrorDialog.open</span> <span class="pre">(module</span> <span class="pre">clb-ui-error)</span></code>. Those two refactore will have you covered:</p>
+<div class="highlight-python"><div class="highlight"><pre>hbpDialogFactory -&gt; clbErrorDialog
+clbErrorDialog.error -&gt; clbErrorDialog.open
+</pre></div>
+</div>
+<p>If you were using other methods from clbDialogFactory (e.g.: <code class="docutils literal"><span class="pre">.alert()</span></code> or <code class="docutils literal"><span class="pre">.confirm</span></code>),
+you need to rewrite them using angular-bootstrap <code class="docutils literal"><span class="pre">$uibModal</span></code> (read the
+<span class="target" id="documentation-https-angular-ui-github-io-bootstrap-modal">documentation &lt;https://angular-ui.github.io/bootstrap/#/modal&gt;</span>)</p>
+<p>Since usage of <code class="docutils literal"><span class="pre">hbp-generated-icon</span></code> has been deprecated for anything but users
+without avatars, it has been replaced by a new directive called <code class="docutils literal"><span class="pre">clb-user-avatar</span></code>
+available in the module clb-ui-identity.
+It displays either a generated icon or the user profile picture. This new
+component is also easier to customize using pure css.</p>
+<p>At the end of the process, your application should only load <code class="docutils literal"><span class="pre">angular-hbp-collaboratory</span></code></p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;myModule&#39;</span><span class="p">,</span> <span class="p">[</span>
+<span class="c1">// some of the following:</span>
+  <span class="s1">&#39;clb-app&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-automator&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-collab&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-env&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-error&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-identity&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-rest&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-storage&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-stream&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-ui-error&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-ui-storage&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-ui-form&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-ui-loading&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;clb-stream&#39;</span>
+<span class="p">]);</span>
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 <div class="section" id="license">
