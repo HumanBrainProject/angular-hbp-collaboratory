@@ -12,7 +12,6 @@ Children
 .. toctree::
    :maxdepth: 1
    
-   module-clb-env.clbEnv
    
 Description
 ===========
