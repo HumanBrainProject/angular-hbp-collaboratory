@@ -141,11 +141,11 @@ uploaded at some point. The directive doesn&#8217;t proceed to upload by itself
 but rather triggers the onDrop callback.</p>
 <p>The directive accepts the following attributes:</p>
 <ul class="simple">
-<li>on-drop: a function to call when one or more files are dropped or selected</li>
+<li>on-drop: a function to call when one or more files are dropped or selected
+the callback will receive an array of File instance.</li>
+<li>on-error: a function to call when an error occurs. It receives an HbpError
+instance in parameter.</li>
 </ul>
-<p>the callback will receive an array of File instance.
-- on-error: a function to call when an error occurs. It receives an HbpError
-instance in parameter.</p>
 </div>
 <div class="section" id="examples">
 <h2><a class="toc-backref" href="#id3">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
