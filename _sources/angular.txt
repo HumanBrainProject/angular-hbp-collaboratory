@@ -30,7 +30,7 @@ or service.
 
 Before being used, clbEnv must be initialized with the context values. You
 can do so by setting up a global bbpConfig variable or using
-:doc:`angular.clbBootstrap <module-clb-app.clbBootstrap>`.
+:doc:`angular.clbBootstrap <angular.clbBootstrap>`.
 
 .. js:function:: clbEnv($injector)
 
