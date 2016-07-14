@@ -120,11 +120,14 @@
 <li class="toctree-l1"><a class="reference internal" href="module-clb-app.html">Module: <code class="docutils literal"><span class="pre">clb-app</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-automator.html">Module: <code class="docutils literal"><span class="pre">clb-automator</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-collab.html">Module: <code class="docutils literal"><span class="pre">clb-collab</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-clb-context-data.html">Module: <code class="docutils literal"><span class="pre">clb-context-data</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-env.html">Module: <code class="docutils literal"><span class="pre">clb-env</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="module-hbpCommonCompat.html">Module: <code class="docutils literal"><span class="pre">hbpCommonCompat</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-lodash.html">Module: <code class="docutils literal"><span class="pre">lodash</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-hbpCollaboratoryCore.html">Module: <code class="docutils literal"><span class="pre">hbpCollaboratoryCore</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-rest.html">Module: <code class="docutils literal"><span class="pre">clb-rest</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-storage.html">Module: <code class="docutils literal"><span class="pre">clb-storage</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-stream.html">Module: <code class="docutils literal"><span class="pre">clb-stream</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-clb-ui-dialog.html">Module: <code class="docutils literal"><span class="pre">clb-ui-dialog</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-ui-error.html">Module: <code class="docutils literal"><span class="pre">clb-ui-error</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-ui-form.html">Module: <code class="docutils literal"><span class="pre">clb-ui-form</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-ui-identity.html">Module: <code class="docutils literal"><span class="pre">clb-ui-identity</span></code></a></li>
@@ -202,7 +205,9 @@ clbCollabApp -&gt; clbCollabApp             (from clb-collab module)
 hbpEntityStore -&gt; clbStorage             (from clb-storage module)
 hbpFileStore -&gt; clbStorage               (from clb-storage module)
 hbpProjectStore -&gt; clbStorage            (from clb-storage module)
-hbp-file-browser -&gt; clb-ui-storage     (from clb-ui-storage module)
+hbpConfigStore -&gt; Manually refactor to clbCtxData (from clb-ctx-data)
+  The service now use JSON as data format and the method signature
+  changed from method(config) to method(ctx, data)
 </pre></div>
 </div>
 <p>In fact, <code class="docutils literal"><span class="pre">hbpCollaboratoryCore</span></code> is a shell module that will require many
@@ -275,21 +280,40 @@ angular-hbp-collaboratory.</p>
 <p>You now need to run <code class="docutils literal"><span class="pre">bower</span> <span class="pre">update</span></code> and resolve the conflict on <code class="docutils literal"><span class="pre">angular-bootsrap</span></code>
 by choosing the version in <code class="docutils literal"><span class="pre">angular-hbp-collaboratory</span></code>.</p>
 <p>If your code is using directives from this library, please refer to the angular-bootstrap
-<span class="target" id="migration-guide-https-github-com-angular-ui-bootstrap-wiki-migration-guide-for-prefixes">Migration Guide &lt;https://github.com/angular-ui/bootstrap/wiki/Migration-guide-for-prefixes&gt;</span>.</p>
+<span class="target" id="migration-guide-https-github-com-angular-ui-bootstrap-wiki-migration-guide-for-prefixes">Migration Guide &lt;https://github.com/angular-ui/bootstrap/wiki/Migration-guide-for-prefixes&gt;</span>.
+To find if and where your code is using such directives, you can run the following command
+in your source code folder:</p>
+<div class="highlight-bash"><div class="highlight"><pre>grep -ro <span class="s1">&#39;&lt;accordion\|&lt;accordion-group\|&lt;accordion-heading\|&lt;accordionConfig\|&lt;alert\|&lt;btn-checkbox\|&lt;btn-radio\|&lt;buttonConfig\|&lt;carousel\|&lt;slide\|&lt;collapse\|&lt;dateParser\|&lt;datepicker\|&lt;datepicker-popup\|&lt;daypicker\|&lt;monthpicker\|&lt;yearpicker\|&lt;datepickerConfig\|&lt;datepickerPopupConfig\|&lt;dropdown\|&lt;dropdown-toggle\|&lt;dropdown-menu\|&lt;keyboard-nav\|&lt;dropdownService\|&lt;$modal\|&lt;$modalInstance\|&lt;$modalStack\|&lt;modal-transclude\|&lt;pagination\|&lt;pager\|&lt;pagerConfig\|&lt;paginationConfig\|&lt;popover\|&lt;popover-template\|&lt;popover-html\|&lt;$position\|&lt;progressbar\|&lt;bar\|&lt;progress\|&lt;progressConfig\|&lt;rating\|&lt;ratingConfig\|&lt;tabset\|&lt;tab\|&lt;tab-heading\|&lt;timepicker\|&lt;timepickerConfig\|&lt;tooltip\|&lt;tooltip-template\|&lt;tooltip-html\|&lt;$tooltip\|&lt;typeahead\|&lt;typeahead-highlight\|&lt;typeahead-match\|&lt;typeaheadHighlightFilter\|&lt;typeaheadParser&#39;</span> .
+</pre></div>
+</div>
 <p>You can also use the directives provided by this package.
 Please be sure to check the change in the directive attributes prefix as well.:</p>
-<div class="highlight-python"><div class="highlight"><pre>hbp-file-browser -&gt; clb-file-browser (root -&gt; clb-root, entity -&gt; clb-entity)
+<div class="highlight-python"><div class="highlight"><pre>hbp-file-browser -&gt; clb-ui-storage (root -&gt; clb-root, entity -&gt; clb-entity)
 hbp-error-message -&gt; clb-error-message (hbp-promise -&gt; clb-promise, hbp-message -&gt; clb-message)
 hbp-usercard -&gt; clb-usercard (hbp-user -&gt; clb-user, hbp-template -&gt; clb-template)
+hbp-loading -&gt; clb-loading (hbp-promise -&gt; clb-promise, hbp-message -&gt; clb-message)
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">hbpDialogFactory</span></code> has been removed, with the exception of <code class="docutils literal"><span class="pre">hbpDialogFactory.error</span></code> which
-is now <code class="docutils literal"><span class="pre">clbErrorDialog.open</span> <span class="pre">(module</span> <span class="pre">clb-ui-error)</span></code>. Those two refactore will have you covered:</p>
-<div class="highlight-python"><div class="highlight"><pre>hbpDialogFactory -&gt; clbErrorDialog
-clbErrorDialog.error -&gt; clbErrorDialog.open
+<p>If you wrote a usercard custom template (using <code class="docutils literal"><span class="pre">hbp-template</span></code> attribute), you should update the following css classes
+and probably update the template to conform to the new html structure:</p>
+<div class="highlight-python"><div class="highlight"><pre>hbp-usercard -&gt; clb-usercard
+hbp-usercard-pix -&gt; clb-usercard-pix
+hbp-user-avatar -&gt; clb-user-avatar
+hbp-usercard-header -&gt; clb-usercard-header
+hbp-usercard-institution -&gt; clb-usercard-institution
+hbp-usercard-contact -&gt; clb-usercard-contact
+hbp-usercard-contact-item -&gt; clb-usercard-contact-item
 </pre></div>
 </div>
-<p>If you were using other methods from clbDialogFactory (e.g.: <code class="docutils literal"><span class="pre">.alert()</span></code> or <code class="docutils literal"><span class="pre">.confirm</span></code>),
+<p><code class="docutils literal"><span class="pre">hbpDialogFactory</span></code> has been removed, with the exception of <code class="docutils literal"><span class="pre">hbpDialogFactory.error</span></code> and <code class="docutils literal"><span class="pre">hbpDialogFactory.confirm</span></code> which
+are now respectively <code class="docutils literal"><span class="pre">clbErrorDialog.open</span></code> (module <code class="docutils literal"><span class="pre">clb-ui-error</span></code>) and <code class="docutils literal"><span class="pre">clbConfirm.open</span></code> (module <code class="docutils literal"><span class="pre">clb-ui-dialog</span></code>).
+These two refactoring will have you covered:</p>
+<div class="highlight-python"><div class="highlight"><pre>hbpDialogFactory -&gt; clbErrorDialog and/or clbConfirm
+hbpDialogFactory.error -&gt; clbErrorDialog.open
+hbpDialogFactory.confirm -&gt; clbConfirm.open
+</pre></div>
+</div>
+<p>If you were using other methods from hbpDialogFactory (e.g.: <code class="docutils literal"><span class="pre">.alert()</span></code>),
 you need to rewrite them using angular-bootstrap <code class="docutils literal"><span class="pre">$uibModal</span></code> (read the
 <span class="target" id="documentation-https-angular-ui-github-io-bootstrap-modal">documentation &lt;https://angular-ui.github.io/bootstrap/#/modal&gt;</span>)</p>
 <p>Since usage of <code class="docutils literal"><span class="pre">hbp-generated-icon</span></code> has been deprecated for anything but users

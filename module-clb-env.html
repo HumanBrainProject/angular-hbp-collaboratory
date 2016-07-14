@@ -29,8 +29,8 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="_static/hbpdoc.js"></script>
     <link rel="top" title="angular-hbp-collaboratory 0.1.5 documentation" href="index.html" />
-    <link rel="next" title="Module: hbpCommonCompat" href="module-hbpCommonCompat.html" />
-    <link rel="prev" title="Namespace: clbContext" href="module-clb-collab.clbContext.html" />
+    <link rel="next" title="Module: lodash" href="module-lodash.html" />
+    <link rel="prev" title="Module: clb-context-data" href="module-clb-context-data.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
   </head>
@@ -56,16 +56,17 @@
 <li><a class="reference internal" href="#">Module: <code class="docutils literal"><span class="pre">clb-env</span></code></a><ul>
 <li><a class="reference internal" href="#children">Children</a></li>
 <li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#function-clbenv">Function: <code class="docutils literal"><span class="pre">clbEnv</span></code></a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="module-clb-collab.clbContext.html"
-                        title="previous chapter">Namespace: <code class="docutils literal"><span class="pre">clbContext</span></code></a></p>
+  <p class="topless"><a href="module-clb-context-data.html"
+                        title="previous chapter">Module: <code class="docutils literal"><span class="pre">clb-context-data</span></code></a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="module-hbpCommonCompat.html"
-                        title="next chapter">Module: <code class="docutils literal"><span class="pre">hbpCommonCompat</span></code></a></p>
+  <p class="topless"><a href="module-lodash.html"
+                        title="next chapter">Module: <code class="docutils literal"><span class="pre">lodash</span></code></a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -98,12 +99,12 @@
                 <aside class="hbpdoc-hnav hbpdoc-hnav-top">
                     
                     <span class="hbpdoc-hnav-previous">
-                        previous: <a class="hbpdoc-hnav-link" href="module-clb-collab.clbContext.html">Namespace: <code class="docutils literal"><span class="pre">clbContext</span></code></a>
+                        previous: <a class="hbpdoc-hnav-link" href="module-clb-context-data.html">Module: <code class="docutils literal"><span class="pre">clb-context-data</span></code></a>
                     </span>
                     
                     
                     <span class="hbpdoc-hnav-next">
-                        next: <a class="hbpdoc-hnav-link" href="module-hbpCommonCompat.html">Module: <code class="docutils literal"><span class="pre">hbpCommonCompat</span></code></a>
+                        next: <a class="hbpdoc-hnav-link" href="module-lodash.html">Module: <code class="docutils literal"><span class="pre">lodash</span></code></a>
                     </span>
                     
                 </aside>
@@ -115,6 +116,7 @@
 <ul class="simple">
 <li><a class="reference internal" href="#children" id="id1">Children</a></li>
 <li><a class="reference internal" href="#description" id="id2">Description</a></li>
+<li><a class="reference internal" href="#function-clbenv" id="id3">Function: <code class="docutils literal"><span class="pre">clbEnv</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="children">
@@ -128,6 +130,33 @@
 <h2><a class="toc-backref" href="#id2">Description</a><a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">clb-env</span></code> module provides a way to information from the global environment.</p>
 </div>
+<div class="section" id="function-clbenv">
+<span id="module-clb-env-clbenv"></span><h2><a class="toc-backref" href="#id3">Function: <code class="docutils literal"><span class="pre">clbEnv</span></code></a><a class="headerlink" href="#function-clbenv" title="Permalink to this headline">¶</a></h2>
+<p>Get environement information using dotted notation with the <cite>clbEnv</cite> provider
+or service.</p>
+<p>Before being used, clbEnv must be initialized with the context values. You
+can do so by setting up a global bbpConfig variable or using
+<span class="xref std std-ref">angular.clbBootstrap</span>.</p>
+<dl class="function">
+<dt id="clbEnv">
+<code class="descname">clbEnv</code><span class="sig-paren">(</span><em>$injector</em><span class="sig-paren">)</span><a class="headerlink" href="#clbEnv" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>$injector</strong> (<em>object</em>) &#8211; AngularJS injection</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return object:</th><td class="field-body"><p class="first last">provider</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 </div>
 
             </div>
@@ -135,12 +164,12 @@
             <aside class="hbpdoc-hnav hbpdoc-hnav-bottom">
                 
                 <span class="hbpdoc-hnav-previous">
-                    previous: <a class="hbpdoc-hnav-link" href="module-clb-collab.clbContext.html">Namespace: <code class="docutils literal"><span class="pre">clbContext</span></code></a>
+                    previous: <a class="hbpdoc-hnav-link" href="module-clb-context-data.html">Module: <code class="docutils literal"><span class="pre">clb-context-data</span></code></a>
                 </span>
                 
                 
                 <span class="hbpdoc-hnav-next">
-                    next: <a class="hbpdoc-hnav-link" href="module-hbpCommonCompat.html">Module: <code class="docutils literal"><span class="pre">hbpCommonCompat</span></code></a>
+                    next: <a class="hbpdoc-hnav-link" href="module-lodash.html">Module: <code class="docutils literal"><span class="pre">lodash</span></code></a>
                 </span>
                 
             </aside>

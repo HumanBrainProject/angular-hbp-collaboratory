@@ -55,7 +55,7 @@
 <li><a class="reference internal" href="#">Namespace: <code class="docutils literal"><span class="pre">angular</span></code></a><ul>
 <li><a class="reference internal" href="#children">Children</a></li>
 <li><a class="reference internal" href="#description">Description</a></li>
-<li><a class="reference internal" href="#function-clbenv">Function: <code class="docutils literal"><span class="pre">clbEnv</span></code></a></li>
+<li><a class="reference internal" href="#function-clbbootstrap">Function: <code class="docutils literal"><span class="pre">clbBootstrap</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -106,48 +106,52 @@
 <div class="contents local topic" id="local-navigation">
 <p class="topic-title first">Local Navigation</p>
 <ul class="simple">
-<li><a class="reference internal" href="#children" id="id1">Children</a></li>
-<li><a class="reference internal" href="#description" id="id2">Description</a></li>
-<li><a class="reference internal" href="#function-clbenv" id="id3">Function: <code class="docutils literal"><span class="pre">clbEnv</span></code></a></li>
+<li><a class="reference internal" href="#children" id="id2">Children</a></li>
+<li><a class="reference internal" href="#description" id="id3">Description</a></li>
+<li><a class="reference internal" href="#function-clbbootstrap" id="id4">Function: <code class="docutils literal"><span class="pre">clbBootstrap</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="children">
-<h2><a class="toc-backref" href="#id1">Children</a><a class="headerlink" href="#children" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Children</a><a class="headerlink" href="#children" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul class="simple">
 </ul>
 </div>
 </div>
 <div class="section" id="description">
-<h2><a class="toc-backref" href="#id2">Description</a><a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Description</a><a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="function-clbenv">
-<span id="angular-clbenv"></span><h2><a class="toc-backref" href="#id3">Function: <code class="docutils literal"><span class="pre">clbEnv</span></code></a><a class="headerlink" href="#function-clbenv" title="Permalink to this headline">¶</a></h2>
-<p>Get environement information using dotted notation with the <cite>clbEnv</cite> provider
-or service.</p>
-<p>Before being used, clbEnv must be initialized with the context values. You
-can do so by setting up a global bbpConfig variable or using
-<span class="xref std std-ref">angular.clbBootstrap</span>.</p>
+<div class="section" id="function-clbbootstrap">
+<span id="angular-clbbootstrap"></span><h2><a class="toc-backref" href="#id4">Function: <code class="docutils literal"><span class="pre">clbBootstrap</span></code></a><a class="headerlink" href="#function-clbbootstrap" title="Permalink to this headline">¶</a></h2>
+<p>Bootstrap AngularJS application with the HBP environment loaded.</p>
+<p>It is very important to load the HBP environement <em>before</em> starting
+the application. This method let you do that synchronously or asynchronously.
+Whichever method you choose, the values in your environment should look
+very similar to the one in <span class="target" id="https-collab-humanbrainproject-eu-config-json">https://collab.humanbrainproject.eu/config.json</span>,
+customized with your own values.</p>
+<p>At least <code class="docutils literal"><span class="pre">auth.clientId</span></code> should be edited in the config.json file.</p>
 <dl class="function">
-<dt id="clbEnv">
-<code class="descname">clbEnv</code><span class="sig-paren">(</span><em>$injector</em><span class="sig-paren">)</span><a class="headerlink" href="#clbEnv" title="Permalink to this definition">¶</a></dt>
+<dt id="clbBootstrap">
+<code class="descname">clbBootstrap</code><span class="sig-paren">(</span><em>module</em>, <em>options</em>, <em>options.env</em><span class="sig-paren">)</span><a class="headerlink" href="#clbBootstrap" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
-<li><strong>$injector</strong> (<em>object</em>) &#8211; AngularJS injection</li>
+<li><strong>module</strong> (<em>string</em>) &#8211; the name of the Angular application module to load.</li>
+<li><strong>options</strong> (<em>object</em>) &#8211; pass those options to deferredBootstrap</li>
+<li><strong>options.env</strong> (<em>object</em>) &#8211; HBP environment JSON (<a class="reference external" href="https://collab.humanbrainproject.eu/config.json">https://collab.humanbrainproject.eu/config.json</a>)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return object:</th><td class="field-body"><p class="first last">provider</p>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">return once the environment has been bootstrapped</p>
 </td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
-<p id="undefined-clbbootstrap">Member: <code class="docutils literal"><span class="pre">clbBootstrap</span></code>:</p>
+<p id="id1">Member: <code class="docutils literal"><span class="pre">clbBootstrap</span></code>:</p>
 </div>
 </div>
 

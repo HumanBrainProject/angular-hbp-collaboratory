@@ -56,7 +56,6 @@
 <li><a class="reference internal" href="#">Module: <code class="docutils literal"><span class="pre">clb-collab</span></code></a><ul>
 <li><a class="reference internal" href="#children">Children</a></li>
 <li><a class="reference internal" href="#description">Description</a></li>
-<li><a class="reference internal" href="#function-clbcollabteam">Function: <code class="docutils literal"><span class="pre">clbCollabTeam</span></code></a></li>
 <li><a class="reference internal" href="#function-clbcollabmodel">Function: <code class="docutils literal"><span class="pre">ClbCollabModel</span></code></a></li>
 <li><a class="reference internal" href="#function-clbcontextmodel">Function: <code class="docutils literal"><span class="pre">ClbContextModel</span></code></a></li>
 </ul>
@@ -118,9 +117,8 @@
 <ul class="simple">
 <li><a class="reference internal" href="#children" id="id1">Children</a></li>
 <li><a class="reference internal" href="#description" id="id2">Description</a></li>
-<li><a class="reference internal" href="#function-clbcollabteam" id="id3">Function: <code class="docutils literal"><span class="pre">clbCollabTeam</span></code></a></li>
-<li><a class="reference internal" href="#function-clbcollabmodel" id="id4">Function: <code class="docutils literal"><span class="pre">ClbCollabModel</span></code></a></li>
-<li><a class="reference internal" href="#function-clbcontextmodel" id="id5">Function: <code class="docutils literal"><span class="pre">ClbContextModel</span></code></a></li>
+<li><a class="reference internal" href="#function-clbcollabmodel" id="id3">Function: <code class="docutils literal"><span class="pre">ClbCollabModel</span></code></a></li>
+<li><a class="reference internal" href="#function-clbcontextmodel" id="id4">Function: <code class="docutils literal"><span class="pre">ClbContextModel</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="children">
@@ -131,6 +129,7 @@
 <li class="toctree-l1"><a class="reference internal" href="module-clb-collab.clbCollabApp.html">Namespace: <code class="docutils literal"><span class="pre">clbCollabApp</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-collab.clbCollabNav.html">Namespace: <code class="docutils literal"><span class="pre">clbCollabNav</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-collab.clbCollabTeamRole.html">Namespace: <code class="docutils literal"><span class="pre">clbCollabTeamRole</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module-clb-collab.clbCollabTeam.html">Namespace: <code class="docutils literal"><span class="pre">clbCollabTeam</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-collab.clbCollab.html">Namespace: <code class="docutils literal"><span class="pre">clbCollab</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="module-clb-collab.clbContext.html">Namespace: <code class="docutils literal"><span class="pre">clbContext</span></code></a></li>
 </ul>
@@ -141,38 +140,8 @@
 <p>Contain services to interact with collabs (e.g.: retriving collab informations or
 team members).</p>
 </div>
-<div class="section" id="function-clbcollabteam">
-<span id="undefined-clbcollabteam"></span><h2><a class="toc-backref" href="#id3">Function: <code class="docutils literal"><span class="pre">clbCollabTeam</span></code></a><a class="headerlink" href="#function-clbcollabteam" title="Permalink to this headline">¶</a></h2>
-<p>Angular client to access Collab Team REST endpoint.</p>
-<dl class="function">
-<dt id="clbCollabTeam">
-<code class="descname">clbCollabTeam</code><span class="sig-paren">(</span><em>$http</em>, <em>$log</em>, <em>$q</em>, <em>lodash</em>, <em>clbEnv</em>, <em>clbError</em>, <em>clbCollabTeamRole</em>, <em>clbUser</em><span class="sig-paren">)</span><a class="headerlink" href="#clbCollabTeam" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
-<li><strong>$http</strong> (<em>object</em>) &#8211; Angular DI</li>
-<li><strong>$log</strong> (<em>object</em>) &#8211; Angular DI</li>
-<li><strong>$q</strong> (<em>object</em>) &#8211; Angular DI</li>
-<li><strong>lodash</strong> (<em>object</em>) &#8211; Angular DI</li>
-<li><strong>clbEnv</strong> (<em>object</em>) &#8211; Angular DI</li>
-<li><strong>clbError</strong> (<em>object</em>) &#8211; Angular DI</li>
-<li><strong>clbCollabTeamRole</strong> (<em>object</em>) &#8211; Angular DI</li>
-<li><strong>clbUser</strong> (<em>object</em>) &#8211; Angular DI</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return object:</th><td class="field-body"><p class="first last">Angular Service</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
 <div class="section" id="function-clbcollabmodel">
-<span id="undefined-clbcollabmodel"></span><h2><a class="toc-backref" href="#id4">Function: <code class="docutils literal"><span class="pre">ClbCollabModel</span></code></a><a class="headerlink" href="#function-clbcollabmodel" title="Permalink to this headline">¶</a></h2>
+<span id="undefined-clbcollabmodel"></span><h2><a class="toc-backref" href="#id3">Function: <code class="docutils literal"><span class="pre">ClbCollabModel</span></code></a><a class="headerlink" href="#function-clbcollabmodel" title="Permalink to this headline">¶</a></h2>
 <p>Representation of a Collab.</p>
 <dl class="function">
 <dt id="ClbCollabModel">
@@ -192,7 +161,7 @@ team members).</p>
 
 </div>
 <div class="section" id="function-clbcontextmodel">
-<span id="module-clb-collab-clbcontextmodel"></span><h2><a class="toc-backref" href="#id5">Function: <code class="docutils literal"><span class="pre">ClbContextModel</span></code></a><a class="headerlink" href="#function-clbcontextmodel" title="Permalink to this headline">¶</a></h2>
+<span id="module-clb-collab-clbcontextmodel"></span><h2><a class="toc-backref" href="#id4">Function: <code class="docutils literal"><span class="pre">ClbContextModel</span></code></a><a class="headerlink" href="#function-clbcontextmodel" title="Permalink to this headline">¶</a></h2>
 <p>Representation of a Collab Context.</p>
 <dl class="function">
 <dt id="ClbContextModel">

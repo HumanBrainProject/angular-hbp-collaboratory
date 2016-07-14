@@ -58,6 +58,7 @@
 <li><a class="reference internal" href="#children">Children</a></li>
 <li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#function-getentity">Function: <code class="docutils literal"><span class="pre">getEntity</span></code></a></li>
+<li><a class="reference internal" href="#function-getabsolutepath">Function: <code class="docutils literal"><span class="pre">getAbsolutePath</span></code></a></li>
 <li><a class="reference internal" href="#function-runonce">Function: <code class="docutils literal"><span class="pre">runOnce</span></code></a></li>
 <li><a class="reference internal" href="#function-getentitybyuuid">Function: <code class="docutils literal"><span class="pre">getEntityByUUID</span></code></a></li>
 <li><a class="reference internal" href="#function-query">Function: <code class="docutils literal"><span class="pre">query</span></code></a></li>
@@ -138,19 +139,20 @@
 <li><a class="reference internal" href="#children" id="id1">Children</a></li>
 <li><a class="reference internal" href="#description" id="id2">Description</a></li>
 <li><a class="reference internal" href="#function-getentity" id="id3">Function: <code class="docutils literal"><span class="pre">getEntity</span></code></a></li>
-<li><a class="reference internal" href="#function-runonce" id="id4">Function: <code class="docutils literal"><span class="pre">runOnce</span></code></a></li>
-<li><a class="reference internal" href="#function-getentitybyuuid" id="id5">Function: <code class="docutils literal"><span class="pre">getEntityByUUID</span></code></a></li>
-<li><a class="reference internal" href="#function-query" id="id6">Function: <code class="docutils literal"><span class="pre">query</span></code></a></li>
-<li><a class="reference internal" href="#function-metadatakey" id="id7">Function: <code class="docutils literal"><span class="pre">metadataKey</span></code></a></li>
-<li><a class="reference internal" href="#function-addmetadata" id="id8">Function: <code class="docutils literal"><span class="pre">addMetadata</span></code></a></li>
-<li><a class="reference internal" href="#function-deletemetadata" id="id9">Function: <code class="docutils literal"><span class="pre">deleteMetadata</span></code></a></li>
-<li><a class="reference internal" href="#function-create" id="id10">Function: <code class="docutils literal"><span class="pre">create</span></code></a></li>
-<li><a class="reference internal" href="#function-copy" id="id11">Function: <code class="docutils literal"><span class="pre">copy</span></code></a></li>
-<li><a class="reference internal" href="#function-getcontent" id="id12">Function: <code class="docutils literal"><span class="pre">getContent</span></code></a></li>
-<li><a class="reference internal" href="#function-getuseraccess" id="id13">Function: <code class="docutils literal"><span class="pre">getUserAccess</span></code></a></li>
-<li><a class="reference internal" href="#function-getchildren" id="id14">Function: <code class="docutils literal"><span class="pre">getChildren</span></code></a></li>
-<li><a class="reference internal" href="#function-upload" id="id15">Function: <code class="docutils literal"><span class="pre">upload</span></code></a></li>
-<li><a class="reference internal" href="#function-downloadurl" id="id16">Function: <code class="docutils literal"><span class="pre">downloadUrl</span></code></a></li>
+<li><a class="reference internal" href="#function-getabsolutepath" id="id4">Function: <code class="docutils literal"><span class="pre">getAbsolutePath</span></code></a></li>
+<li><a class="reference internal" href="#function-runonce" id="id5">Function: <code class="docutils literal"><span class="pre">runOnce</span></code></a></li>
+<li><a class="reference internal" href="#function-getentitybyuuid" id="id6">Function: <code class="docutils literal"><span class="pre">getEntityByUUID</span></code></a></li>
+<li><a class="reference internal" href="#function-query" id="id7">Function: <code class="docutils literal"><span class="pre">query</span></code></a></li>
+<li><a class="reference internal" href="#function-metadatakey" id="id8">Function: <code class="docutils literal"><span class="pre">metadataKey</span></code></a></li>
+<li><a class="reference internal" href="#function-addmetadata" id="id9">Function: <code class="docutils literal"><span class="pre">addMetadata</span></code></a></li>
+<li><a class="reference internal" href="#function-deletemetadata" id="id10">Function: <code class="docutils literal"><span class="pre">deleteMetadata</span></code></a></li>
+<li><a class="reference internal" href="#function-create" id="id11">Function: <code class="docutils literal"><span class="pre">create</span></code></a></li>
+<li><a class="reference internal" href="#function-copy" id="id12">Function: <code class="docutils literal"><span class="pre">copy</span></code></a></li>
+<li><a class="reference internal" href="#function-getcontent" id="id13">Function: <code class="docutils literal"><span class="pre">getContent</span></code></a></li>
+<li><a class="reference internal" href="#function-getuseraccess" id="id14">Function: <code class="docutils literal"><span class="pre">getUserAccess</span></code></a></li>
+<li><a class="reference internal" href="#function-getchildren" id="id15">Function: <code class="docutils literal"><span class="pre">getChildren</span></code></a></li>
+<li><a class="reference internal" href="#function-upload" id="id16">Function: <code class="docutils literal"><span class="pre">upload</span></code></a></li>
+<li><a class="reference internal" href="#function-downloadurl" id="id17">Function: <code class="docutils literal"><span class="pre">downloadUrl</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="children">
@@ -197,8 +199,31 @@ or reject a <a class="reference internal" href="module-clb-error.ClbError.html">
 </dd></dl>
 
 </div>
+<div class="section" id="function-getabsolutepath">
+<span id="module-clb-storage-clbstorage-getabsolutepath"></span><h2><a class="toc-backref" href="#id4">Function: <code class="docutils literal"><span class="pre">getAbsolutePath</span></code></a><a class="headerlink" href="#function-getabsolutepath" title="Permalink to this headline">¶</a></h2>
+<p>Return the absolute path of the entity</p>
+<dl class="function">
+<dt id="getAbsolutePath">
+<code class="descname">getAbsolutePath</code><span class="sig-paren">(</span><em>entity</em><span class="sig-paren">)</span><a class="headerlink" href="#getAbsolutePath" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
+<li><strong>entity</strong> (<em>object|UUID</em>) &#8211; UUID or descriptor</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return Promise:</th><td class="field-body"><p class="first last">return a path string when fulfilled.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="function-runonce">
-<span id="module-clb-storage-clbstorage-runonce"></span><h2><a class="toc-backref" href="#id4">Function: <code class="docutils literal"><span class="pre">runOnce</span></code></a><a class="headerlink" href="#function-runonce" title="Permalink to this headline">¶</a></h2>
+<span id="module-clb-storage-clbstorage-runonce"></span><h2><a class="toc-backref" href="#id5">Function: <code class="docutils literal"><span class="pre">runOnce</span></code></a><a class="headerlink" href="#function-runonce" title="Permalink to this headline">¶</a></h2>
 <p>Ensure there is only one async <cite>fn</cite> run named <cite>k</cite> at once.
 subsequent call to runOnce with the same <cite>k</cite> value will
 return the promise of the running async function.</p>
@@ -224,7 +249,7 @@ return the promise of the running async function.</p>
 
 </div>
 <div class="section" id="function-getentitybyuuid">
-<span id="module-clb-storage-clbstorage-getentitybyuuid"></span><h2><a class="toc-backref" href="#id5">Function: <code class="docutils literal"><span class="pre">getEntityByUUID</span></code></a><a class="headerlink" href="#function-getentitybyuuid" title="Permalink to this headline">¶</a></h2>
+<span id="module-clb-storage-clbstorage-getentitybyuuid"></span><h2><a class="toc-backref" href="#id6">Function: <code class="docutils literal"><span class="pre">getEntityByUUID</span></code></a><a class="headerlink" href="#function-getentitybyuuid" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="getEntityByUUID">
 <code class="descname">getEntityByUUID</code><span class="sig-paren">(</span><em>uuid</em><span class="sig-paren">)</span><a class="headerlink" href="#getEntityByUUID" title="Permalink to this definition">¶</a></dt>
@@ -246,7 +271,7 @@ return the promise of the running async function.</p>
 
 </div>
 <div class="section" id="function-query">
-<span id="module-clb-storage-clbstorage-query"></span><h2><a class="toc-backref" href="#id6">Function: <code class="docutils literal"><span class="pre">query</span></code></a><a class="headerlink" href="#function-query" title="Permalink to this headline">¶</a></h2>
+<span id="module-clb-storage-clbstorage-query"></span><h2><a class="toc-backref" href="#id7">Function: <code class="docutils literal"><span class="pre">query</span></code></a><a class="headerlink" href="#function-query" title="Permalink to this headline">¶</a></h2>
 <p>Query entities by attributes or metadata.</p>
 <dl class="function">
 <dt id="query">
@@ -269,7 +294,7 @@ return the promise of the running async function.</p>
 
 </div>
 <div class="section" id="function-metadatakey">
-<span id="module-clb-storage-clbstorage-metadatakey"></span><h2><a class="toc-backref" href="#id7">Function: <code class="docutils literal"><span class="pre">metadataKey</span></code></a><a class="headerlink" href="#function-metadatakey" title="Permalink to this headline">¶</a></h2>
+<span id="module-clb-storage-clbstorage-metadatakey"></span><h2><a class="toc-backref" href="#id8">Function: <code class="docutils literal"><span class="pre">metadataKey</span></code></a><a class="headerlink" href="#function-metadatakey" title="Permalink to this headline">¶</a></h2>
 <p>Retrieve the key to lookup for on entities given the ctx</p>
 <dl class="function">
 <dt id="metadataKey">
@@ -292,7 +317,7 @@ return the promise of the running async function.</p>
 
 </div>
 <div class="section" id="function-addmetadata">
-<span id="module-clb-storage-clbstorage-addmetadata"></span><h2><a class="toc-backref" href="#id8">Function: <code class="docutils literal"><span class="pre">addMetadata</span></code></a><a class="headerlink" href="#function-addmetadata" title="Permalink to this headline">¶</a></h2>
+<span id="module-clb-storage-clbstorage-addmetadata"></span><h2><a class="toc-backref" href="#id9">Function: <code class="docutils literal"><span class="pre">addMetadata</span></code></a><a class="headerlink" href="#function-addmetadata" title="Permalink to this headline">¶</a></h2>
 <p>Add metadata to the provided entity and returns a promise that resolves to an object
 containing all the new metadata. The promise fails if one of the metadata already exists.</p>
 <dl class="function">
@@ -317,7 +342,7 @@ containing all the new metadata. The promise fails if one of the metadata alread
 
 </div>
 <div class="section" id="function-deletemetadata">
-<span id="module-clb-storage-clbstorage-deletemetadata"></span><h2><a class="toc-backref" href="#id9">Function: <code class="docutils literal"><span class="pre">deleteMetadata</span></code></a><a class="headerlink" href="#function-deletemetadata" title="Permalink to this headline">¶</a></h2>
+<span id="module-clb-storage-clbstorage-deletemetadata"></span><h2><a class="toc-backref" href="#id10">Function: <code class="docutils literal"><span class="pre">deleteMetadata</span></code></a><a class="headerlink" href="#function-deletemetadata" title="Permalink to this headline">¶</a></h2>
 <p>Delete metadata keys in input from the provided entity and returns a promise that resolves to an object
 containing all the remaining metadata. The promise fails if one of the metadata doesn&#8217;t exist.</p>
 <dl class="function">
@@ -342,7 +367,7 @@ containing all the remaining metadata. The promise fails if one of the metadata 
 
 </div>
 <div class="section" id="function-create">
-<span id="module-clb-storage-clbstorage-create"></span><h2><a class="toc-backref" href="#id10">Function: <code class="docutils literal"><span class="pre">create</span></code></a><a class="headerlink" href="#function-create" title="Permalink to this headline">¶</a></h2>
+<span id="module-clb-storage-clbstorage-create"></span><h2><a class="toc-backref" href="#id11">Function: <code class="docutils literal"><span class="pre">create</span></code></a><a class="headerlink" href="#function-create" title="Permalink to this headline">¶</a></h2>
 <p>Create a new entity.</p>
 <dl class="function">
 <dt id="create">
@@ -368,7 +393,7 @@ containing all the remaining metadata. The promise fails if one of the metadata 
 
 </div>
 <div class="section" id="function-copy">
-<span id="module-clb-storage-clbstorage-copy"></span><h2><a class="toc-backref" href="#id11">Function: <code class="docutils literal"><span class="pre">copy</span></code></a><a class="headerlink" href="#function-copy" title="Permalink to this headline">¶</a></h2>
+<span id="module-clb-storage-clbstorage-copy"></span><h2><a class="toc-backref" href="#id12">Function: <code class="docutils literal"><span class="pre">copy</span></code></a><a class="headerlink" href="#function-copy" title="Permalink to this headline">¶</a></h2>
 <p>Copy a file to a destination folder</p>
 <dl class="function">
 <dt id="copy">
@@ -392,17 +417,18 @@ containing all the remaining metadata. The promise fails if one of the metadata 
 
 </div>
 <div class="section" id="function-getcontent">
-<span id="module-clb-storage-clbstorage-getcontent"></span><h2><a class="toc-backref" href="#id12">Function: <code class="docutils literal"><span class="pre">getContent</span></code></a><a class="headerlink" href="#function-getcontent" title="Permalink to this headline">¶</a></h2>
+<span id="module-clb-storage-clbstorage-getcontent"></span><h2><a class="toc-backref" href="#id13">Function: <code class="docutils literal"><span class="pre">getContent</span></code></a><a class="headerlink" href="#function-getcontent" title="Permalink to this headline">¶</a></h2>
 <p>Retrieves the content of a file given its id.</p>
 <dl class="function">
 <dt id="getContent">
-<code class="descname">getContent</code><span class="sig-paren">(</span><em>id</em><span class="sig-paren">)</span><a class="headerlink" href="#getContent" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getContent</code><span class="sig-paren">(</span><em>id</em><span class="optional">[</span>, <em>customConfig</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#getContent" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first simple">
 <li><strong>id</strong> (<em>string</em>) &#8211; FileEntity UUID</li>
+<li><strong>customConfig</strong> (<em>object</em>) &#8211; contains extra configuration</li>
 </ul>
 </td>
 </tr>
@@ -415,7 +441,7 @@ containing all the remaining metadata. The promise fails if one of the metadata 
 
 </div>
 <div class="section" id="function-getuseraccess">
-<span id="module-clb-storage-clbstorage-getuseraccess"></span><h2><a class="toc-backref" href="#id13">Function: <code class="docutils literal"><span class="pre">getUserAccess</span></code></a><a class="headerlink" href="#function-getuseraccess" title="Permalink to this headline">¶</a></h2>
+<span id="module-clb-storage-clbstorage-getuseraccess"></span><h2><a class="toc-backref" href="#id14">Function: <code class="docutils literal"><span class="pre">getUserAccess</span></code></a><a class="headerlink" href="#function-getuseraccess" title="Permalink to this headline">¶</a></h2>
 <p>Get current user access right to the provided entity.</p>
 <p>The returned promise will be resolved
 with an object literal containing three boolean
@@ -434,7 +460,7 @@ flags corresponding the user access:</p>
 
 </div>
 <div class="section" id="function-getchildren">
-<span id="module-clb-storage-clbstorage-getchildren"></span><h2><a class="toc-backref" href="#id14">Function: <code class="docutils literal"><span class="pre">getChildren</span></code></a><a class="headerlink" href="#function-getchildren" title="Permalink to this headline">¶</a></h2>
+<span id="module-clb-storage-clbstorage-getchildren"></span><h2><a class="toc-backref" href="#id15">Function: <code class="docutils literal"><span class="pre">getChildren</span></code></a><a class="headerlink" href="#function-getchildren" title="Permalink to this headline">¶</a></h2>
 <p>Retrieve children entities of a &#8216;parent&#8217; entity according to the options and
 add them to the children list.
 The returned promise will be resolved with the
@@ -457,7 +483,7 @@ in the queried direction.</p>
 
 </div>
 <div class="section" id="function-upload">
-<span id="module-clb-storage-clbstorage-upload"></span><h2><a class="toc-backref" href="#id15">Function: <code class="docutils literal"><span class="pre">upload</span></code></a><a class="headerlink" href="#function-upload" title="Permalink to this headline">¶</a></h2>
+<span id="module-clb-storage-clbstorage-upload"></span><h2><a class="toc-backref" href="#id16">Function: <code class="docutils literal"><span class="pre">upload</span></code></a><a class="headerlink" href="#function-upload" title="Permalink to this headline">¶</a></h2>
 <p>Create file entity and upload the content of the given file.</p>
 <p><cite>options</cite> should contain a <cite>parent</cite> key containing the parent entity.</p>
 <p>Possible error causes:</p>
@@ -490,7 +516,7 @@ with the new entity object.</p>
 
 </div>
 <div class="section" id="function-downloadurl">
-<span id="module-clb-storage-clbstorage-downloadurl"></span><h2><a class="toc-backref" href="#id16">Function: <code class="docutils literal"><span class="pre">downloadUrl</span></code></a><a class="headerlink" href="#function-downloadurl" title="Permalink to this headline">¶</a></h2>
+<span id="module-clb-storage-clbstorage-downloadurl"></span><h2><a class="toc-backref" href="#id17">Function: <code class="docutils literal"><span class="pre">downloadUrl</span></code></a><a class="headerlink" href="#function-downloadurl" title="Permalink to this headline">¶</a></h2>
 <p>Asynchronously ask for a short-lived (a few seconds),
 presigned URL that can be used to access and
 download a file without authentication headers.</p>
