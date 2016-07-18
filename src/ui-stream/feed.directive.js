@@ -44,8 +44,18 @@ function clbFeed() {
  */
 function FeedController($log, clbStream, clbUser) {
   var vm = this;
+  vm.activitiesLimit = 15;
 
   activate();
+
+  vm.loadMore = function() {
+    var incremented = vm.activitiesLimit + 15;
+    vm.activitiesLimit = incremented > vm.activities.results.length ? vm.activities.results.length : incremented;
+  };
+
+  vm.loadLess = function() {
+    vm.activitiesLimit = 15;
+  };
 
   /* ------------- */
 
