@@ -39,10 +39,11 @@ function clbFeed() {
 /**
  * ViewModel of an activity used to render the clb-activity directive
  * @param {object} $log angular injection
+ * @param {object} $scope angular injection
  * @param {object} clbStream DI
  * @param {object} clbUser DI
  */
-function FeedController($log, clbStream, clbUser) {
+function FeedController($log, $scope, clbStream, clbUser) {
   var vm = this;
   vm.activitiesLimit = 15;
 
