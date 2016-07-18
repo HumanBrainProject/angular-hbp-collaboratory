@@ -12,8 +12,11 @@
   </li>
   <li class="list-group-item"
       ng-repeat="a in vm.activities.results" clb-activity="a" class="clb-activity-item"></li>
-  <li class="list-group-item"
-      ng-if="vm.activities.hasNext">
-    <a href clb-perform-action="vm.activities.next()" class="btn btn-default">More</a>
+  <li class="list-group-item">
+    <span class="text-muted">Showing {{vm.activitiesLimit}} of {{vm.activities.results.length}}</span>
+  </li>
+  <li class="list-group-item">
+    <a href class="btn btn-default" ng-click="loadMore()" ng-if="vm.activities.results.length > vm.activitiesLimit">Load more</a>
+    <a href class="btn btn-default" ng-click="loadLess()" ng-if="vm.activitiesLimit > 15">Load less</a>
   </li>
 </ul>

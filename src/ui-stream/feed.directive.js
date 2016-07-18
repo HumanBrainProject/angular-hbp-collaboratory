@@ -39,13 +39,24 @@ function clbFeed() {
 /**
  * ViewModel of an activity used to render the clb-activity directive
  * @param {object} $log angular injection
+ * @param {object} $scope angular injection
  * @param {object} clbStream DI
  * @param {object} clbUser DI
  */
-function FeedController($log, clbStream, clbUser) {
+function FeedController($log, $scope, clbStream, clbUser) {
   var vm = this;
+  vm.activitiesLimit = 15;
 
   activate();
+
+  $scope.loadMore = function() {
+    var incremented = vm.activitiesLimit + 15;
+    vm.activitiesLimit = incremented > vm.activities.results.length ? vm.activities.results.length : incremented;
+  };
+
+  $scope.loadLess = function() {
+    vm.activitiesLimit = 15;
+  };
 
   /* ------------- */
 
