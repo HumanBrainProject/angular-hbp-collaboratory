@@ -29,20 +29,15 @@
  */
 clbApp.$inject = ['$log', '$q', '$rootScope', '$timeout', '$window', 'clbError'];
 clbAutomator.$inject = ['$q', '$log', 'clbError'];
-clbCollabTeamRole.$inject = ['$http', '$log', '$q', 'clbEnv', 'clbError'];
-clbCollabTeam.$inject = ['$http', '$log', '$q', 'lodash', 'clbEnv', 'clbError', 'clbCollabTeamRole', 'clbUser'];
-clbCollab.$inject = ['$log', '$q', '$cacheFactory', '$http', 'lodash', 'clbContext', 'clbEnv', 'clbError', 'clbResultSet', 'clbUser', 'ClbCollabModel', 'ClbContextModel'];
-clbContext.$inject = ['$http', '$q', 'clbError', 'clbEnv', 'ClbContextModel'];
 clbCtxData.$inject = ['$http', '$q', 'uuid4', 'clbEnv', 'clbError'];
-clbEnv.$inject = ['$injector'];
 clbError.$inject = ['$q'];
 clbUser.$inject = ['$rootScope', '$q', '$http', '$cacheFactory', '$log', 'lodash', 'clbEnv', 'clbError', 'clbResultSet', 'clbIdentityUtil'];
 clbIdentityUtil.$inject = ['$log', 'lodash'];
 clbResultSet.$inject = ['$http', '$q', 'clbError'];
 clbStorage.$inject = ['$http', '$q', '$log', 'uuid4', 'clbEnv', 'clbError', 'clbUser', 'clbResultSet'];
+clbConfirm.$inject = ['$rootScope', '$uibModal'];
 clbResourceLocator.$inject = ['$q', '$log', '$injector', 'clbError'];
 clbStream.$inject = ['$http', '$log', 'clbEnv', 'clbError', 'clbResultSet'];
-clbConfirm.$inject = ['$rootScope', '$uibModal'];
 clbErrorDialog.$inject = ['$uibModal', 'clbError'];
 clbUsercardPopoverDirective.$inject = ['$log', '$q', 'clbUser', 'clbUsercardPopover'];
 clbUserCardPopoverService.$inject = ['$rootScope'];
@@ -52,7 +47,12 @@ clbFileBrowserPath.$inject = ['clbStorage'];
 clbFileBrowser.$inject = ['lodash'];
 clbFileChooser.$inject = ['$q', '$log'];
 ActivityController.$inject = ['$scope', '$sce', '$log', '$window', '$q', '$compile', 'clbResourceLocator', 'clbErrorDialog'];
-FeedController.$inject = ['$log', 'clbStream', 'clbUser'];
+FeedController.$inject = ['$log', '$scope', 'clbStream', 'clbUser'];
+clbEnv.$inject = ['$injector'];
+clbCollabTeamRole.$inject = ['$http', '$log', '$q', 'clbEnv', 'clbError'];
+clbCollabTeam.$inject = ['$http', '$log', '$q', 'lodash', 'clbEnv', 'clbError', 'clbCollabTeamRole', 'clbUser'];
+clbCollab.$inject = ['$log', '$q', '$cacheFactory', '$http', 'lodash', 'clbContext', 'clbEnv', 'clbError', 'clbResultSet', 'clbUser', 'ClbCollabModel', 'ClbContextModel'];
+clbContext.$inject = ['$http', '$q', 'clbError', 'clbEnv', 'ClbContextModel'];
 angular.module('hbpCollaboratoryCore', [
   'clb-app',
   'clb-automator',
@@ -129,35 +129,12 @@ angular.module('clb-automator', [
 ]);
 
 /**
- * @module clb-collab
- * @desc
- * Contain services to interact with collabs (e.g.: retriving collab informations or
- * team members).
- */
-angular.module('clb-collab', [
-  'lodash',
-  'clb-env',
-  'clb-error',
-  'clb-identity',
-  'clb-rest',
-  'uuid4'
-]);
-
-/**
  * Provides a key value store where keys are context UUID
  * and values are string.
  *
  * @module clb-context-data
  */
 angular.module('clb-ctx-data', ['uuid4', 'clb-env', 'clb-error']);
-
-/**
- * @module clb-env
- * @desc
- * ``clb-env`` module provides a way to information from the global environment.
- */
-
-angular.module('clb-env', []);
 
 angular.module('clb-error', []);
 
@@ -212,6 +189,11 @@ angular.module('clb-storage', [
 ]);
 
 /**
+ * @module clb-ui-dialog
+ */
+angular.module('clb-ui-dialog', ['ui.bootstrap.modal']);
+
+/**
  * @module clb-stream
  * @desc
  * The `clb-stream` module contains a service and a few directives to retrieve
@@ -225,11 +207,6 @@ angular.module('clb-stream', [
   'clb-rest',
   'clb-identity'
 ]);
-
-/**
- * @module clb-ui-dialog
- */
-angular.module('clb-ui-dialog', ['ui.bootstrap.modal']);
 
 /**
  * @module clb-ui-error
@@ -286,6 +263,29 @@ angular.module('clb-ui-stream', [
   'angularMoment',
   'clb-stream',
   'clb-ui-error'
+]);
+
+/**
+ * @module clb-env
+ * @desc
+ * ``clb-env`` module provides a way to information from the global environment.
+ */
+
+angular.module('clb-env', []);
+
+/**
+ * @module clb-collab
+ * @desc
+ * Contain services to interact with collabs (e.g.: retriving collab informations or
+ * team members).
+ */
+angular.module('clb-collab', [
+  'lodash',
+  'clb-env',
+  'clb-error',
+  'clb-identity',
+  'clb-rest',
+  'uuid4'
 ]);
 
 angular.module('clb-app')
@@ -1137,1077 +1137,6 @@ angular.module('clb-automator')
   }
 }]);
 
-/* eslint camelcase: 0 */
-
-/**
- * @namespace clbCollabApp
- * @memberof module:clb-collab
- * @desc
- * clbCollabApp can be used to find and work with the
- * registered HBP Collaboratory applications.
- */
-angular.module('clb-collab')
-.constant('folderAppId', '__collab_folder__')
-.service('clbCollabApp', ['$q', '$http', '$cacheFactory', 'clbError', 'clbEnv', 'clbResultSet', function(
-  $q, $http, $cacheFactory,
-  clbError, clbEnv, clbResultSet
-) {
-  var appsCache = $cacheFactory('__appsCache__');
-  var urlBase = clbEnv.get('api.collab.v0') + '/extension/';
-  var apps = null;
-
-  /**
-   * @class App
-   * @desc client representation of an application
-   * @memberof module:clb-collab
-   * @param  {object} [attrs] a list of attributes to set to the App instance
-   */
-  var App = function(attrs) {
-    var self = this;
-    angular.forEach(attrs, function(v, k) {
-      self[k] = v;
-    });
-  };
-  App.prototype = {
-    /**
-     * Transform an App instance into an object reprensentation compatible with
-     * the backend schema. This object can then be easily converted to a JSON
-     * string.
-     * @memberof module:clb-collab.App
-     * @return {object} server representation of an App instance
-     */
-    toJson: function() {
-      return {
-        id: this.id,
-        description: this.description,
-        edit_url: this.editUrl,
-        run_url: this.runUrl,
-        title: this.title
-      };
-    }
-  };
-
-  /**
-   * Create an app instance from a server representation.
-   * @memberof module:clb-collab.App
-   * @param  {object} json converted from the server JSON string
-   * @return {App} the new App instance
-   */
-  App.fromJson = function(json) {
-    /* jshint camelcase: false */
-    return new App({
-      id: json.id,
-      deleted: json.deleted,
-      description: json.description,
-      editUrl: json.edit_url,
-      runUrl: json.run_url,
-      title: json.title,
-      createdBy: json.created_by
-    });
-  };
-
-  appsCache.put('__collab_folder__', {
-    id: '__collab_folder__',
-    title: 'Folder'
-  });
-
-  var loadAll = function(promise) {
-    return promise.then(function(rs) {
-      if (rs.hasNext) {
-        return loadAll(rs.next());
-      }
-      apps = rs.results;
-      return apps;
-    });
-  };
-
-  /**
-   * @memberof module:clb-collab.clbCollabApp
-   * @return {Promise} promise of the list of all applications
-   */
-  var list = function() {
-    if (!apps) {
-      return loadAll(clbResultSet.get($http.get(urlBase), {
-        factory: App.fromJson
-      }));
-    }
-    return $q.when(apps);
-  };
-
-  /**
-   * Retrieve an App instance from its id.
-   * @memberof module:clb-collab.clbCollabApp
-   * @param  {number} id the app id
-   * @return {Promise} promise of an app instance
-   */
-  var getById = function(id) {
-    if (!id) {
-      return $q.when(null);
-    }
-    var ext = appsCache.get(id);
-    if (ext) {
-      return $q.when(ext);
-    }
-    return $http.get(urlBase + id + '/').then(function(res) {
-      appsCache.put(id, App.fromJson(res.data));
-      return appsCache.get(id);
-    }, function(res) {
-      return $q.reject(clbError.httpError(res));
-    });
-  };
-
-  /**
-   * @memberof module:clb-collab.clbCollabApp
-   * @param  {object} params query parameters
-   * @return {Promise} promise of an App instance
-   */
-  var findOne = function(params) {
-    return $http.get(urlBase, {params: params}).then(function(res) {
-      var results = res.data.results;
-      // Reject if more than one results
-      if (results.length > 1) {
-        return $q.reject(clbError.error({
-          type: 'TooManyResults',
-          message: 'Multiple apps has been retrieved ' +
-                   'when only one was expected.',
-          data: res.data
-        }));
-      }
-      // Null when no result
-      if (results.length === 0) {
-        return null;
-      }
-      // Build the app if exactly one result
-      var app = App.fromJson(results[0]);
-      appsCache.put(app.id, app);
-      return app;
-    }, clbError.rejectHttpError);
-  };
-
-  return {
-    list: list,
-    getById: getById,
-    findOne: findOne
-  };
-}]);
-
-/* eslint camelcase:[2, {properties: "never"}] */
-
-/**
- * @namespace clbCollabNav
- * @memberof module:clb-collab
- * @desc clbCollabNav provides tools to create and manage
- *       navigation items.
- */
-angular.module('clb-collab')
-.service('clbCollabNav', ['$q', '$http', '$log', '$cacheFactory', '$timeout', 'orderByFilter', 'uuid4', 'clbEnv', 'clbError', function($q, $http, $log,
-    $cacheFactory, $timeout, orderByFilter, uuid4,
-    clbEnv, clbError) {
-  var collabApiUrl = clbEnv.get('api.collab.v0') + '/collab/';
-  // a cache with individual nav items
-  var cacheNavItems = $cacheFactory('navItem');
-
-  // a cache with the promises of each collab's nav tree root
-  var cacheNavRoots = $cacheFactory('navRoot');
-
-  /**
-   * @class NavItem
-   * @desc
-   * Client representation of a navigation item.
-   * @memberof module:clb-collab.clbCollabNav
-   * @param  {object} attr attributes of the new instance
-   */
-  var NavItem = function(attr) {
-    var self = this;
-    angular.forEach(attr, function(v, k) {
-      self[k] = v;
-    });
-    if (angular.isUndefined(this.context)) {
-      this.context = uuid4.generate();
-    }
-    if (angular.isUndefined(this.children)) {
-      this.children = [];
-    }
-  };
-  NavItem.prototype = {
-    /**
-     * @desc
-     * Return a server object representation that can be easily serialized
-     * to JSON and send to the backend.
-     * @memberof module:clb-collab.clbCollabNav.NavItem
-     * @return {object} server object representation
-     */
-    toJson: function() {
-      /* jshint camelcase: false */
-      return {
-        id: this.id,
-        app_id: this.appId,
-        collab: this.collabId,
-        name: this.name,
-        context: this.context,
-        order_index: this.order,
-        type: this.type || (this.folder ? 'FO' : 'IT'),
-        parent: this.parentId
-      };
-    },
-    /**
-     * @memberof module:clb-collab.clbCollabNav.NavItem
-     * @param  {object} attrs NavItem instance attributes
-     * @return {NavItemt} this instance
-     */
-    update: function(attrs) {
-      angular.forEach([
-        'id', 'name', 'children', 'context',
-        'collabId', 'appId', 'order', 'folder',
-        'parentId', 'type'
-      ], function(a) {
-        if (angular.isDefined(attrs[a])) {
-          this[a] = attrs[a];
-        }
-      }, this);
-
-      return this;
-    },
-    /**
-     * @memberof module:clb-collab.clbCollabNav.NavItem
-     * @return {NavItem} this instance
-     * @private
-     */
-    ensureCached: function() {
-      cacheNavItems.put(key(this.collabId, this.id), this);
-      return this;
-    }
-  };
-  /**
-   * Manage `acc` accumulator with all the data from jsonArray and return it.
-   *
-   * @param  {int} collabId  the collab ID
-   * @param  {array} jsonArray description of the children
-   * @param  {Array} acc       the accumulator
-   * @return {Array}           the children
-   */
-  function childrenFromJson(collabId, jsonArray, acc) {
-    acc = acc || [];
-    // an undefined array means we abort the process
-    // where an empty array will ensure the resulting array
-    // is empty as well.
-    if (angular.isUndefined(jsonArray)) {
-      return acc;
-    }
-
-    acc.length = 0;
-    angular.forEach(jsonArray, function(json) {
-      acc.push(NavItem.fromJson(collabId, json));
-    });
-    return acc;
-  }
-  /**
-   * Build an instance from the server object representation.
-   *
-   * @memberof module:clb-collab.clbCollabNav.NavItem
-   * @param  {number} collabId collab ID
-   * @param  {string} json server object representation
-   * @return {NavItem} new instance of NavItem
-   */
-  NavItem.fromJson = function(collabId, json) {
-    /* jshint camelcase: false */
-    var attrs = {
-      id: json.id,
-      appId: json.app_id,
-      collabId: collabId,
-      name: json.name,
-      context: json.context,
-      order: json.order_index,
-      folder: json.type === 'FO',
-      type: json.type,
-      parentId: json.parent,
-      children: childrenFromJson(collabId, json.children)
-    };
-    var k = key(collabId, attrs.id);
-    var cached = cacheNavItems.get(k);
-    if (cached) {
-      return cached.update(attrs);
-    }
-    return new NavItem(attrs).ensureCached();
-  };
-
-  /**
-   * Retrieve the root item of the given collab.
-   *
-   * @memberof module:clb-collab.clbCollabNav
-   * @param  {number} collabId collab ID
-   * @return {Promise} promise the root nav item
-   */
-  var getRoot = function(collabId) {
-    var treePromise = cacheNavRoots.get(collabId);
-
-    if (!treePromise) {
-      treePromise = $http.get(collabApiUrl + collabId + '/nav/all/').then(
-        function(resp) {
-          var root;
-          var i;
-          var item;
-          var data = orderByFilter(resp.data, '+order_index');
-
-          // fill in the cache
-          for (i = 0; i !== data.length; ++i) {
-            item = NavItem.fromJson(collabId, data[i]);
-            if (item.context === 'root') {
-              root = item;
-            }
-          }
-
-          // link children and parents
-          for (i = 0; i !== data.length; ++i) {
-            item = cacheNavItems.get(key(collabId, data[i].id));
-            if (item.parentId) {
-              var parent = cacheNavItems.get(key(collabId, item.parentId));
-              parent.children.push(item);
-            }
-          }
-
-          return root;
-        },
-        clbError.rejectHttpError
-      );
-
-      cacheNavRoots.put(collabId, treePromise);
-    }
-
-    return treePromise;
-  };
-
-  /**
-   * @memberof module:clb-collab.clbCollabNav
-   * @param  {number} collabId collab ID
-   * @param  {number} nodeId   node ID
-   * @return {NavItem} the matching nav item
-   */
-  var getNode = function(collabId, nodeId) {
-    return getRoot(collabId).then(function() {
-      var k = key(collabId, nodeId);
-      var item = cacheNavItems.get(k);
-
-      if (!item) {
-        $log.error('unknown nav item', k);
-      }
-
-      return item;
-    });
-  };
-
-  /**
-   * @memberof module:clb-collab.clbCollabNav
-   * @param  {str} ctx The context UUID
-   * @return {Promise}   The promise of a NavItem
-   */
-  var getNodeFromContext = function(ctx) {
-    var url = [
-      clbEnv.get('api.collab.v0'),
-      'collab/context',
-      ctx
-    ].join('/') + '/';
-    return $http.get(url)
-    .then(function(res) {
-      var nav = NavItem.fromJson(res.data.collab.id, res.data);
-      var k = key(nav.collabId, nav.id);
-      if (cacheNavItems.get(k)) {
-        nav = cacheNavItems.get(k).update(nav);
-      } else {
-        cacheNavItems.put(k, nav);
-      }
-      return nav;
-    }, function(res) {
-      return $q.reject(clbError.rejectHttpError(res));
-    });
-  };
-
-  /**
-   * @memberof module:clb-collab.clbCollabNav
-   * @param  {number} collabId collab ID
-   * @param  {number} navItem  the NavItem instance to add to the navigation
-   * @return {Promise} promise of the added NavItem instance
-   */
-  var addNode = function(collabId, navItem) {
-    return $http.post(collabApiUrl + collabId + '/nav/', navItem.toJson())
-    .then(function(resp) {
-      return NavItem.fromJson(collabId, resp.data);
-    }, clbError.rejectHttpError);
-  };
-
-  /**
-   * @memberof module:clb-collab.clbCollabNav
-   * @param  {number} collabId collab ID
-   * @param  {NavItem} navItem the NavItem instance to remove from the navigation
-   * @return {Promise} promise of an undefined item at the end
-   */
-  var deleteNode = function(collabId, navItem) {
-    return $http.delete(collabApiUrl + collabId + '/nav/' + navItem.id + '/')
-    .then(function() {
-      cacheNavItems.remove(key(collabId, navItem.id));
-    }, clbError.rejectHttpError);
-  };
-
-  /**
-   * @memberof module:clb-collab.clbCollabNav
-   * @param  {number} collabId collab ID
-   * @param  {NavItem} navItem the instance to update
-   * @return {Promise} promise the updated instance
-   */
-  var update = function(collabId, navItem) {
-    navItem.collabId = collabId;
-    return $http.put(collabApiUrl + collabId + '/nav/' +
-      navItem.id + '/', navItem.toJson())
-    .then(function(resp) {
-      return NavItem.fromJson(collabId, resp.data);
-    }, clbError.rejectHttpError);
-  };
-
-  // ordering operation needs to be globally queued to ensure consistency.
-  var insertQueue = $q.when();
-
-  /**
-   * Insert node in the three.
-   *
-   * A queue is used to ensure that the insert operation does not conflict
-   * on a single client.
-   *
-   * @memberof module:clb-collab.clbCollabNav
-   * @param  {int} collabId   id of the collab
-   * @param  {NavItem} navItem    Nav item instance
-   * @param  {NavItem} parentItem parent item
-   * @param  {int} insertAt   add to the menu
-   * @return {Promise}        a promise that will
-   *                          return the update nav item
-   */
-  function insertNode(collabId, navItem, parentItem, insertAt) {
-    return insertQueue.then(function() {
-      // first item order_index must be 1
-      navItem.order = (insertAt === -1 ? 1 : insertAt + 1);
-      navItem.parentId = parentItem.id;
-      return update(collabId, navItem);
-    });
-  }
-
-  /**
-   * Return a unique key for chaching a nav item.
-   * @param  {int} collabId collab ID
-   * @param  {int} nodeId   NavItem ID
-   * @return {string}       the unique key
-   * @private
-   */
-  function key(collabId, nodeId) {
-    return collabId + '--' + nodeId;
-  }
-
-  return {
-    NavItem: NavItem,
-    getRoot: getRoot,
-    getNode: getNode,
-    getNodeFromContext: getNodeFromContext,
-    addNode: addNode,
-    saveNode: update,
-    deleteNode: deleteNode,
-    insertNode: insertNode
-  };
-}]);
-
-angular.module('clb-collab')
-.factory('clbCollabTeamRole', clbCollabTeamRole);
-
-/**
- * @namespace clbCollabTeamRole
- * @memberof module:clb-collab
- * @param  {object} $http    Angular DI
- * @param  {object} $log     Angular DI
- * @param  {object} $q       Angular DI
- * @param  {object} clbEnv   Angular DI
- * @param  {object} clbError Angular DI
- * @return {object}          Angular Service
- */
-function clbCollabTeamRole($http, $log, $q, clbEnv, clbError) {
-  var urlBase = clbEnv.get('api.collab.v0');
-  var collabUrl = urlBase + '/collab/';
-  var rolesCache = {};
-
-  return {
-    get: get,
-    set: set
-  };
-
-  /**
-   * Retrieve the role of a user.
-   * @param  {int}    collabId  Collab ID
-   * @param  {string} userId    User ID
-   * @return {string}           The user role
-   */
-  function get(collabId, userId) {
-    if (!userId) {
-      $log.error('Must provide userId: ', collabId, userId);
-      return;
-    }
-    if (!rolesCache[collabId]) {
-      rolesCache[collabId] = {};
-    }
-    if (rolesCache[collabId] && rolesCache[collabId][userId]) {
-      return $q.when(rolesCache[collabId][userId]);
-    }
-    return $http.get(collabUrl + collabId + '/team/role/' + userId + '/')
-    .then(function(res) {
-      rolesCache[collabId][userId] = res.data.role;
-      return $q.when(rolesCache[collabId][userId]);
-    }, function(res) {
-      if (res.status === 404) {
-        rolesCache[collabId][userId] = undefined;
-        return $q.when(rolesCache[collabId][userId]);
-      }
-      clbError.rejectHttpError(res);
-    });
-  }
-
-  /**
-   * Set the role of a User within a Collab.
-   * @param {int} collabId    Collab ID
-   * @param {string} userId   User ID
-   * @param {string} role     Role description
-   * @return {Promise}        Resolve when the role is set.
-   */
-  function set(collabId, userId, role) {
-    var thisUrl = collabUrl + collabId + '/team/role/' + userId + '/';
-    if (rolesCache[collabId] && rolesCache[collabId][userId]) {
-      rolesCache[collabId][userId] = role;
-      return $http.put(thisUrl, {role: role})
-      .catch(function(resp) {
-        if (resp.status === 404) { // should have been a POST...
-          return $http.post(thisUrl, {role: role})
-          .catch(clbError.rejectHttpError);
-        }
-        return clbError.rejectHttpError(resp);
-      });
-    }
-    if (!rolesCache[collabId]) {
-      rolesCache[collabId] = {};
-    }
-    rolesCache[collabId][userId] = role;
-    return $http.post(thisUrl, {role: role})
-    .catch(clbError.rejectHttpError);
-  }
-}
-
-angular.module('clb-collab')
-.factory('clbCollabTeam', clbCollabTeam);
-
-/**
- * Angular client to access Collab Team REST endpoint.
- *
- * @namespace clbCollabTeam
- * @memberof module:clb-collab
- * @param  {object} $http             Angular DI
- * @param  {object} $log              Angular DI
- * @param  {object} $q                Angular DI
- * @param  {object} lodash            Angular DI
- * @param  {object} clbEnv            Angular DI
- * @param  {object} clbError          Angular DI
- * @param  {object} clbCollabTeamRole Angular DI
- * @param  {object} clbUser           Angular DI
- * @return {object}                   Angular Service
- */
-function clbCollabTeam(
-  $http,
-  $log,
-  $q,
-  lodash,
-  clbEnv,
-  clbError,
-  clbCollabTeamRole,
-  clbUser
-) {
-  var urlBase = clbEnv.get('api.collab.v0');
-  var collabUrl = urlBase + '/collab/';
-
-  return {
-    add: add,
-    delete: remove, // backward compatibility
-    remove: remove,
-    list: list,
-    userInTeam: userInTeam,
-    roles: clbCollabTeamRole // backward compatibility
-  };
-
-  /**
-   * Add a team member to a Collab.
-   * @param  {int} collabId the Collab id
-   * @param  {string} userId the User id
-   * @return {Promise} resolve after the user has been added
-   */
-  function add(collabId, userId) {
-    return $http.put(collabUrl + collabId + '/team/', {
-      users: [userId]
-    }).catch(clbError.rejectHttpError);
-  }
-
-  /**
-   * Remove a team member from a Collab.
-   * @param  {int} collabId the Collab id
-   * @param  {string} userId the User id
-   * @return {Promise} resolve after the user has been added
-   */
-  function remove(collabId, userId) {
-    return $http({
-      method: 'DELETE',
-      url: collabUrl + collabId + '/team/',
-      data: {users: [userId]},
-      headers: {'Content-Type': 'application/json'}
-    }).catch(clbError.rejectHttpError);
-  }
-
-  /**
-   * List team members from the Collab.
-   * @param  {int} collabId The collab ID
-   * @return {Promise}      Resolve to an array of user with injected membership
-   *                        informations.
-   */
-  function list(collabId) {
-    return $http.get(collabUrl + collabId + '/team/')
-    .then(function(res) {
-      var indexedTeam = lodash.keyBy(res.data, 'user_id');
-      return clbUser.list({
-        pageSize: 0,
-        filter: {
-          id: lodash.keys(indexedTeam)
-        }
-      }).then(function(data) {
-        return lodash.reduce(data.results, function(res, user) {
-          var membershipInfo = indexedTeam[parseInt(user.id, 10)];
-          if (membershipInfo) {
-            res.push(angular.extend({}, user, {
-              membershipId: membershipInfo.user_id,
-              role: membershipInfo.role
-            }));
-          }
-          return res;
-        }, []);
-      });
-    }, clbError.rejectHttpError);
-  }
-
-  /**
-   * Return true if the current user is in the team
-   * @param  {int} collabId The collab ID
-   * @return {Promise}      Resolve to a boolean
-   */
-  function userInTeam(collabId) {
-    return clbUser.getCurrentUserOnly().then(function(me) {
-      return $http.get(collabUrl + collabId + '/team/')
-      .then(function(list) {
-        return lodash.keyBy(
-          list.data, 'user_id')[parseInt(me.id, 10)] !== undefined;
-      });
-    });
-  }
-}
-
-angular.module('clb-collab')
-.factory('ClbCollabModel', function() {
-  /**
-   * Representation of a Collab.
-   * @memberof module:clb-collab
-   * @param {object} [attributes] initial values
-   */
-  function ClbCollabModel(attributes) {
-    if (!attributes) {
-      attributes = {};
-    }
-    this.id = attributes.id;
-    this.created = attributes.created || null;
-    this.edited = attributes.edited || null;
-    this.title = attributes.title || '';
-    this.content = attributes.content || '';
-    this.private = attributes.private || false;
-    this.deleted = attributes.deleted || null;
-  }
-  ClbCollabModel.prototype = {
-    toJson: function() {
-      return {
-        id: this.id,
-        title: this.title,
-        content: this.content,
-        private: this.private
-      };
-    },
-    update: function(attrs) {
-      angular.forEach(['id', 'title', 'content', 'private'], function(a) {
-        if (attrs[a] !== undefined) {
-          this[a] = attrs[a];
-        }
-      }, this);
-    }
-  };
-  ClbCollabModel.fromJson = function(json) {
-    if (json.toJson) {
-      return json;
-    }
-    var c = new ClbCollabModel(json);
-    return c;
-  };
-  return ClbCollabModel;
-});
-
-/* eslint camelcase:0 */
-angular.module('clb-collab')
-.factory('clbCollab', clbCollab);
-
-/**
- * @namespace clbCollab
- * @memberof module:clb-collab
- * @desc
- * Provide a javascript client to query the Collab REST service.
- *
- * @param  {object} $log             Angular injection
- * @param  {object} $q               Angular injection
- * @param  {object} $cacheFactory    Angular injection
- * @param  {object} $http            Angular injection
- * @param  {object} lodash           Angular injection
- * @param  {object} clbContext       Angular injection
- * @param  {object} clbEnv           Angular injection
- * @param  {object} clbError         Angular injection
- * @param  {object} clbResultSet     Angular injection
- * @param  {object} clbUser          Angular injection
- * @param  {object} ClbCollabModel   Angular injection
- * @param  {object} ClbContextModel  Angular injection
- * @return {object}                  Angular Service
- */
-function clbCollab(
-  $log,
-  $q,
-  $cacheFactory,
-  $http,
-  lodash,
-  clbContext,
-  clbEnv,
-  clbError,
-  clbResultSet,
-  clbUser,
-  ClbCollabModel,
-  ClbContextModel
-) {
-  var urlBase = clbEnv.get('api.collab.v0');
-  var collabUrl = urlBase + '/collab/';
-  var myCollabsUrl = urlBase + '/mycollabs/';
-  var collabCache = $cacheFactory('clbCollabInstances');
-  var ongoingCollabGetRequests = {};
-
-  return {
-    Collab: ClbCollabModel,   // backward compatibility
-    Context: ClbContextModel, // backward compatibility
-    context: clbContext,      // backward compatibility
-    get: get,
-    getByLabel: getByLabel,
-    list: list,
-    mine: mine,
-    create: create,
-    save: save,
-    delete: deleteCollab
-  };
-
-  /**
-   * Retrieve the promise of an ongoing request if it exists.
-   * @param  {string} key caching key
-   * @return {Promise}    the existing promise
-   * @private
-   */
-  function getPromiseFromCache(key) {
-    var collab = collabCache.get(key);
-    if (collab) {
-      return $q.when(collab);
-    }
-    if (ongoingCollabGetRequests[key]) {
-      return ongoingCollabGetRequests[key];
-    }
-  }
-
-  /**
-   * Retrieve a collab.
-   * @param  {string} url [description]
-   * @param  {string} key cache key to retrieve
-   * @return {Promise}    Resolve to a collab
-   * @private
-   */
-  function getter(url, key) {
-    if (!key) {
-      return $q.reject(clbError.error({message: 'id parameter is required'}));
-    }
-
-    var promise = getPromiseFromCache(key);
-    if (promise) {
-      return promise;
-    }
-
-    ongoingCollabGetRequests[key] = $http.get(url + key + '/')
-    .then(function(res) {
-      ongoingCollabGetRequests[key] = null;
-      return ClbCollabModel.fromJson(res.data);
-    }, function(res) {
-      ongoingCollabGetRequests[key] = null;
-      return clbError.rejectHttpError(res);
-    });
-    return ongoingCollabGetRequests[key];
-  }
-
-  /**
-   * Retrieve a collab given its id.
-   * @param  {int} id the Collab ID
-   * @return {Promise}    Will resolve to a ClbCollabModel
-   */
-  function get(id) {
-    id = (id && id.id) || id;
-    return getter(collabUrl, id).then(function(collab) {
-      collabCache.put(collab.id, collab);
-      return collab;
-    });
-  }
-
-  /**
-   * Ensure the collab is in cache for the given label.
-   * @param  {ClbCollabModel} collab instance to cache
-   * @param  {string} label   the label
-   * @return {ClbCollabModel} the cached collab
-   * @private
-   */
-  function cacheCollabWithLabel(collab, label) {
-    // ensure the collab is in cache for this label
-    // to avoid duplicate reference for it.
-    if (!collab._label) {
-      collab._label = label;
-      collabCache.put(label, collab);
-      collabCache.put(collab.id, collab);
-    }
-    return collab;
-  }
-
-  /**
-   * Retrieve a collab using a string label.
-   * @param  {string} label the label associated to the Collab
-   * @return {Promise}      will resolve to a ClbCollabModel instance
-   */
-  function getByLabel(label) {
-    return getter(urlBase + '/r/', label).then(function(collab) {
-      // Ensure the collab has not been fetched by id already.
-      // This might occurs if the collab was fetched by id the first
-      // time. In this case, no way to know its associated label.
-      var promise = getPromiseFromCache(collab.id);
-      if (promise) {
-        return promise.then(function(c) {
-          return cacheCollabWithLabel(c, label);
-        });
-      }
-      return cacheCollabWithLabel(collab, label);
-    });
-  }
-
-  /**
-   * @name list
-   * @desc
-   * list return the a hbpUtil.ResultSet instance containing the collab
-   * matching the given parameters.
-   *
-   * @param {Object} [options] the request options
-   * @param {string} [options.search] search string to filter the results
-   * @param {(string|string[])} [options.id] string or array of collab ids
-   * @param {int}  [options.pageSize=25] number of result per page
-   * @param {int}  [options.page] the page to retrive
-   * @param {Object} [options.params] DEPRECATED any query parameter
-   * @param {string} [options.url] DEPRECATED overide the default URL
-   * @return {hbpUtil.ResultSet} a result set of results
-   */
-  function list(options) {
-    var url = collabUrl;
-    var request;
-    // support old signature (url, options)
-    if (angular.isString(options)) {
-      url = options;
-      options = arguments[1];
-    }
-    options = angular.extend({}, options);
-
-    if (angular.isArray(options.id)) {
-      options.id = options.id.join(',');
-    }
-
-    if (options.pageSize) {
-      options.page_size = options.pageSize;
-    }
-
-    if (options.url) { // Deprecated URL support
-      request = $http.get(options.url);
-    } else {
-      request = $http.get(url, {
-        params: angular.extend(
-          {},
-          options.params,
-          lodash.pick(options, ['search', 'id', 'page_size', 'page'])
-        )
-      });
-    }
-    return clbResultSet.get(request, {
-      resultsFactory: resultsFactory
-    });
-  }
-
-  /**
-   * @name mine
-   * @description
-   * `mine` return a hbpUtil.ResultSet of the user collabs.
-   *
-   * @param {Object} [options] request options
-   * @param {string} [options.search] search string to filter the results
-   * @param {int}  [options.pageSize] number of result per page
-   * @param {int}  [options.page] the page to retrive
-   * @return {hbpUtil.ResultSet} the current user collabs
-   */
-  function mine(options) {
-    options = angular.extend({}, options);
-    var params = angular.extend({}, lodash.pick(options, ['search']));
-    return clbResultSet.get($http.get(myCollabsUrl, {params: params}), {
-      resultsFactory: resultsFactory
-    });
-  }
-
-  /**
-   * Create a new collab using a model instance or the server data representation.
-   * @param  {object|ClbCollabModel} jsonCollab JSON representation of the new collab
-   * @return {Promise}           Resolve to the new Collab
-   */
-  function create(jsonCollab) {
-    var c = ClbCollabModel.fromJson(jsonCollab);
-    return $http.post(collabUrl, c.toJson()).then(function(res) {
-      c.update(res.data);
-      collabCache.put(c.id, c);
-      return c;
-    }, clbError.rejectHttpError);
-  }
-
-  /**
-   * Save a collab using its JSON server representation or a collab instance.
-   * @param  {object|ClbCollabModel} jsonCollab JSON representation of a Collab
-   * @return {Promise}           resolve to the Collab instance.
-   */
-  function save(jsonCollab) {
-    var c = ClbCollabModel.fromJson(jsonCollab);
-    return $http.put(collabUrl + c.id + '/', c.toJson()).then(function(res) {
-      c.update(res.data);
-      collabCache.put(c.id, c);
-      return c;
-    }, clbError.rejectHttpError);
-  }
-
-  /**
-   * @function delete
-   * @desc
-   * Delete the collab.
-   * @param  {ClbCollabModel} collab The collab instance to delete
-   * @return {Promise}       Resolve once the delete operation is completed
-   */
-  function deleteCollab(collab) {
-    return $http.delete(collabUrl + collab.id + '/').then(
-      function() {
-        collabCache.remove(collab.id);
-        if (collab._label) {
-          collabCache.remove(collab._label);
-        }
-      }, clbError.rejectHttpError
-    );
-  }
-
-  /**
-   * Build the instance from a result list.
-   *
-   * @param  {array} results Array of object
-   * @return {array}         Array of Collab
-   */
-  function resultsFactory(results) {
-    return lodash.map(results, ClbCollabModel.fromJson);
-  }
-}
-
-angular.module('clb-collab')
-.factory('ClbContextModel', ['ClbCollabModel', function(ClbCollabModel) {
-  /**
-   * Representation of a Collab Context.
-   * @memberof module:clb-collab
-   */
-  function ClbContextModel() {}
-  ClbContextModel.fromJson = function(json) {
-    var c = new ClbContextModel();
-    c.context = json.context;
-    c.appId = json.app_id;
-    c.name = json.name;
-    c.navId = json.id;
-    c.collab = ClbCollabModel.fromJson(json.collab);
-    c.toJson = function() {
-      return {
-        context: json.context,
-        appId: json.app_id,
-        name: c.name
-      };
-    };
-    return c;
-  };
-  return ClbContextModel;
-}]);
-
-angular.module('clb-collab')
-.factory('clbContext', clbContext);
-
-/**
- * @namespace clbContext
- * @memberof module:clb-collab
- * @param  {object} $http             Angular DI
- * @param  {object} $q                Angular DI
- * @param  {object} clbError          Angular DI
- * @param  {object} clbEnv            Angular DI
- * @param  {class}  ClbContextModel   Angular DI
- * @return {object}                   the service
- */
-function clbContext($http, $q, clbError, clbEnv, ClbContextModel) {
-  var ongoingContextRequests = {};
-  var urlBase = clbEnv.get('api.collab.v0');
-  var collabUrl = urlBase + '/collab/';
-  var contextUrl = collabUrl + 'context/';
-
-  return {
-    get: get
-  };
-
-  /**
-   * @memberof module:clb-collab.clbContext
-   * @param  {string} uuid UUID of the context
-   * @return {Promise}     Resolve to the ClbContextModel instance
-   */
-  function get(uuid) {
-    if (!uuid) {
-      return $q.reject(clbError.error({
-        message: 'uuid parameter is required'
-      }));
-    }
-    // return the promise of an ongoing request
-    if (ongoingContextRequests[uuid]) {
-      return ongoingContextRequests[uuid];
-    }
-    // proceed to the request
-    ongoingContextRequests[uuid] =
-      $http.get(contextUrl + uuid + '/', {cache: true})
-    .then(function(res) {
-      ongoingContextRequests[uuid] = null;
-      return ClbContextModel.fromJson(res.data);
-    }, function(res) {
-      ongoingContextRequests[uuid] = null;
-      return clbError.rejectHttpError(res);
-    });
-    return ongoingContextRequests[uuid];
-  }
-}
-
 angular.module('clb-ctx-data')
 .factory('clbCtxData', clbCtxData);
 
@@ -2316,85 +1245,6 @@ function clbCtxData($http, $q, uuid4, clbEnv, clbError) {
       },
       code: -3
     });
-  }
-}
-
-/* global window */
-
-angular.module('clb-env')
-.provider('clbEnv', clbEnv);
-
-/**
- * Get environement information using dotted notation with the `clbEnv` provider
- * or service.
- *
- * Before being used, clbEnv must be initialized with the context values. You
- * can do so by setting up a global bbpConfig variable or using
- * :ref:`angular.clbBootstrap <angular.clbBootstrap>`.
- *
- * @function clbEnv
- * @memberof module:clb-env
- * @param {object} $injector AngularJS injection
- * @return {object} provider
- * @example <caption>Basic usage of clbEnv</caption>
- * angular.module('myApp', ['clbEnv', 'rest'])
- * .service('myService', function(clbEnv, clbResultSet) {
- *   return {
- *     listCollab: function() {
- *       // return a paginated list of all collabs
- *       return clbResultSet.get($http.get(clbEnv.get('api.collab.v0') + '/'));
- *     }
- *   };
- * });
- * @example <caption>Use clbEnv in your configuration</caption>
- * angular.module('myApp', ['clbEnv', 'rest'])
- * .config(function(clbEnvProvider, myAppServiceProvider) {
- *   // also demonstrate how we accept a custom variable.
- *   myAppServiceProvider.setMaxFileUpload(clbEnvProvider.get('myapp.maxFileUpload', '1m'))
- * });
- */
-function clbEnv($injector) {
-  return {
-    get: get,
-    $get: function() {
-      return {
-        get: get
-      };
-    }
-  };
-
-  /**
-   * ``get(key, [defaultValue])`` provides configuration value loaded at
-   * the application bootstrap.
-   *
-   * Accept a key and an optional default
-   * value. If the key cannot be found in the configurations, it will return
-   * the provided default value. If the defaultValue is undefied, it will
-   * throw an error.
-   *
-   * To ensures that those data are available when angular bootstrap the
-   * application, use angular.clbBootstrap(module, options).
-   *
-   * @memberof module:clb-env.clbEnv
-   * @param {string} key the environment variable to retrieve, using a key.
-   * @param {any} [defaultValue] an optional default value.
-   * @return {any} the value or ``defaultValue`` if the asked for configuration
-   *               is not defined.
-   */
-  function get(key, defaultValue) {
-    var parts = key.split('.');
-    var cursor = (window.bbpConfig ?
-                  window.bbpConfig : $injector.get('CLB_ENVIRONMENT'));
-    for (var i = 0; i < parts.length; i++) {
-      if (!(cursor && cursor.hasOwnProperty(parts[i]))) {
-        if (defaultValue !== undefined) {
-          return defaultValue;
-        }
-        throw new Error('UnkownConfigurationKey: <' + key + '>');
-      }
-      cursor = cursor[parts[i]];
-    }
-    return cursor;
   }
 }
 
@@ -4366,6 +3216,59 @@ function clbStorage(
   }
 }
 
+angular.module('clb-ui-dialog')
+.factory('clbConfirm', clbConfirm);
+
+/**
+ * Service to trigger modal dialog.
+ *
+ * @namespace clbDialog
+ * @memberof module:clb-ui-dialog
+ * @param  {object} $rootScope Angular DI
+ * @param  {object} $uibModal     Angular DI
+ * @return {object}            Service Descriptor
+ */
+function clbConfirm($rootScope, $uibModal) {
+  return {
+    open: open
+  };
+
+  /**
+   * Confirmation dialog
+   * @param  {object} options Parameters
+   * @return {Promise}        Resolve if the confirmation happens, reject otherwise
+   */
+  function open(options) {
+    options = angular.extend({
+      scope: $rootScope,
+      title: 'Confirm',
+      confirmLabel: 'Yes',
+      cancelLabel: 'No',
+      template: 'Are you sure?',
+      closable: true
+    }, options);
+
+    var modalScope = options.scope.$new();
+    modalScope.title = options.title;
+    modalScope.confirmLabel = options.confirmLabel;
+    modalScope.cancelLabel = options.cancelLabel;
+    modalScope.confirmationContent = options.template;
+    modalScope.confirmationContentUrl = options.templateUrl;
+    modalScope.closable = options.closable;
+    modalScope.securityQuestion = options.securityQuestion;
+    modalScope.securityAnswer = options.securityAnswer;
+
+    var instance = $uibModal.open({
+      template:'<div class=modal-header><button type=button ng-show=closable class=close ng-click="$dismiss(\'cancel\')" aria-hidden=true>&times;</button><h4 class=modal-title>{{title}}</h4></div><div class=modal-body><alert ng-if=error type=danger>{{error.reason}}</alert><div class="alert alert-warning" ng-show=securityQuestion>Unexpected bad things will happen if you don’t read this!</div><ng-include ng-if=confirmationContentUrl src=confirmationContentUrl></ng-include><p ng-if=!confirmationContentUrl>{{confirmationContent}}</p><fieldset class=form-group ng-show=securityQuestion><label for=securityAnswer>{{securityQuestion}}</label> <input type=text class=form-control name=securityAnswer ng-model=answer></fieldset></div><div class=modal-footer><button class="btn btn-default" ng-click="$dismiss(\'cancel\')">{{cancelLabel}}</button> <button class="btn btn-danger" ng-disabled="securityAnswer && answer !== securityAnswer" ng-click=$close()>{{confirmLabel}}</button></div>',
+      show: true,
+      backdrop: 'static',
+      scope: modalScope,
+      keyboard: options.keyboard || options.closable
+    });
+    return instance.result;
+  }
+}
+
 angular.module('clb-stream')
 .provider('clbResourceLocator', clbResourceLocatorProvider);
 
@@ -4562,59 +3465,6 @@ function clbStream($http, $log, clbEnv, clbError, clbResultSet) {
                          type + ':' + id + '/';
     return clbResultSet.get($http.get(url), options)
     .catch(clbError.rejectHttpError);
-  }
-}
-
-angular.module('clb-ui-dialog')
-.factory('clbConfirm', clbConfirm);
-
-/**
- * Service to trigger modal dialog.
- *
- * @namespace clbDialog
- * @memberof module:clb-ui-dialog
- * @param  {object} $rootScope Angular DI
- * @param  {object} $uibModal     Angular DI
- * @return {object}            Service Descriptor
- */
-function clbConfirm($rootScope, $uibModal) {
-  return {
-    open: open
-  };
-
-  /**
-   * Confirmation dialog
-   * @param  {object} options Parameters
-   * @return {Promise}        Resolve if the confirmation happens, reject otherwise
-   */
-  function open(options) {
-    options = angular.extend({
-      scope: $rootScope,
-      title: 'Confirm',
-      confirmLabel: 'Yes',
-      cancelLabel: 'No',
-      template: 'Are you sure?',
-      closable: true
-    }, options);
-
-    var modalScope = options.scope.$new();
-    modalScope.title = options.title;
-    modalScope.confirmLabel = options.confirmLabel;
-    modalScope.cancelLabel = options.cancelLabel;
-    modalScope.confirmationContent = options.template;
-    modalScope.confirmationContentUrl = options.templateUrl;
-    modalScope.closable = options.closable;
-    modalScope.securityQuestion = options.securityQuestion;
-    modalScope.securityAnswer = options.securityAnswer;
-
-    var instance = $uibModal.open({
-      template:'<div class=modal-header><button type=button ng-show=closable class=close ng-click="$dismiss(\'cancel\')" aria-hidden=true>&times;</button><h4 class=modal-title>{{title}}</h4></div><div class=modal-body><alert ng-if=error type=danger>{{error.reason}}</alert><div class="alert alert-warning" ng-show=securityQuestion>Unexpected bad things will happen if you don’t read this!</div><ng-include ng-if=confirmationContentUrl src=confirmationContentUrl></ng-include><p ng-if=!confirmationContentUrl>{{confirmationContent}}</p><fieldset class=form-group ng-show=securityQuestion><label for=securityAnswer>{{securityQuestion}}</label> <input type=text class=form-control name=securityAnswer ng-model=answer></fieldset></div><div class=modal-footer><button class="btn btn-default" ng-click="$dismiss(\'cancel\')">{{cancelLabel}}</button> <button class="btn btn-danger" ng-disabled="securityAnswer && answer !== securityAnswer" ng-click=$close()>{{confirmLabel}}</button></div>',
-      show: true,
-      backdrop: 'static',
-      scope: modalScope,
-      keyboard: options.keyboard || options.closable
-    });
-    return instance.result;
   }
 }
 
@@ -6163,7 +5013,7 @@ function clbFeed() {
     controller: FeedController,
     controllerAs: 'vm',
     bindToController: true,
-    template:'<ul class="feed list-group" ng-class="{\'feed-empty\': vm.activities.results.length === 0}"><li ng-if=vm.error class=list-group-item><div class="alert alert-warning"><strong>Load Error:</strong> {{vm.error}}</div></li><li class=list-group-item ng-if="!vm.activities && !vm.error"><hbp-loading></hbp-loading></li><li class=list-group-item ng-if="vm.activities.results.length === 0"><div class="alert alert-info">Nothing new</div></li><li class=list-group-item ng-repeat="a in vm.activities.results" clb-activity=a></li><li class=list-group-item ng-if=vm.activities.hasNext><a clb-perform-action=vm.activities.next() class="btn btn-default">More</a></li></ul>',
+    template:'<ul class="feed list-group" ng-class="{\'feed-empty\': vm.activities.results.length === 0}"><li ng-if=vm.error class=list-group-item><div class="alert alert-warning"><strong>Load Error:</strong> {{vm.error}}</div></li><li class=list-group-item ng-if="!vm.activities && !vm.error"><hbp-loading></hbp-loading></li><li class=list-group-item ng-if="vm.activities.results.length === 0"><div class="alert alert-info">Nothing new</div></li><li class=list-group-item ng-repeat="a in vm.activities.results | limitTo : vm.activitiesLimit" clb-activity=a></li><li class=list-group-item><span class=text-muted>Showing {{vm.activitiesLimit}} of {{vm.activities.results.length}}</span></li><li class=list-group-item><a class="btn btn-default" ng-click=vm.loadMore() ng-if="vm.activities.results.length > vm.activitiesLimit">Load more</a> <a class="btn btn-default" ng-click=vm.loadLess() ng-if="vm.activitiesLimit > 15">Load less</a></li></ul>',
     link: function(scope, elt) {
       elt.addClass('clb-feed');
       var unbind = scope.$on(
@@ -6181,13 +5031,24 @@ function clbFeed() {
 /**
  * ViewModel of an activity used to render the clb-activity directive
  * @param {object} $log angular injection
+ * @param {object} $scope angular injection
  * @param {object} clbStream DI
  * @param {object} clbUser DI
  */
-function FeedController($log, clbStream, clbUser) {
+function FeedController($log, $scope, clbStream, clbUser) {
   var vm = this;
+  vm.activitiesLimit = 15;
 
   activate();
+
+  vm.loadMore = function() {
+    var incremented = vm.activitiesLimit + 15;
+    vm.activitiesLimit = incremented > vm.activities.results.length ? vm.activities.results.length : incremented;
+  };
+
+  vm.loadLess = function() {
+    vm.activitiesLimit = 15;
+  };
 
   /* ------------- */
 
@@ -6225,6 +5086,1156 @@ function FeedController($log, clbStream, clbUser) {
     .catch(function(err) {
       vm.error = err.message;
     });
+  }
+}
+
+/* global window */
+
+angular.module('clb-env')
+.provider('clbEnv', clbEnv);
+
+/**
+ * Get environement information using dotted notation with the `clbEnv` provider
+ * or service.
+ *
+ * Before being used, clbEnv must be initialized with the context values. You
+ * can do so by setting up a global bbpConfig variable or using
+ * :ref:`angular.clbBootstrap <angular.clbBootstrap>`.
+ *
+ * @function clbEnv
+ * @memberof module:clb-env
+ * @param {object} $injector AngularJS injection
+ * @return {object} provider
+ * @example <caption>Basic usage of clbEnv</caption>
+ * angular.module('myApp', ['clbEnv', 'rest'])
+ * .service('myService', function(clbEnv, clbResultSet) {
+ *   return {
+ *     listCollab: function() {
+ *       // return a paginated list of all collabs
+ *       return clbResultSet.get($http.get(clbEnv.get('api.collab.v0') + '/'));
+ *     }
+ *   };
+ * });
+ * @example <caption>Use clbEnv in your configuration</caption>
+ * angular.module('myApp', ['clbEnv', 'rest'])
+ * .config(function(clbEnvProvider, myAppServiceProvider) {
+ *   // also demonstrate how we accept a custom variable.
+ *   myAppServiceProvider.setMaxFileUpload(clbEnvProvider.get('myapp.maxFileUpload', '1m'))
+ * });
+ */
+function clbEnv($injector) {
+  return {
+    get: get,
+    $get: function() {
+      return {
+        get: get
+      };
+    }
+  };
+
+  /**
+   * ``get(key, [defaultValue])`` provides configuration value loaded at
+   * the application bootstrap.
+   *
+   * Accept a key and an optional default
+   * value. If the key cannot be found in the configurations, it will return
+   * the provided default value. If the defaultValue is undefied, it will
+   * throw an error.
+   *
+   * To ensures that those data are available when angular bootstrap the
+   * application, use angular.clbBootstrap(module, options).
+   *
+   * @memberof module:clb-env.clbEnv
+   * @param {string} key the environment variable to retrieve, using a key.
+   * @param {any} [defaultValue] an optional default value.
+   * @return {any} the value or ``defaultValue`` if the asked for configuration
+   *               is not defined.
+   */
+  function get(key, defaultValue) {
+    var parts = key.split('.');
+    var cursor = (window.bbpConfig ?
+                  window.bbpConfig : $injector.get('CLB_ENVIRONMENT'));
+    for (var i = 0; i < parts.length; i++) {
+      if (!(cursor && cursor.hasOwnProperty(parts[i]))) {
+        if (defaultValue !== undefined) {
+          return defaultValue;
+        }
+        throw new Error('UnkownConfigurationKey: <' + key + '>');
+      }
+      cursor = cursor[parts[i]];
+    }
+    return cursor;
+  }
+}
+
+/* eslint camelcase: 0 */
+
+/**
+ * @namespace clbCollabApp
+ * @memberof module:clb-collab
+ * @desc
+ * clbCollabApp can be used to find and work with the
+ * registered HBP Collaboratory applications.
+ */
+angular.module('clb-collab')
+.constant('folderAppId', '__collab_folder__')
+.service('clbCollabApp', ['$q', '$http', '$cacheFactory', 'clbError', 'clbEnv', 'clbResultSet', function(
+  $q, $http, $cacheFactory,
+  clbError, clbEnv, clbResultSet
+) {
+  var appsCache = $cacheFactory('__appsCache__');
+  var urlBase = clbEnv.get('api.collab.v0') + '/extension/';
+  var apps = null;
+
+  /**
+   * @class App
+   * @desc client representation of an application
+   * @memberof module:clb-collab
+   * @param  {object} [attrs] a list of attributes to set to the App instance
+   */
+  var App = function(attrs) {
+    var self = this;
+    angular.forEach(attrs, function(v, k) {
+      self[k] = v;
+    });
+  };
+  App.prototype = {
+    /**
+     * Transform an App instance into an object reprensentation compatible with
+     * the backend schema. This object can then be easily converted to a JSON
+     * string.
+     * @memberof module:clb-collab.App
+     * @return {object} server representation of an App instance
+     */
+    toJson: function() {
+      return {
+        id: this.id,
+        description: this.description,
+        edit_url: this.editUrl,
+        run_url: this.runUrl,
+        title: this.title
+      };
+    }
+  };
+
+  /**
+   * Create an app instance from a server representation.
+   * @memberof module:clb-collab.App
+   * @param  {object} json converted from the server JSON string
+   * @return {App} the new App instance
+   */
+  App.fromJson = function(json) {
+    /* jshint camelcase: false */
+    return new App({
+      id: json.id,
+      deleted: json.deleted,
+      description: json.description,
+      editUrl: json.edit_url,
+      runUrl: json.run_url,
+      title: json.title,
+      createdBy: json.created_by
+    });
+  };
+
+  appsCache.put('__collab_folder__', {
+    id: '__collab_folder__',
+    title: 'Folder'
+  });
+
+  var loadAll = function(promise) {
+    return promise.then(function(rs) {
+      if (rs.hasNext) {
+        return loadAll(rs.next());
+      }
+      apps = rs.results;
+      return apps;
+    });
+  };
+
+  /**
+   * @memberof module:clb-collab.clbCollabApp
+   * @return {Promise} promise of the list of all applications
+   */
+  var list = function() {
+    if (!apps) {
+      return loadAll(clbResultSet.get($http.get(urlBase), {
+        factory: App.fromJson
+      }));
+    }
+    return $q.when(apps);
+  };
+
+  /**
+   * Retrieve an App instance from its id.
+   * @memberof module:clb-collab.clbCollabApp
+   * @param  {number} id the app id
+   * @return {Promise} promise of an app instance
+   */
+  var getById = function(id) {
+    if (!id) {
+      return $q.when(null);
+    }
+    var ext = appsCache.get(id);
+    if (ext) {
+      return $q.when(ext);
+    }
+    return $http.get(urlBase + id + '/').then(function(res) {
+      appsCache.put(id, App.fromJson(res.data));
+      return appsCache.get(id);
+    }, function(res) {
+      return $q.reject(clbError.httpError(res));
+    });
+  };
+
+  /**
+   * @memberof module:clb-collab.clbCollabApp
+   * @param  {object} params query parameters
+   * @return {Promise} promise of an App instance
+   */
+  var findOne = function(params) {
+    return $http.get(urlBase, {params: params}).then(function(res) {
+      var results = res.data.results;
+      // Reject if more than one results
+      if (results.length > 1) {
+        return $q.reject(clbError.error({
+          type: 'TooManyResults',
+          message: 'Multiple apps has been retrieved ' +
+                   'when only one was expected.',
+          data: res.data
+        }));
+      }
+      // Null when no result
+      if (results.length === 0) {
+        return null;
+      }
+      // Build the app if exactly one result
+      var app = App.fromJson(results[0]);
+      appsCache.put(app.id, app);
+      return app;
+    }, clbError.rejectHttpError);
+  };
+
+  return {
+    list: list,
+    getById: getById,
+    findOne: findOne
+  };
+}]);
+
+/* eslint camelcase:[2, {properties: "never"}] */
+
+/**
+ * @namespace clbCollabNav
+ * @memberof module:clb-collab
+ * @desc clbCollabNav provides tools to create and manage
+ *       navigation items.
+ */
+angular.module('clb-collab')
+.service('clbCollabNav', ['$q', '$http', '$log', '$cacheFactory', '$timeout', 'orderByFilter', 'uuid4', 'clbEnv', 'clbError', function($q, $http, $log,
+    $cacheFactory, $timeout, orderByFilter, uuid4,
+    clbEnv, clbError) {
+  var collabApiUrl = clbEnv.get('api.collab.v0') + '/collab/';
+  // a cache with individual nav items
+  var cacheNavItems = $cacheFactory('navItem');
+
+  // a cache with the promises of each collab's nav tree root
+  var cacheNavRoots = $cacheFactory('navRoot');
+
+  /**
+   * @class NavItem
+   * @desc
+   * Client representation of a navigation item.
+   * @memberof module:clb-collab.clbCollabNav
+   * @param  {object} attr attributes of the new instance
+   */
+  var NavItem = function(attr) {
+    var self = this;
+    angular.forEach(attr, function(v, k) {
+      self[k] = v;
+    });
+    if (angular.isUndefined(this.context)) {
+      this.context = uuid4.generate();
+    }
+    if (angular.isUndefined(this.children)) {
+      this.children = [];
+    }
+  };
+  NavItem.prototype = {
+    /**
+     * @desc
+     * Return a server object representation that can be easily serialized
+     * to JSON and send to the backend.
+     * @memberof module:clb-collab.clbCollabNav.NavItem
+     * @return {object} server object representation
+     */
+    toJson: function() {
+      /* jshint camelcase: false */
+      return {
+        id: this.id,
+        app_id: this.appId,
+        collab: this.collabId,
+        name: this.name,
+        context: this.context,
+        order_index: this.order,
+        type: this.type || (this.folder ? 'FO' : 'IT'),
+        parent: this.parentId
+      };
+    },
+    /**
+     * @memberof module:clb-collab.clbCollabNav.NavItem
+     * @param  {object} attrs NavItem instance attributes
+     * @return {NavItemt} this instance
+     */
+    update: function(attrs) {
+      angular.forEach([
+        'id', 'name', 'children', 'context',
+        'collabId', 'appId', 'order', 'folder',
+        'parentId', 'type'
+      ], function(a) {
+        if (angular.isDefined(attrs[a])) {
+          this[a] = attrs[a];
+        }
+      }, this);
+
+      return this;
+    },
+    /**
+     * @memberof module:clb-collab.clbCollabNav.NavItem
+     * @return {NavItem} this instance
+     * @private
+     */
+    ensureCached: function() {
+      cacheNavItems.put(key(this.collabId, this.id), this);
+      return this;
+    }
+  };
+  /**
+   * Manage `acc` accumulator with all the data from jsonArray and return it.
+   *
+   * @param  {int} collabId  the collab ID
+   * @param  {array} jsonArray description of the children
+   * @param  {Array} acc       the accumulator
+   * @return {Array}           the children
+   */
+  function childrenFromJson(collabId, jsonArray, acc) {
+    acc = acc || [];
+    // an undefined array means we abort the process
+    // where an empty array will ensure the resulting array
+    // is empty as well.
+    if (angular.isUndefined(jsonArray)) {
+      return acc;
+    }
+
+    acc.length = 0;
+    angular.forEach(jsonArray, function(json) {
+      acc.push(NavItem.fromJson(collabId, json));
+    });
+    return acc;
+  }
+  /**
+   * Build an instance from the server object representation.
+   *
+   * @memberof module:clb-collab.clbCollabNav.NavItem
+   * @param  {number} collabId collab ID
+   * @param  {string} json server object representation
+   * @return {NavItem} new instance of NavItem
+   */
+  NavItem.fromJson = function(collabId, json) {
+    /* jshint camelcase: false */
+    var attrs = {
+      id: json.id,
+      appId: json.app_id,
+      collabId: collabId,
+      name: json.name,
+      context: json.context,
+      order: json.order_index,
+      folder: json.type === 'FO',
+      type: json.type,
+      parentId: json.parent,
+      children: childrenFromJson(collabId, json.children)
+    };
+    var k = key(collabId, attrs.id);
+    var cached = cacheNavItems.get(k);
+    if (cached) {
+      return cached.update(attrs);
+    }
+    return new NavItem(attrs).ensureCached();
+  };
+
+  /**
+   * Retrieve the root item of the given collab.
+   *
+   * @memberof module:clb-collab.clbCollabNav
+   * @param  {number} collabId collab ID
+   * @return {Promise} promise the root nav item
+   */
+  var getRoot = function(collabId) {
+    var treePromise = cacheNavRoots.get(collabId);
+
+    if (!treePromise) {
+      treePromise = $http.get(collabApiUrl + collabId + '/nav/all/').then(
+        function(resp) {
+          var root;
+          var i;
+          var item;
+          var data = orderByFilter(resp.data, '+order_index');
+
+          // fill in the cache
+          for (i = 0; i !== data.length; ++i) {
+            item = NavItem.fromJson(collabId, data[i]);
+            if (item.context === 'root') {
+              root = item;
+            }
+          }
+
+          // link children and parents
+          for (i = 0; i !== data.length; ++i) {
+            item = cacheNavItems.get(key(collabId, data[i].id));
+            if (item.parentId) {
+              var parent = cacheNavItems.get(key(collabId, item.parentId));
+              parent.children.push(item);
+            }
+          }
+
+          return root;
+        },
+        clbError.rejectHttpError
+      );
+
+      cacheNavRoots.put(collabId, treePromise);
+    }
+
+    return treePromise;
+  };
+
+  /**
+   * @memberof module:clb-collab.clbCollabNav
+   * @param  {number} collabId collab ID
+   * @param  {number} nodeId   node ID
+   * @return {NavItem} the matching nav item
+   */
+  var getNode = function(collabId, nodeId) {
+    return getRoot(collabId).then(function() {
+      var k = key(collabId, nodeId);
+      var item = cacheNavItems.get(k);
+
+      if (!item) {
+        $log.error('unknown nav item', k);
+      }
+
+      return item;
+    });
+  };
+
+  /**
+   * @memberof module:clb-collab.clbCollabNav
+   * @param  {str} ctx The context UUID
+   * @return {Promise}   The promise of a NavItem
+   */
+  var getNodeFromContext = function(ctx) {
+    var url = [
+      clbEnv.get('api.collab.v0'),
+      'collab/context',
+      ctx
+    ].join('/') + '/';
+    return $http.get(url)
+    .then(function(res) {
+      var nav = NavItem.fromJson(res.data.collab.id, res.data);
+      var k = key(nav.collabId, nav.id);
+      if (cacheNavItems.get(k)) {
+        nav = cacheNavItems.get(k).update(nav);
+      } else {
+        cacheNavItems.put(k, nav);
+      }
+      return nav;
+    }, function(res) {
+      return $q.reject(clbError.rejectHttpError(res));
+    });
+  };
+
+  /**
+   * @memberof module:clb-collab.clbCollabNav
+   * @param  {number} collabId collab ID
+   * @param  {number} navItem  the NavItem instance to add to the navigation
+   * @return {Promise} promise of the added NavItem instance
+   */
+  var addNode = function(collabId, navItem) {
+    return $http.post(collabApiUrl + collabId + '/nav/', navItem.toJson())
+    .then(function(resp) {
+      return NavItem.fromJson(collabId, resp.data);
+    }, clbError.rejectHttpError);
+  };
+
+  /**
+   * @memberof module:clb-collab.clbCollabNav
+   * @param  {number} collabId collab ID
+   * @param  {NavItem} navItem the NavItem instance to remove from the navigation
+   * @return {Promise} promise of an undefined item at the end
+   */
+  var deleteNode = function(collabId, navItem) {
+    return $http.delete(collabApiUrl + collabId + '/nav/' + navItem.id + '/')
+    .then(function() {
+      cacheNavItems.remove(key(collabId, navItem.id));
+    }, clbError.rejectHttpError);
+  };
+
+  /**
+   * @memberof module:clb-collab.clbCollabNav
+   * @param  {number} collabId collab ID
+   * @param  {NavItem} navItem the instance to update
+   * @return {Promise} promise the updated instance
+   */
+  var update = function(collabId, navItem) {
+    navItem.collabId = collabId;
+    return $http.put(collabApiUrl + collabId + '/nav/' +
+      navItem.id + '/', navItem.toJson())
+    .then(function(resp) {
+      return NavItem.fromJson(collabId, resp.data);
+    }, clbError.rejectHttpError);
+  };
+
+  // ordering operation needs to be globally queued to ensure consistency.
+  var insertQueue = $q.when();
+
+  /**
+   * Insert node in the three.
+   *
+   * A queue is used to ensure that the insert operation does not conflict
+   * on a single client.
+   *
+   * @memberof module:clb-collab.clbCollabNav
+   * @param  {int} collabId   id of the collab
+   * @param  {NavItem} navItem    Nav item instance
+   * @param  {NavItem} parentItem parent item
+   * @param  {int} insertAt   add to the menu
+   * @return {Promise}        a promise that will
+   *                          return the update nav item
+   */
+  function insertNode(collabId, navItem, parentItem, insertAt) {
+    return insertQueue.then(function() {
+      // first item order_index must be 1
+      navItem.order = (insertAt === -1 ? 1 : insertAt + 1);
+      navItem.parentId = parentItem.id;
+      return update(collabId, navItem);
+    });
+  }
+
+  /**
+   * Return a unique key for chaching a nav item.
+   * @param  {int} collabId collab ID
+   * @param  {int} nodeId   NavItem ID
+   * @return {string}       the unique key
+   * @private
+   */
+  function key(collabId, nodeId) {
+    return collabId + '--' + nodeId;
+  }
+
+  return {
+    NavItem: NavItem,
+    getRoot: getRoot,
+    getNode: getNode,
+    getNodeFromContext: getNodeFromContext,
+    addNode: addNode,
+    saveNode: update,
+    deleteNode: deleteNode,
+    insertNode: insertNode
+  };
+}]);
+
+angular.module('clb-collab')
+.factory('clbCollabTeamRole', clbCollabTeamRole);
+
+/**
+ * @namespace clbCollabTeamRole
+ * @memberof module:clb-collab
+ * @param  {object} $http    Angular DI
+ * @param  {object} $log     Angular DI
+ * @param  {object} $q       Angular DI
+ * @param  {object} clbEnv   Angular DI
+ * @param  {object} clbError Angular DI
+ * @return {object}          Angular Service
+ */
+function clbCollabTeamRole($http, $log, $q, clbEnv, clbError) {
+  var urlBase = clbEnv.get('api.collab.v0');
+  var collabUrl = urlBase + '/collab/';
+  var rolesCache = {};
+
+  return {
+    get: get,
+    set: set
+  };
+
+  /**
+   * Retrieve the role of a user.
+   * @param  {int}    collabId  Collab ID
+   * @param  {string} userId    User ID
+   * @return {string}           The user role
+   */
+  function get(collabId, userId) {
+    if (!userId) {
+      $log.error('Must provide userId: ', collabId, userId);
+      return;
+    }
+    if (!rolesCache[collabId]) {
+      rolesCache[collabId] = {};
+    }
+    if (rolesCache[collabId] && rolesCache[collabId][userId]) {
+      return $q.when(rolesCache[collabId][userId]);
+    }
+    return $http.get(collabUrl + collabId + '/team/role/' + userId + '/')
+    .then(function(res) {
+      rolesCache[collabId][userId] = res.data.role;
+      return $q.when(rolesCache[collabId][userId]);
+    }, function(res) {
+      if (res.status === 404) {
+        rolesCache[collabId][userId] = undefined;
+        return $q.when(rolesCache[collabId][userId]);
+      }
+      clbError.rejectHttpError(res);
+    });
+  }
+
+  /**
+   * Set the role of a User within a Collab.
+   * @param {int} collabId    Collab ID
+   * @param {string} userId   User ID
+   * @param {string} role     Role description
+   * @return {Promise}        Resolve when the role is set.
+   */
+  function set(collabId, userId, role) {
+    var thisUrl = collabUrl + collabId + '/team/role/' + userId + '/';
+    if (rolesCache[collabId] && rolesCache[collabId][userId]) {
+      rolesCache[collabId][userId] = role;
+      return $http.put(thisUrl, {role: role})
+      .catch(function(resp) {
+        if (resp.status === 404) { // should have been a POST...
+          return $http.post(thisUrl, {role: role})
+          .catch(clbError.rejectHttpError);
+        }
+        return clbError.rejectHttpError(resp);
+      });
+    }
+    if (!rolesCache[collabId]) {
+      rolesCache[collabId] = {};
+    }
+    rolesCache[collabId][userId] = role;
+    return $http.post(thisUrl, {role: role})
+    .catch(clbError.rejectHttpError);
+  }
+}
+
+angular.module('clb-collab')
+.factory('clbCollabTeam', clbCollabTeam);
+
+/**
+ * Angular client to access Collab Team REST endpoint.
+ *
+ * @namespace clbCollabTeam
+ * @memberof module:clb-collab
+ * @param  {object} $http             Angular DI
+ * @param  {object} $log              Angular DI
+ * @param  {object} $q                Angular DI
+ * @param  {object} lodash            Angular DI
+ * @param  {object} clbEnv            Angular DI
+ * @param  {object} clbError          Angular DI
+ * @param  {object} clbCollabTeamRole Angular DI
+ * @param  {object} clbUser           Angular DI
+ * @return {object}                   Angular Service
+ */
+function clbCollabTeam(
+  $http,
+  $log,
+  $q,
+  lodash,
+  clbEnv,
+  clbError,
+  clbCollabTeamRole,
+  clbUser
+) {
+  var urlBase = clbEnv.get('api.collab.v0');
+  var collabUrl = urlBase + '/collab/';
+
+  return {
+    add: add,
+    delete: remove, // backward compatibility
+    remove: remove,
+    list: list,
+    userInTeam: userInTeam,
+    roles: clbCollabTeamRole // backward compatibility
+  };
+
+  /**
+   * Add a team member to a Collab.
+   * @param  {int} collabId the Collab id
+   * @param  {string} userId the User id
+   * @return {Promise} resolve after the user has been added
+   */
+  function add(collabId, userId) {
+    return $http.put(collabUrl + collabId + '/team/', {
+      users: [userId]
+    }).catch(clbError.rejectHttpError);
+  }
+
+  /**
+   * Remove a team member from a Collab.
+   * @param  {int} collabId the Collab id
+   * @param  {string} userId the User id
+   * @return {Promise} resolve after the user has been added
+   */
+  function remove(collabId, userId) {
+    return $http({
+      method: 'DELETE',
+      url: collabUrl + collabId + '/team/',
+      data: {users: [userId]},
+      headers: {'Content-Type': 'application/json'}
+    }).catch(clbError.rejectHttpError);
+  }
+
+  /**
+   * List team members from the Collab.
+   * @param  {int} collabId The collab ID
+   * @return {Promise}      Resolve to an array of user with injected membership
+   *                        informations.
+   */
+  function list(collabId) {
+    return $http.get(collabUrl + collabId + '/team/')
+    .then(function(res) {
+      var indexedTeam = lodash.keyBy(res.data, 'user_id');
+      return clbUser.list({
+        pageSize: 0,
+        filter: {
+          id: lodash.keys(indexedTeam)
+        }
+      }).then(function(data) {
+        return lodash.reduce(data.results, function(res, user) {
+          var membershipInfo = indexedTeam[parseInt(user.id, 10)];
+          if (membershipInfo) {
+            res.push(angular.extend({}, user, {
+              membershipId: membershipInfo.user_id,
+              role: membershipInfo.role
+            }));
+          }
+          return res;
+        }, []);
+      });
+    }, clbError.rejectHttpError);
+  }
+
+  /**
+   * Return true if the current user is in the team
+   * @param  {int} collabId The collab ID
+   * @return {Promise}      Resolve to a boolean
+   */
+  function userInTeam(collabId) {
+    return clbUser.getCurrentUserOnly().then(function(me) {
+      return $http.get(collabUrl + collabId + '/team/')
+      .then(function(list) {
+        return lodash.keyBy(
+          list.data, 'user_id')[parseInt(me.id, 10)] !== undefined;
+      });
+    });
+  }
+}
+
+angular.module('clb-collab')
+.factory('ClbCollabModel', function() {
+  /**
+   * Representation of a Collab.
+   * @memberof module:clb-collab
+   * @param {object} [attributes] initial values
+   */
+  function ClbCollabModel(attributes) {
+    if (!attributes) {
+      attributes = {};
+    }
+    this.id = attributes.id;
+    this.created = attributes.created || null;
+    this.edited = attributes.edited || null;
+    this.title = attributes.title || '';
+    this.content = attributes.content || '';
+    this.private = attributes.private || false;
+    this.deleted = attributes.deleted || null;
+  }
+  ClbCollabModel.prototype = {
+    toJson: function() {
+      return {
+        id: this.id,
+        title: this.title,
+        content: this.content,
+        private: this.private
+      };
+    },
+    update: function(attrs) {
+      angular.forEach(['id', 'title', 'content', 'private'], function(a) {
+        if (attrs[a] !== undefined) {
+          this[a] = attrs[a];
+        }
+      }, this);
+    }
+  };
+  ClbCollabModel.fromJson = function(json) {
+    if (json.toJson) {
+      return json;
+    }
+    var c = new ClbCollabModel(json);
+    return c;
+  };
+  return ClbCollabModel;
+});
+
+/* eslint camelcase:0 */
+angular.module('clb-collab')
+.factory('clbCollab', clbCollab);
+
+/**
+ * @namespace clbCollab
+ * @memberof module:clb-collab
+ * @desc
+ * Provide a javascript client to query the Collab REST service.
+ *
+ * @param  {object} $log             Angular injection
+ * @param  {object} $q               Angular injection
+ * @param  {object} $cacheFactory    Angular injection
+ * @param  {object} $http            Angular injection
+ * @param  {object} lodash           Angular injection
+ * @param  {object} clbContext       Angular injection
+ * @param  {object} clbEnv           Angular injection
+ * @param  {object} clbError         Angular injection
+ * @param  {object} clbResultSet     Angular injection
+ * @param  {object} clbUser          Angular injection
+ * @param  {object} ClbCollabModel   Angular injection
+ * @param  {object} ClbContextModel  Angular injection
+ * @return {object}                  Angular Service
+ */
+function clbCollab(
+  $log,
+  $q,
+  $cacheFactory,
+  $http,
+  lodash,
+  clbContext,
+  clbEnv,
+  clbError,
+  clbResultSet,
+  clbUser,
+  ClbCollabModel,
+  ClbContextModel
+) {
+  var urlBase = clbEnv.get('api.collab.v0');
+  var collabUrl = urlBase + '/collab/';
+  var myCollabsUrl = urlBase + '/mycollabs/';
+  var collabCache = $cacheFactory('clbCollabInstances');
+  var ongoingCollabGetRequests = {};
+
+  return {
+    Collab: ClbCollabModel,   // backward compatibility
+    Context: ClbContextModel, // backward compatibility
+    context: clbContext,      // backward compatibility
+    get: get,
+    getByLabel: getByLabel,
+    list: list,
+    mine: mine,
+    create: create,
+    save: save,
+    delete: deleteCollab
+  };
+
+  /**
+   * Retrieve the promise of an ongoing request if it exists.
+   * @param  {string} key caching key
+   * @return {Promise}    the existing promise
+   * @private
+   */
+  function getPromiseFromCache(key) {
+    var collab = collabCache.get(key);
+    if (collab) {
+      return $q.when(collab);
+    }
+    if (ongoingCollabGetRequests[key]) {
+      return ongoingCollabGetRequests[key];
+    }
+  }
+
+  /**
+   * Retrieve a collab.
+   * @param  {string} url [description]
+   * @param  {string} key cache key to retrieve
+   * @return {Promise}    Resolve to a collab
+   * @private
+   */
+  function getter(url, key) {
+    if (!key) {
+      return $q.reject(clbError.error({message: 'id parameter is required'}));
+    }
+
+    var promise = getPromiseFromCache(key);
+    if (promise) {
+      return promise;
+    }
+
+    ongoingCollabGetRequests[key] = $http.get(url + key + '/')
+    .then(function(res) {
+      ongoingCollabGetRequests[key] = null;
+      return ClbCollabModel.fromJson(res.data);
+    }, function(res) {
+      ongoingCollabGetRequests[key] = null;
+      return clbError.rejectHttpError(res);
+    });
+    return ongoingCollabGetRequests[key];
+  }
+
+  /**
+   * Retrieve a collab given its id.
+   * @param  {int} id the Collab ID
+   * @return {Promise}    Will resolve to a ClbCollabModel
+   */
+  function get(id) {
+    id = (id && id.id) || id;
+    return getter(collabUrl, id).then(function(collab) {
+      collabCache.put(collab.id, collab);
+      return collab;
+    });
+  }
+
+  /**
+   * Ensure the collab is in cache for the given label.
+   * @param  {ClbCollabModel} collab instance to cache
+   * @param  {string} label   the label
+   * @return {ClbCollabModel} the cached collab
+   * @private
+   */
+  function cacheCollabWithLabel(collab, label) {
+    // ensure the collab is in cache for this label
+    // to avoid duplicate reference for it.
+    if (!collab._label) {
+      collab._label = label;
+      collabCache.put(label, collab);
+      collabCache.put(collab.id, collab);
+    }
+    return collab;
+  }
+
+  /**
+   * Retrieve a collab using a string label.
+   * @param  {string} label the label associated to the Collab
+   * @return {Promise}      will resolve to a ClbCollabModel instance
+   */
+  function getByLabel(label) {
+    return getter(urlBase + '/r/', label).then(function(collab) {
+      // Ensure the collab has not been fetched by id already.
+      // This might occurs if the collab was fetched by id the first
+      // time. In this case, no way to know its associated label.
+      var promise = getPromiseFromCache(collab.id);
+      if (promise) {
+        return promise.then(function(c) {
+          return cacheCollabWithLabel(c, label);
+        });
+      }
+      return cacheCollabWithLabel(collab, label);
+    });
+  }
+
+  /**
+   * @name list
+   * @desc
+   * list return the a hbpUtil.ResultSet instance containing the collab
+   * matching the given parameters.
+   *
+   * @param {Object} [options] the request options
+   * @param {string} [options.search] search string to filter the results
+   * @param {(string|string[])} [options.id] string or array of collab ids
+   * @param {int}  [options.pageSize=25] number of result per page
+   * @param {int}  [options.page] the page to retrive
+   * @param {Object} [options.params] DEPRECATED any query parameter
+   * @param {string} [options.url] DEPRECATED overide the default URL
+   * @return {hbpUtil.ResultSet} a result set of results
+   */
+  function list(options) {
+    var url = collabUrl;
+    var request;
+    // support old signature (url, options)
+    if (angular.isString(options)) {
+      url = options;
+      options = arguments[1];
+    }
+    options = angular.extend({}, options);
+
+    if (angular.isArray(options.id)) {
+      options.id = options.id.join(',');
+    }
+
+    if (options.pageSize) {
+      options.page_size = options.pageSize;
+    }
+
+    if (options.url) { // Deprecated URL support
+      request = $http.get(options.url);
+    } else {
+      request = $http.get(url, {
+        params: angular.extend(
+          {},
+          options.params,
+          lodash.pick(options, ['search', 'id', 'page_size', 'page'])
+        )
+      });
+    }
+    return clbResultSet.get(request, {
+      resultsFactory: resultsFactory
+    });
+  }
+
+  /**
+   * @name mine
+   * @description
+   * `mine` return a hbpUtil.ResultSet of the user collabs.
+   *
+   * @param {Object} [options] request options
+   * @param {string} [options.search] search string to filter the results
+   * @param {int}  [options.pageSize] number of result per page
+   * @param {int}  [options.page] the page to retrive
+   * @return {hbpUtil.ResultSet} the current user collabs
+   */
+  function mine(options) {
+    options = angular.extend({}, options);
+    var params = angular.extend({}, lodash.pick(options, ['search']));
+    return clbResultSet.get($http.get(myCollabsUrl, {params: params}), {
+      resultsFactory: resultsFactory
+    });
+  }
+
+  /**
+   * Create a new collab using a model instance or the server data representation.
+   * @param  {object|ClbCollabModel} jsonCollab JSON representation of the new collab
+   * @return {Promise}           Resolve to the new Collab
+   */
+  function create(jsonCollab) {
+    var c = ClbCollabModel.fromJson(jsonCollab);
+    return $http.post(collabUrl, c.toJson()).then(function(res) {
+      c.update(res.data);
+      collabCache.put(c.id, c);
+      return c;
+    }, clbError.rejectHttpError);
+  }
+
+  /**
+   * Save a collab using its JSON server representation or a collab instance.
+   * @param  {object|ClbCollabModel} jsonCollab JSON representation of a Collab
+   * @return {Promise}           resolve to the Collab instance.
+   */
+  function save(jsonCollab) {
+    var c = ClbCollabModel.fromJson(jsonCollab);
+    return $http.put(collabUrl + c.id + '/', c.toJson()).then(function(res) {
+      c.update(res.data);
+      collabCache.put(c.id, c);
+      return c;
+    }, clbError.rejectHttpError);
+  }
+
+  /**
+   * @function delete
+   * @desc
+   * Delete the collab.
+   * @param  {ClbCollabModel} collab The collab instance to delete
+   * @return {Promise}       Resolve once the delete operation is completed
+   */
+  function deleteCollab(collab) {
+    return $http.delete(collabUrl + collab.id + '/').then(
+      function() {
+        collabCache.remove(collab.id);
+        if (collab._label) {
+          collabCache.remove(collab._label);
+        }
+      }, clbError.rejectHttpError
+    );
+  }
+
+  /**
+   * Build the instance from a result list.
+   *
+   * @param  {array} results Array of object
+   * @return {array}         Array of Collab
+   */
+  function resultsFactory(results) {
+    return lodash.map(results, ClbCollabModel.fromJson);
+  }
+}
+
+angular.module('clb-collab')
+.factory('ClbContextModel', ['ClbCollabModel', function(ClbCollabModel) {
+  /**
+   * Representation of a Collab Context.
+   * @memberof module:clb-collab
+   */
+  function ClbContextModel() {}
+  ClbContextModel.fromJson = function(json) {
+    var c = new ClbContextModel();
+    c.context = json.context;
+    c.appId = json.app_id;
+    c.name = json.name;
+    c.navId = json.id;
+    c.collab = ClbCollabModel.fromJson(json.collab);
+    c.toJson = function() {
+      return {
+        context: json.context,
+        appId: json.app_id,
+        name: c.name
+      };
+    };
+    return c;
+  };
+  return ClbContextModel;
+}]);
+
+angular.module('clb-collab')
+.factory('clbContext', clbContext);
+
+/**
+ * @namespace clbContext
+ * @memberof module:clb-collab
+ * @param  {object} $http             Angular DI
+ * @param  {object} $q                Angular DI
+ * @param  {object} clbError          Angular DI
+ * @param  {object} clbEnv            Angular DI
+ * @param  {class}  ClbContextModel   Angular DI
+ * @return {object}                   the service
+ */
+function clbContext($http, $q, clbError, clbEnv, ClbContextModel) {
+  var ongoingContextRequests = {};
+  var urlBase = clbEnv.get('api.collab.v0');
+  var collabUrl = urlBase + '/collab/';
+  var contextUrl = collabUrl + 'context/';
+
+  return {
+    get: get
+  };
+
+  /**
+   * @memberof module:clb-collab.clbContext
+   * @param  {string} uuid UUID of the context
+   * @return {Promise}     Resolve to the ClbContextModel instance
+   */
+  function get(uuid) {
+    if (!uuid) {
+      return $q.reject(clbError.error({
+        message: 'uuid parameter is required'
+      }));
+    }
+    // return the promise of an ongoing request
+    if (ongoingContextRequests[uuid]) {
+      return ongoingContextRequests[uuid];
+    }
+    // proceed to the request
+    ongoingContextRequests[uuid] =
+      $http.get(contextUrl + uuid + '/', {cache: true})
+    .then(function(res) {
+      ongoingContextRequests[uuid] = null;
+      return ClbContextModel.fromJson(res.data);
+    }, function(res) {
+      ongoingContextRequests[uuid] = null;
+      return clbError.rejectHttpError(res);
+    });
+    return ongoingContextRequests[uuid];
   }
 }
 
