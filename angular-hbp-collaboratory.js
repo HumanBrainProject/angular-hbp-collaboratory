@@ -6163,7 +6163,7 @@ function clbFeed() {
     controller: FeedController,
     controllerAs: 'vm',
     bindToController: true,
-    template:'<ul class="feed list-group" ng-class="{\'feed-empty\': vm.activities.results.length === 0}"><li ng-if=vm.error class=list-group-item><div class="alert alert-warning"><strong>Load Error:</strong> {{vm.error}}</div></li><li class=list-group-item ng-if="!vm.activities && !vm.error"><hbp-loading></hbp-loading></li><li class=list-group-item ng-if="vm.activities.results.length === 0"><div class="alert alert-info">Nothing new</div></li><li class=list-group-item ng-repeat="a in vm.activities.results" clb-activity=a></li><li class=list-group-item ng-if=vm.activities.hasNext><a clb-perform-action=vm.activities.next() class="btn btn-default">More</a></li></ul>',
+    template:'<ul class="feed list-group" ng-class="{\'feed-empty\': vm.activities.results.length === 0}"><li ng-if=vm.error class=list-group-item><div class="alert alert-warning"><strong>Load Error:</strong> {{vm.error}}</div></li><li class=list-group-item ng-if="!vm.activities && !vm.error"><hbp-loading></hbp-loading></li><li class=list-group-item ng-if="vm.activities.results.length === 0"><div class="alert alert-info">Nothing new</div></li><li class=list-group-item ng-repeat="a in vm.activities.results | limitTo : vm.activitiesLimit" clb-activity=a></li><li class=list-group-item><span class=text-muted>Showing {{vm.activitiesLimit}} of {{vm.activities.results.length}}</span></li><li class=list-group-item><a class="btn btn-default" ng-click=vm.loadMore() ng-if="vm.activities.results.length > vm.activitiesLimit">Load more</a> <a class="btn btn-default" ng-click=vm.loadLess() ng-if="vm.activitiesLimit > 15">Load less</a></li></ul>',
     link: function(scope, elt) {
       elt.addClass('clb-feed');
       var unbind = scope.$on(
@@ -6186,8 +6186,18 @@ function clbFeed() {
  */
 function FeedController($log, clbStream, clbUser) {
   var vm = this;
+  vm.activitiesLimit = 15;
 
   activate();
+
+  vm.loadMore = function() {
+    var incremented = vm.activitiesLimit + 15;
+    vm.activitiesLimit = incremented > vm.activities.results.length ? vm.activities.results.length : incremented;
+  };
+
+  vm.loadLess = function() {
+    vm.activitiesLimit = 15;
+  };
 
   /* ------------- */
 
