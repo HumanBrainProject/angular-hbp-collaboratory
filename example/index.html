@@ -31,7 +31,7 @@
 
       <div class="panel panel-default">
         <div class="panel-heading">
-          Identity UI
+          <h4>Identity UI</h4>
         </div>
         <div class="panel-body" ng-controller="UiIdentityController as vm">
           <h4>User Avatar</h4>
@@ -62,8 +62,17 @@
           <clb-user-avatar style="width: 60px; height: 60px;" clb-user="vm.user"></clb-user-avatar>
 
           <h4>User Card</h4>
-          <clb-usercard clb-user="vm.user"></clb-usercard>
-          <uib-alert ng-if="!vm.user">
+          <clb-usercard clb-user="vm.user" ng-if="vm.logged"></clb-usercard>
+          <uib-alert ng-if="!vm.logged">
+            <strong>Not available:</strong> You must login to see the user card.
+          </uib-alert>
+
+          <h4>User Select</h4>
+          <div class="content" ng-if="vm.logged">
+            <clb-user-select ng-model="vm.selectedUser"></clb-user-select>
+          </div>
+          <clb-usercard clb-user="vm.selectedUser" ng-if="vm.selectedUser"></clb-usercard>
+          <uib-alert ng-if="!vm.logged">
             <strong>Not available:</strong> You must login to see the user card.
           </uib-alert>
         </div>

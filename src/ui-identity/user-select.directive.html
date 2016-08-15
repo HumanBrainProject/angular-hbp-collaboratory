@@ -1,0 +1,9 @@
+<input type="text"
+       ng-model="ngModel"
+       uib-typeahead="user as user.displayName for user in search($viewValue) | limitTo:8"
+       typeahead-editable="false"
+       typeahead-loading="loading"
+       typeahead-no-results="noResults"
+       typeahead-template-url="user-select-item.tpl.html"
+       placeholder="{{placeholder}}"
+       class="form-control">

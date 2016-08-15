@@ -231,6 +231,9 @@ li.clb-activity-item {
 .clb-user-avatar-icon-hue-8 .clb-user-avatar-icon-fill {
   fill: #456e91; }
 
+.clb-user-select-item {
+  cursor: pointer; }
+
 [ng\:cloak],
 [ng-cloak],
 [data-ng-cloak],

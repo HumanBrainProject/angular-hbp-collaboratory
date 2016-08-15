@@ -27,10 +27,10 @@
  * Module to load all the core modules. Try to use the sub-modules instead.
  * @module hbpCollaboratoryCore
  */
+clbAutomator.$inject = ['$q', '$log', 'clbError'];
 clbApp.$inject = ['$log', '$q', '$rootScope', '$timeout', '$window', 'clbError'];
 authProvider.$inject = ['clbAppHello', 'clbEnvProvider'];
 clbAuthHttp.$inject = ['$http', 'clbAuth'];
-clbAutomator.$inject = ['$q', '$log', 'clbError'];
 clbCollabTeamRole.$inject = ['clbAuthHttp', '$log', '$q', 'clbEnv', 'clbError'];
 clbCollabTeam.$inject = ['clbAuthHttp', '$log', '$q', 'lodash', 'clbEnv', 'clbError', 'clbCollabTeamRole', 'clbUser'];
 clbCollab.$inject = ['$log', '$q', '$cacheFactory', 'clbAuthHttp', 'lodash', 'clbContext', 'clbEnv', 'clbError', 'clbResultSet', 'clbUser', 'ClbCollabModel', 'ClbContextModel'];
@@ -47,6 +47,7 @@ clbResourceLocator.$inject = ['$q', '$log', '$injector', 'clbError'];
 clbStream.$inject = ['clbAuthHttp', 'clbEnv', 'clbError', 'clbResultSet', 'moment'];
 clbConfirm.$inject = ['$rootScope', '$uibModal'];
 clbErrorDialog.$inject = ['$uibModal', 'clbError'];
+clbUserSelect.$inject = ['clbUser'];
 clbUsercardPopoverDirective.$inject = ['$log', '$q', 'clbUser', 'clbUsercardPopover'];
 clbUserCardPopoverService.$inject = ['$rootScope'];
 clbUsercard.$inject = ['lodash'];
@@ -100,22 +101,6 @@ angular.module('hbpCollaboratory', [
  * @typedef {string} UUID A string formatted as a valid UUID4
  */
 
-/* global hello */
-
-/**
- * @module clb-app
- * @desc
- * ``clb-app`` module provides utilities to retrieve current
- * HBP Collaboratory Context in an app and to communicate with the current
- * Collaboratory instance.
- *
- * This module must be bootstraped using ``angular.clbBootstrap`` function as
- * it needs to load the global environment loaded in CLB_ENBIRONMENT angular
- * constant.
- */
-angular.module('clb-app', ['clb-env', 'clb-error'])
-.constant('clbAppHello', hello);
-
 /**
  * @module clb-automator
  * @desc
@@ -134,6 +119,22 @@ angular.module('clb-automator', [
   'clb-collab',
   'clb-storage'
 ]);
+
+/* global hello */
+
+/**
+ * @module clb-app
+ * @desc
+ * ``clb-app`` module provides utilities to retrieve current
+ * HBP Collaboratory Context in an app and to communicate with the current
+ * Collaboratory instance.
+ *
+ * This module must be bootstraped using ``angular.clbBootstrap`` function as
+ * it needs to load the global environment loaded in CLB_ENBIRONMENT angular
+ * constant.
+ */
+angular.module('clb-app', ['clb-env', 'clb-error'])
+.constant('clbAppHello', hello);
 
 /**
  * @module clb-collab
@@ -298,467 +299,6 @@ angular.module('clb-ui-stream', [
   'clb-stream',
   'clb-ui-error'
 ]);
-
-angular.module('clb-app')
-.factory('clbApp', clbApp);
-
-/**
- * @namespace clbApp
- * @memberof module:clb-app
- * @desc
- * An AngularJS service to interface a web application with the HBP Collaboratory.
- * This library provides a few helper to work within the Collaboratory environment.
- *
- * Usage
- * -----
- *
- * - :ref:`module-clb-app.clbApp.context` is used to set and retrieve
- *   the current context.
- * - :ref:`module-clb-app.clbApp.emit` is used to send a command
- *   to the HBP Collaboratory and wait for its answer.
- *
- * @example <caption>Retrieve the current context object</caption>
- * clbApp.context()
- * .then(function(context) {
- *   console.log(context.ctx, context.state, context.collab);
- * })
- * .catch(function(err) {
- *   // Cannot set the state
- * });
- *
- * @example <caption>Set the current state in order for a user to be able to copy-paste its current URL and reopen the same collab with your app loaded at the same place.</caption>
- * clbApp.context({state: 'lorem ipsum'})
- * .then(function(context) {
- *   console.log(context.ctx, context.state, context.collab);
- * })
- * .catch(function(err) {
- *   // Cannot set the state
- * });
- *
- * @param  {object} $log AngularJS service injection
- * @param  {object} $q AngularJS service injection
- * @param  {object} $rootScope AngularJS service injection
- * @param  {object} $timeout AngularJS service injection
- * @param  {object} $window AngularJS service injection
- * @param  {object} clbError AngularJS service injection
- * @return {object}         the service singleton
- */
-function clbApp(
-  $log,
-  $q,
-  $rootScope,
-  $timeout,
-  $window,
-  clbError
-) {
-  var eventId = 0;
-  var sentMessages = {};
-
-  /**
-   * Singleton class
-   */
-  function AppToolkit() { }
-  AppToolkit.prototype = {
-    emit: emit,
-    context: context,
-    open: open
-  };
-
-  $window.addEventListener('message', function(event) {
-    $rootScope.$emit('message', event.data);
-  });
-
-  $rootScope.$on('message', function(event, message) {
-    if (!message || !message.origin || !sentMessages[message.origin]) {
-      return;
-    }
-    if (message.eventName === 'resolved') {
-      sentMessages[message.origin].resolve(message.data);
-    } else if (message.eventName === 'error') {
-      sentMessages[message.origin].reject(clbError.error(message.data));
-    }
-    sentMessages[message.origin] = null;
-  });
-
-  /**
-   * Send a message to the HBP Collaboratory.
-   * @memberof module:clb-app.clbApp
-   * @param  {string} name name of the event to be propagated
-   * @param  {object} data corresponding data to be sent alongside the event
-   * @return  {Promise} resolve with the message response
-   */
-  function emit(name, data) {
-    eventId++;
-    sentMessages[eventId] = $q.defer();
-    var promise = sentMessages[eventId].promise;
-    $window.parent.postMessage({
-      apiVersion: 1,
-      eventName: name,
-      data: data,
-      ticket: eventId
-    }, '*');
-    return promise;
-  }
-
-  var currentContext;
-
-  /**
-   * @typedef HbpCollaboratoryContext
-   * @memberof module:clb-app.clbApp
-   * @type {object}
-   * @property {string} mode - the current mode, either 'run' or 'edit'
-   * @property {string} ctx - the UUID of the current context
-   * @property {string} state - an application defined state string
-   */
-
-   /**
-    * @memberof module:clb-app.clbApp
-    * @desc
-    * Asynchronously retrieve the current HBP Collaboratory Context, including
-    * the mode, the ctx UUID and the application state if any.
-    * @function context
-    * @param {object} data new values to send to HBP Collaboratory frontend
-    * @return {Promise} resolve to the context
-    * @static
-    */
-  function context(data) {
-    var d = $q.defer();
-    var kill = $timeout(function() {
-      d.reject(clbError.error({
-        type: 'TimeoutException',
-        message: 'No context can be retrieved'
-      }));
-    }, 250);
-
-    if (data) {
-      // discard context if new data should be set.
-      currentContext = null;
-    }
-
-    if (currentContext) {
-      // directly return context when cached.
-      return d.resolve(currentContext);
-    }
-    emit('workspace.context', data)
-    .then(function(context) {
-      $timeout.cancel(kill);
-      currentContext = context;
-      d.resolve(context);
-    })
-    .catch(function(err) {
-      d.reject(clbError.error(err));
-    });
-    return d.promise;
-  }
-  return new AppToolkit();
-
-  /**
-   * @desc
-   * Open a resource described by the given ObjectReference.
-   *
-   * The promise will fulfill only if the navigation is possible. Otherwise,
-   * an error will be returned.
-   * @function open
-   * @memberof module:clb-app.clbApp
-   * @param {ObjectReference} ref  The object reference to navigate to
-   * @return {Promise}  The promise retrieved by the call to emit
-   */
-  function open(ref) {
-    $log.debug('Ask the frontend to navigate to:', ref);
-    return emit('resourceLocator.open', {ref: ref});
-  }
-}
-
-/* eslint require-jsdoc:0 valid-jsdoc:0 */
-angular.module('clb-app')
-.provider('clbAuth', authProvider);
-
-function authProvider(clbAppHello, clbEnvProvider) {
-  return {
-    $get: ['$http', '$log', '$q', '$rootScope', '$timeout', 'clbEnv', 'clbError', function($http, $log, $q, $rootScope, $timeout, clbEnv, clbError) {
-      _addHbpProvider();
-      _loadApplicationInfo();
-      _bindEvents();
-
-      return {
-        login: login,
-        logout: logout,
-        getAuthInfo: getAuthInfo
-      };
-
-      function login(options) {
-        var d = $q.defer();
-        clbAppHello.login('hbp', options)
-        .then(function(res) {
-          d.resolve(getAuthInfo(res.authResponse));
-        }, function(err) {
-          d.reject(_formatError(err));
-        });
-        return d.promise;
-      }
-
-      function logout(options) {
-        var info = getAuthInfo();
-        if (!info) {
-          return $q.when(true);
-        }
-        var d = $q.defer();
-        clbAppHello.logout('hbp', options)
-        .then(function() {
-          return d.resolve(true);
-        }, function(err) {
-          d.reject(_formatError(err));
-        });
-        return d.promise;
-      }
-
-      function getAuthInfo(authResponse) {
-        authResponse = authResponse || clbAppHello.getAuthResponse('hbp');
-        if (!authResponse) {
-          return null;
-        }
-        return {
-          accessToken: authResponse.access_token,
-          tokenType: authResponse.token_type,
-          // When no scopes are specified, the server will generate a token
-          // with the app default scopes. In this case hello.js don't know what
-          // they are so we set the value to undefined by convention.
-          scope: authResponse.scope || undefined,
-          expires: authResponse.expires
-        };
-      }
-
-      function _formatError(err) {
-        return clbError.error({
-          type: err.error.code,
-          message: err.error.message,
-          data: err
-        });
-      }
-
-      function _bindEvents() {
-        clbAppHello.on('auth.login', _handleAuthInfoChange);
-        clbAppHello.on('auth.logout', _handleAuthInfoChange);
-      }
-
-      function _handleAuthInfoChange(data, name) {
-        if (data.network !== 'hbp') {
-          return;
-        }
-        $log.debug('propagate auth event from original event', name);
-        $timeout(function() {
-          $rootScope.$broadcast('clbAuth.changed', getAuthInfo());
-        }, 0);
-      }
-
-      /**
-       * Define a new provider Hello.js provider for HBP
-       */
-      function _addHbpProvider() {
-        clbAppHello.init({
-          hbp: {
-            name: 'Human Brain Project',
-            oauth: {
-              version: '2',
-              auth: clbEnvProvider.get('auth.url') + '/authorize',
-              grant: clbEnvProvider.get('auth.url') + '/token'
-            },
-            // API base URL
-            base: clbEnvProvider.get('auth.url') + '/',
-            scope_delim: ' ', // eslint-disable-line camelcase
-            login: function(p) {
-              // Reauthenticate
-              if (p.options.force) {
-                p.qs.prompt = 'login';
-              }
-              if (!p.qs.scope) {
-                delete p.qs.scope;
-              }
-            },
-            logout: function(callback, p) {
-              $http.post(clbEnv.get('auth.url') + '/slo', {
-                token: p.authResponse.access_token
-              }, {
-                withCredentials: true
-              })
-              .then(function() {
-                callback();
-              })
-              .catch(function(err) {
-                $log.error('Cannot kill the global session');
-                $log.debug(err);
-                callback();
-              });
-            }
-          }
-        });
-      }
-
-      /**
-       * Set the current application data.
-       */
-      function _loadApplicationInfo() {
-        clbAppHello.init({
-          hbp: clbEnvProvider.get('auth.clientId')
-        }, {
-          default_service: 'hbp', // eslint-disable-line camelcase
-          display: 'page',
-          scope: clbEnvProvider.get('auth.scopes', null),
-          force: false
-        });
-      }
-    }]
-  };
-}
-
-angular.module('clb-app')
-.factory('clbAuthHttp', clbAuthHttp);
-
-/**
- * Proxy $http to add the HBP bearer token.
- * Also handle 401 Authentication Required errors.
- * See $http service
- *
- * @param  {object} $http   DI
- * @param  {object} clbAuth DI
- * @return {function}       the service
- */
-function clbAuthHttp($http, clbAuth) {
-  var proxyHttp = function(config) {
-    var auth = clbAuth.getAuthInfo();
-    if (!auth) {
-      return $http(config);
-    }
-    var authToken = auth.tokenType + ' ' + auth.accessToken;
-    if (!config.headers) {
-      config.headers = {
-        Authorization: authToken
-      };
-    }
-    config.headers.Authorization = authToken;
-    return $http(config);
-  };
-  proxyHttp.get = _wrapper('GET');
-  proxyHttp.head = _wrapper('HEAD');
-  proxyHttp.delete = _wrapper('DELETE');
-  proxyHttp.post = _wrapperData('POST');
-  proxyHttp.put = _wrapperData('PUT');
-  proxyHttp.patch = _wrapperData('PATCH');
-  return proxyHttp;
-
-  /**
-   * Handle $http helper call for GET, DELETE, HEAD requests.
-   *
-   * @param  {string} verb the HTTP verb
-   * @return {function}    The function to attach
-   */
-  function _wrapper(verb) {
-    return function(url, config) {
-      config = config || {};
-      config.method = verb.toUpperCase();
-      config.url = url;
-      return proxyHttp(config);
-    };
-  }
-
-  /**
-   * Handle $http helper call for PUT, PATCH, POST requests.
-   *
-   * @param  {string} verb the HTTP verb
-   * @return {function}    The function to attach
-   */
-  function _wrapperData(verb) {
-    return function(url, data, config) {
-      config = config || {};
-      config.method = verb.toUpperCase();
-      config.url = url;
-      config.data = data;
-      return proxyHttp(config);
-    };
-  }
-}
-
-/* global deferredBootstrapper, window, document */
-
-/**
- * @namespace angular
- */
-
-angular.clbBootstrap = clbBootstrap;
-
-/**
- * Bootstrap AngularJS application with the HBP environment loaded.
- *
- * It is very important to load the HBP environement *before* starting
- * the application. This method let you do that synchronously or asynchronously.
- * Whichever method you choose, the values in your environment should look
- * very similar to the one in _`https://collab.humanbrainproject.eu/config.json`,
- * customized with your own values.
- *
- * At least ``auth.clientId`` should be edited in the config.json file.
- *
- * @memberof angular
- * @param {string} module the name of the Angular application module to load.
- * @param {object} options pass those options to deferredBootstrap
- * @param {object} options.env HBP environment JSON (https://collab.humanbrainproject.eu/config.json)
- * @return {Promise} return once the environment has been bootstrapped
- * @example <caption>Bootstrap the environment synchronously</caption>
- * angular.clbBootstrap('myApp', {
- *   env: { } // content from https://collab.humanbrainproject.eu/config.json
- * })
- * @example <caption>Bootstrap the environment asynchronously</caption>
- * angular.clbBootstrap('myApp', {
- *   env: 'https://my-project-website/config.json'
- * })
- * @example <caption>Using backward compatibility</caption>
- * window.bbpConfig = { } // content from https://collab.humanbrainproject.eu/config.json
- * angular.clbBoostrap('myApp')
- */
-function clbBootstrap(module, options) {
-  if (window.bbpConfig) {
-    options.env = window.bbpConfig;
-  }
-  if (!options.element) {
-    options.element = document.body;
-  }
-  options.module = module;
-  if (!options.moduleResolves) {
-    options.moduleResolves = {};
-  }
-  options.moduleResolves = [{
-    module: 'clb-env',
-    resolve: {
-      // use injection here as it is not resolved automatically on build.
-      CLB_ENVIRONMENT: ['$q', '$http', function($q, $http) {
-        // Remove any previously defined CLB_ENVIRONMENT
-        // As this results in unpredictable results when multiple apps
-        // use this strategy.
-        var invoker = angular.module(['clb-env'])._invokeQueue;
-        for (var i = 0; i < invoker.length; i++) {
-          var inv = invoker[i];
-          if (inv[2][0] === 'CLB_ENVIRONMENT') {
-            invoker.splice(i, 1);
-            i--;
-          }
-        }
-        if (angular.isString(options.env)) {
-          return $http.get(options.env)
-          .then(function(res) {
-            // Set bbpConfig for backward compatibility
-            window.bbpConfig = res.data;
-            return res.data;
-          });
-        }
-        // Set bbpConfig for backward compatibility
-        if (!window.bbpConfig) {
-          window.bbpConfig = options.env;
-        }
-        return $q.when(options.env);
-      }]
-    }
-  }];
-  return deferredBootstrapper.bootstrap(options);
-}
 
 angular.module('clb-automator')
 .factory('clbAutomator', clbAutomator);
@@ -1357,6 +897,467 @@ angular.module('clb-automator')
     });
   }
 }]);
+
+angular.module('clb-app')
+.factory('clbApp', clbApp);
+
+/**
+ * @namespace clbApp
+ * @memberof module:clb-app
+ * @desc
+ * An AngularJS service to interface a web application with the HBP Collaboratory.
+ * This library provides a few helper to work within the Collaboratory environment.
+ *
+ * Usage
+ * -----
+ *
+ * - :ref:`module-clb-app.clbApp.context` is used to set and retrieve
+ *   the current context.
+ * - :ref:`module-clb-app.clbApp.emit` is used to send a command
+ *   to the HBP Collaboratory and wait for its answer.
+ *
+ * @example <caption>Retrieve the current context object</caption>
+ * clbApp.context()
+ * .then(function(context) {
+ *   console.log(context.ctx, context.state, context.collab);
+ * })
+ * .catch(function(err) {
+ *   // Cannot set the state
+ * });
+ *
+ * @example <caption>Set the current state in order for a user to be able to copy-paste its current URL and reopen the same collab with your app loaded at the same place.</caption>
+ * clbApp.context({state: 'lorem ipsum'})
+ * .then(function(context) {
+ *   console.log(context.ctx, context.state, context.collab);
+ * })
+ * .catch(function(err) {
+ *   // Cannot set the state
+ * });
+ *
+ * @param  {object} $log AngularJS service injection
+ * @param  {object} $q AngularJS service injection
+ * @param  {object} $rootScope AngularJS service injection
+ * @param  {object} $timeout AngularJS service injection
+ * @param  {object} $window AngularJS service injection
+ * @param  {object} clbError AngularJS service injection
+ * @return {object}         the service singleton
+ */
+function clbApp(
+  $log,
+  $q,
+  $rootScope,
+  $timeout,
+  $window,
+  clbError
+) {
+  var eventId = 0;
+  var sentMessages = {};
+
+  /**
+   * Singleton class
+   */
+  function AppToolkit() { }
+  AppToolkit.prototype = {
+    emit: emit,
+    context: context,
+    open: open
+  };
+
+  $window.addEventListener('message', function(event) {
+    $rootScope.$emit('message', event.data);
+  });
+
+  $rootScope.$on('message', function(event, message) {
+    if (!message || !message.origin || !sentMessages[message.origin]) {
+      return;
+    }
+    if (message.eventName === 'resolved') {
+      sentMessages[message.origin].resolve(message.data);
+    } else if (message.eventName === 'error') {
+      sentMessages[message.origin].reject(clbError.error(message.data));
+    }
+    sentMessages[message.origin] = null;
+  });
+
+  /**
+   * Send a message to the HBP Collaboratory.
+   * @memberof module:clb-app.clbApp
+   * @param  {string} name name of the event to be propagated
+   * @param  {object} data corresponding data to be sent alongside the event
+   * @return  {Promise} resolve with the message response
+   */
+  function emit(name, data) {
+    eventId++;
+    sentMessages[eventId] = $q.defer();
+    var promise = sentMessages[eventId].promise;
+    $window.parent.postMessage({
+      apiVersion: 1,
+      eventName: name,
+      data: data,
+      ticket: eventId
+    }, '*');
+    return promise;
+  }
+
+  var currentContext;
+
+  /**
+   * @typedef HbpCollaboratoryContext
+   * @memberof module:clb-app.clbApp
+   * @type {object}
+   * @property {string} mode - the current mode, either 'run' or 'edit'
+   * @property {string} ctx - the UUID of the current context
+   * @property {string} state - an application defined state string
+   */
+
+   /**
+    * @memberof module:clb-app.clbApp
+    * @desc
+    * Asynchronously retrieve the current HBP Collaboratory Context, including
+    * the mode, the ctx UUID and the application state if any.
+    * @function context
+    * @param {object} data new values to send to HBP Collaboratory frontend
+    * @return {Promise} resolve to the context
+    * @static
+    */
+  function context(data) {
+    var d = $q.defer();
+    var kill = $timeout(function() {
+      d.reject(clbError.error({
+        type: 'TimeoutException',
+        message: 'No context can be retrieved'
+      }));
+    }, 250);
+
+    if (data) {
+      // discard context if new data should be set.
+      currentContext = null;
+    }
+
+    if (currentContext) {
+      // directly return context when cached.
+      return d.resolve(currentContext);
+    }
+    emit('workspace.context', data)
+    .then(function(context) {
+      $timeout.cancel(kill);
+      currentContext = context;
+      d.resolve(context);
+    })
+    .catch(function(err) {
+      d.reject(clbError.error(err));
+    });
+    return d.promise;
+  }
+  return new AppToolkit();
+
+  /**
+   * @desc
+   * Open a resource described by the given ObjectReference.
+   *
+   * The promise will fulfill only if the navigation is possible. Otherwise,
+   * an error will be returned.
+   * @function open
+   * @memberof module:clb-app.clbApp
+   * @param {ObjectReference} ref  The object reference to navigate to
+   * @return {Promise}  The promise retrieved by the call to emit
+   */
+  function open(ref) {
+    $log.debug('Ask the frontend to navigate to:', ref);
+    return emit('resourceLocator.open', {ref: ref});
+  }
+}
+
+/* eslint require-jsdoc:0 valid-jsdoc:0 */
+angular.module('clb-app')
+.provider('clbAuth', authProvider);
+
+function authProvider(clbAppHello, clbEnvProvider) {
+  return {
+    $get: ['$http', '$log', '$q', '$rootScope', '$timeout', 'clbEnv', 'clbError', function($http, $log, $q, $rootScope, $timeout, clbEnv, clbError) {
+      _addHbpProvider();
+      _loadApplicationInfo();
+      _bindEvents();
+
+      return {
+        login: login,
+        logout: logout,
+        getAuthInfo: getAuthInfo
+      };
+
+      function login(options) {
+        var d = $q.defer();
+        clbAppHello.login('hbp', options)
+        .then(function(res) {
+          d.resolve(getAuthInfo(res.authResponse));
+        }, function(err) {
+          d.reject(_formatError(err));
+        });
+        return d.promise;
+      }
+
+      function logout(options) {
+        var info = getAuthInfo();
+        if (!info) {
+          return $q.when(true);
+        }
+        var d = $q.defer();
+        clbAppHello.logout('hbp', options)
+        .then(function() {
+          return d.resolve(true);
+        }, function(err) {
+          d.reject(_formatError(err));
+        });
+        return d.promise;
+      }
+
+      function getAuthInfo(authResponse) {
+        authResponse = authResponse || clbAppHello.getAuthResponse('hbp');
+        if (!authResponse) {
+          return null;
+        }
+        return {
+          accessToken: authResponse.access_token,
+          tokenType: authResponse.token_type,
+          // When no scopes are specified, the server will generate a token
+          // with the app default scopes. In this case hello.js don't know what
+          // they are so we set the value to undefined by convention.
+          scope: authResponse.scope || undefined,
+          expires: authResponse.expires
+        };
+      }
+
+      function _formatError(err) {
+        return clbError.error({
+          type: err.error.code,
+          message: err.error.message,
+          data: err
+        });
+      }
+
+      function _bindEvents() {
+        clbAppHello.on('auth.login', _handleAuthInfoChange);
+        clbAppHello.on('auth.logout', _handleAuthInfoChange);
+      }
+
+      function _handleAuthInfoChange(data, name) {
+        if (data.network !== 'hbp') {
+          return;
+        }
+        $log.debug('propagate auth event from original event', name);
+        $timeout(function() {
+          $rootScope.$broadcast('clbAuth.changed', getAuthInfo());
+        }, 0);
+      }
+
+      /**
+       * Define a new provider Hello.js provider for HBP
+       */
+      function _addHbpProvider() {
+        clbAppHello.init({
+          hbp: {
+            name: 'Human Brain Project',
+            oauth: {
+              version: '2',
+              auth: clbEnvProvider.get('auth.url') + '/authorize',
+              grant: clbEnvProvider.get('auth.url') + '/token'
+            },
+            // API base URL
+            base: clbEnvProvider.get('auth.url') + '/',
+            scope_delim: ' ', // eslint-disable-line camelcase
+            login: function(p) {
+              // Reauthenticate
+              if (p.options.force) {
+                p.qs.prompt = 'login';
+              }
+              if (!p.qs.scope) {
+                delete p.qs.scope;
+              }
+            },
+            logout: function(callback, p) {
+              $http.post(clbEnv.get('auth.url') + '/slo', {
+                token: p.authResponse.access_token
+              }, {
+                withCredentials: true
+              })
+              .then(function() {
+                callback();
+              })
+              .catch(function(err) {
+                $log.error('Cannot kill the global session');
+                $log.debug(err);
+                callback();
+              });
+            }
+          }
+        });
+      }
+
+      /**
+       * Set the current application data.
+       */
+      function _loadApplicationInfo() {
+        clbAppHello.init({
+          hbp: clbEnvProvider.get('auth.clientId')
+        }, {
+          default_service: 'hbp', // eslint-disable-line camelcase
+          display: 'page',
+          scope: clbEnvProvider.get('auth.scopes', null),
+          force: false
+        });
+      }
+    }]
+  };
+}
+
+angular.module('clb-app')
+.factory('clbAuthHttp', clbAuthHttp);
+
+/**
+ * Proxy $http to add the HBP bearer token.
+ * Also handle 401 Authentication Required errors.
+ * See $http service
+ *
+ * @param  {object} $http   DI
+ * @param  {object} clbAuth DI
+ * @return {function}       the service
+ */
+function clbAuthHttp($http, clbAuth) {
+  var proxyHttp = function(config) {
+    var auth = clbAuth.getAuthInfo();
+    if (!auth) {
+      return $http(config);
+    }
+    var authToken = auth.tokenType + ' ' + auth.accessToken;
+    if (!config.headers) {
+      config.headers = {
+        Authorization: authToken
+      };
+    }
+    config.headers.Authorization = authToken;
+    return $http(config);
+  };
+  proxyHttp.get = _wrapper('GET');
+  proxyHttp.head = _wrapper('HEAD');
+  proxyHttp.delete = _wrapper('DELETE');
+  proxyHttp.post = _wrapperData('POST');
+  proxyHttp.put = _wrapperData('PUT');
+  proxyHttp.patch = _wrapperData('PATCH');
+  return proxyHttp;
+
+  /**
+   * Handle $http helper call for GET, DELETE, HEAD requests.
+   *
+   * @param  {string} verb the HTTP verb
+   * @return {function}    The function to attach
+   */
+  function _wrapper(verb) {
+    return function(url, config) {
+      config = config || {};
+      config.method = verb.toUpperCase();
+      config.url = url;
+      return proxyHttp(config);
+    };
+  }
+
+  /**
+   * Handle $http helper call for PUT, PATCH, POST requests.
+   *
+   * @param  {string} verb the HTTP verb
+   * @return {function}    The function to attach
+   */
+  function _wrapperData(verb) {
+    return function(url, data, config) {
+      config = config || {};
+      config.method = verb.toUpperCase();
+      config.url = url;
+      config.data = data;
+      return proxyHttp(config);
+    };
+  }
+}
+
+/* global deferredBootstrapper, window, document */
+
+/**
+ * @namespace angular
+ */
+
+angular.clbBootstrap = clbBootstrap;
+
+/**
+ * Bootstrap AngularJS application with the HBP environment loaded.
+ *
+ * It is very important to load the HBP environement *before* starting
+ * the application. This method let you do that synchronously or asynchronously.
+ * Whichever method you choose, the values in your environment should look
+ * very similar to the one in _`https://collab.humanbrainproject.eu/config.json`,
+ * customized with your own values.
+ *
+ * At least ``auth.clientId`` should be edited in the config.json file.
+ *
+ * @memberof angular
+ * @param {string} module the name of the Angular application module to load.
+ * @param {object} options pass those options to deferredBootstrap
+ * @param {object} options.env HBP environment JSON (https://collab.humanbrainproject.eu/config.json)
+ * @return {Promise} return once the environment has been bootstrapped
+ * @example <caption>Bootstrap the environment synchronously</caption>
+ * angular.clbBootstrap('myApp', {
+ *   env: { } // content from https://collab.humanbrainproject.eu/config.json
+ * })
+ * @example <caption>Bootstrap the environment asynchronously</caption>
+ * angular.clbBootstrap('myApp', {
+ *   env: 'https://my-project-website/config.json'
+ * })
+ * @example <caption>Using backward compatibility</caption>
+ * window.bbpConfig = { } // content from https://collab.humanbrainproject.eu/config.json
+ * angular.clbBoostrap('myApp')
+ */
+function clbBootstrap(module, options) {
+  if (window.bbpConfig) {
+    options.env = window.bbpConfig;
+  }
+  if (!options.element) {
+    options.element = document.body;
+  }
+  options.module = module;
+  if (!options.moduleResolves) {
+    options.moduleResolves = {};
+  }
+  options.moduleResolves = [{
+    module: 'clb-env',
+    resolve: {
+      // use injection here as it is not resolved automatically on build.
+      CLB_ENVIRONMENT: ['$q', '$http', function($q, $http) {
+        // Remove any previously defined CLB_ENVIRONMENT
+        // As this results in unpredictable results when multiple apps
+        // use this strategy.
+        var invoker = angular.module(['clb-env'])._invokeQueue;
+        for (var i = 0; i < invoker.length; i++) {
+          var inv = invoker[i];
+          if (inv[2][0] === 'CLB_ENVIRONMENT') {
+            invoker.splice(i, 1);
+            i--;
+          }
+        }
+        if (angular.isString(options.env)) {
+          return $http.get(options.env)
+          .then(function(res) {
+            // Set bbpConfig for backward compatibility
+            window.bbpConfig = res.data;
+            return res.data;
+          });
+        }
+        // Set bbpConfig for backward compatibility
+        if (!window.bbpConfig) {
+          window.bbpConfig = options.env;
+        }
+        return $q.when(options.env);
+      }]
+    }
+  }];
+  return deferredBootstrapper.bootstrap(options);
+}
 
 /* eslint camelcase: 0 */
 
@@ -5533,6 +5534,54 @@ function clbUserAvatar() {
         scope.hueNumber = (13 * initials.charCodeAt(0) * 23 *
           initials.charCodeAt(1)) % 7 + 1;
       });
+    }
+  };
+}
+
+angular.module('clb-ui-identity')
+.run(['$templateCache', function($templateCache) {
+  // During the build, templateUrl will be replaced by the inline template.
+  // We need to inject it in template cache as it is used for displaying
+  // the tooltip. Does it smell like a hack? sure, it is a hack!
+  var injector = {
+    template:'<div class=clb-user-select-item><span><clb-user-avatar clb-user=match.model></clb-user-avatar></span> <span>{{match.label}} <span class=text-muted>@{{match.model.username}}</span></span></div>'
+  };
+  // If defined, it means that the template has been inlined during build.
+  if (injector.template) {
+    $templateCache.put('user-select-item.tpl.html', injector.template);
+  }
+}]);
+
+angular.module('clb-ui-identity')
+.directive('clbUserSelect', clbUserSelect);
+
+/**
+ * The clb-user-select directive can be used to select a user from a list.
+ *
+ * @namespace clbUserSelect
+ * @memberof module:ui-identity
+ * @param  {object} clbUser Angular DI
+ * @return {object}        Directive descriptor
+ */
+function clbUserSelect(clbUser) {
+  return {
+    restrict: 'E',
+    template:'<input type=text ng-model=ngModel uib-typeahead="user as user.displayName for user in search($viewValue) | limitTo:8" typeahead-editable=false typeahead-loading=loading typeahead-no-results=noResults typeahead-template-url=user-select-item.tpl.html placeholder={{placeholder}} class=form-control>',
+    scope: {
+      loading: '=?clbUserSelectLoading',
+      noResults: '=?clbUserSelectNoResults',
+      placeholder: '=?clbUserSelectPlaceholder',
+      ngModel: '='
+    },
+    link: function(scope) {
+      scope.loading = scope.loading || 'Loading Users';
+      scope.noResults = scope.noResults || 'No Users';
+      scope.placeholder = scope.placeholder || 'Start typing a user name';
+      scope.search = function(query) {
+        return clbUser.search(query).then(function(rs) {
+          return rs.results;
+        });
+      };
     }
   };
 }

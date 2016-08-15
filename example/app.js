@@ -44,13 +44,17 @@ angular.module('customCollabApp', [
 })
 .controller('UiIdentityController', function($scope, clbUser) {
   var vm = this;
+  vm.selectedUser = null;
+
   $scope.$on('clbAuth.changed', function(event, authInfo) {
+    vm.logged = Boolean(authInfo);
     if (authInfo) {
       clbUser.getCurrentUser().then(function(me) {
         vm.user = me;
       });
     } else {
       vm.user = null;
+      vm.selectedUser = null;
     }
   });
 })
