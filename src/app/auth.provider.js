@@ -14,7 +14,6 @@ function authProvider(clbAppHello, clbEnvProvider) {
       clbEnv,
       clbError
     ) {
-      _addHbpProvider();
       _loadApplicationInfo();
       _bindEvents();
       var _readEnvOnce = false;
@@ -128,49 +127,6 @@ function authProvider(clbAppHello, clbEnvProvider) {
         $timeout(function() {
           $rootScope.$broadcast('clbAuth.changed', getAuthInfo());
         }, 0);
-      }
-
-      /**
-       * Define a new provider Hello.js provider for HBP
-       */
-      function _addHbpProvider() {
-        clbAppHello.init({
-          hbp: {
-            name: 'Human Brain Project',
-            oauth: {
-              version: '2',
-              auth: clbEnvProvider.get('auth.url') + '/authorize',
-              grant: clbEnvProvider.get('auth.url') + '/token'
-            },
-            // API base URL
-            base: clbEnvProvider.get('auth.url') + '/',
-            scope_delim: ' ', // eslint-disable-line camelcase
-            login: function(p) {
-              // Reauthenticate
-              if (p.options.force) {
-                p.qs.prompt = 'login';
-              }
-              if (!p.qs.scope) {
-                delete p.qs.scope;
-              }
-            },
-            logout: function(callback, p) {
-              $http.post(clbEnv.get('auth.url') + '/slo', {
-                token: p.authResponse.access_token
-              }, {
-                withCredentials: true
-              })
-              .then(function() {
-                callback();
-              })
-              .catch(function(err) {
-                $log.error('Cannot kill the global session');
-                $log.debug(err);
-                callback();
-              });
-            }
-          }
-        });
       }
 
       /**
