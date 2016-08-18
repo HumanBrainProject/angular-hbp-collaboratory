@@ -29,7 +29,6 @@
  */
 clbApp.$inject = ['$log', '$q', '$rootScope', '$timeout', '$window', 'clbError'];
 authProvider.$inject = ['clbAppHello', 'clbEnvProvider'];
-clbAuthHttp.$inject = ['$http', 'clbAuth'];
 clbAutomator.$inject = ['$q', '$log', 'clbError'];
 clbCollabTeamRole.$inject = ['clbAuthHttp', '$log', '$q', 'clbEnv', 'clbError'];
 clbCollabTeam.$inject = ['clbAuthHttp', '$log', '$q', 'lodash', 'clbEnv', 'clbError', 'clbCollabTeamRole', 'clbUser'];
@@ -475,7 +474,16 @@ angular.module('clb-app')
 
 function authProvider(clbAppHello, clbEnvProvider) {
   return {
-    $get: ['$http', '$log', '$q', '$rootScope', '$timeout', 'clbEnv', 'clbError', function($http, $log, $q, $rootScope, $timeout, clbEnv, clbError) {
+    $get: ['$http', '$log', '$q', '$rootScope', '$timeout', 'clbApp', 'clbEnv', 'clbError', function(
+      $http,
+      $log,
+      $q,
+      $rootScope,
+      $timeout,
+      clbApp,
+      clbEnv,
+      clbError
+    ) {
       _addHbpProvider();
       _loadApplicationInfo();
       _bindEvents();
@@ -521,7 +529,21 @@ function authProvider(clbAppHello, clbEnvProvider) {
         }, function(err) {
           d.reject(_formatError(err));
         });
-        return d.promise;
+        return $q.all([
+          $http.get(clbEnv.get('auth.url') + '/session', {
+            withCredentials: true
+          }).catch(function(err) {
+            if (err.status >= 400 && err.status < 500) {
+              // no more session
+              clbApp.emit('oidc.logout', {
+                clientId: clbEnv.get('auth.clientId')
+              });
+            } else {
+              $log.error('Cannot state wether a session is still open', err);
+            }
+          }),
+          d.promise
+        ]);
       }
 
       function getAuthInfo(authResponse) {
@@ -639,69 +661,113 @@ function authProvider(clbAppHello, clbEnvProvider) {
 }
 
 angular.module('clb-app')
-.factory('clbAuthHttp', clbAuthHttp);
+.provider('clbAuthHttp', clbAuthHttpProvider);
 
 /**
- * Proxy $http to add the HBP bearer token.
- * Also handle 401 Authentication Required errors.
- * See $http service
- *
- * @param  {object} $http   DI
- * @param  {object} clbAuth DI
- * @return {function}       the service
+ * Provide clbAuthHttp service.
+ * @return {object}   provider description
  */
-function clbAuthHttp($http, clbAuth) {
-  var proxyHttp = function(config) {
-    var auth = clbAuth.getAuthInfo();
-    if (!auth) {
-      return $http(config);
-    }
-    var authToken = auth.tokenType + ' ' + auth.accessToken;
-    if (!config.headers) {
-      config.headers = {
-        Authorization: authToken
+function clbAuthHttpProvider() {
+  clbAuthHttp.$inject = ['$http', '$log', '$q', 'clbAuth'];
+  var provider = {
+    handleSessionExpiration: true,
+    automaticLogin: false,
+    $get: clbAuthHttp
+  };
+  return provider;
+
+  /* ----------------- */
+
+  /**
+   * Proxy $http to add the HBP bearer token.
+   * Also handle 401 Authentication Required errors.
+   * See $http service
+   *
+   * @param  {object} $http   DI
+   * @param  {object} $log   DI
+   * @param  {object} $q   DI
+   * @param  {object} clbAuth DI
+   * @return {function}       the service
+   */
+  function clbAuthHttp($http, $log, $q, clbAuth) {
+    var proxyHttp = function(config) {
+      var auth = clbAuth.getAuthInfo();
+      if (!auth) {
+        if (provider.automaticLogin) {
+          return clbAuth.login().then(function() {
+            // login and relaunch
+            proxyHttp(config);
+          });
+        }
+        return $http(config);
+      }
+      var authToken = auth.tokenType + ' ' + auth.accessToken;
+      if (!config.headers) {
+        config.headers = {
+          Authorization: authToken
+        };
+      }
+      config.headers.Authorization = authToken;
+      return $http(config).catch(function(err) {
+        if (err.status === 401 && provider.handleSessionExpiration) {
+          $log.debug('handle 401 error', err);
+          return clbAuth.logout().then(function() {
+            return clbAuth.login();
+          });
+        }
+        return $q.reject(err);
+      });
+    };
+
+    proxyHttp.get = _wrapper('GET');
+    proxyHttp.head = _wrapper('HEAD');
+    proxyHttp.delete = _wrapper('DELETE');
+    proxyHttp.post = _wrapperData('POST');
+    proxyHttp.put = _wrapperData('PUT');
+    proxyHttp.patch = _wrapperData('PATCH');
+    proxyHttp.configure = function(options) {
+      if (!options) {
+        return;
+      }
+      if (angular.isDefined(options.handleSessionExpiration)) {
+        provider.handleSessionExpiration = options.handleSessionExpiration;
+      }
+      if (angular.isDefined(options.automaticLogin)) {
+        provider.automaticLogin = options.automaticLogin;
+      }
+    };
+    return proxyHttp;
+
+    /**
+     * Handle $http helper call for GET, DELETE, HEAD requests.
+     *
+     * @param  {string} verb the HTTP verb
+     * @return {function}    The function to attach
+     */
+    function _wrapper(verb) {
+      return function(url, config) {
+        config = config || {};
+        config.method = verb.toUpperCase();
+        config.url = url;
+        return proxyHttp(config);
       };
     }
-    config.headers.Authorization = authToken;
-    return $http(config);
-  };
-  proxyHttp.get = _wrapper('GET');
-  proxyHttp.head = _wrapper('HEAD');
-  proxyHttp.delete = _wrapper('DELETE');
-  proxyHttp.post = _wrapperData('POST');
-  proxyHttp.put = _wrapperData('PUT');
-  proxyHttp.patch = _wrapperData('PATCH');
-  return proxyHttp;
 
-  /**
-   * Handle $http helper call for GET, DELETE, HEAD requests.
-   *
-   * @param  {string} verb the HTTP verb
-   * @return {function}    The function to attach
-   */
-  function _wrapper(verb) {
-    return function(url, config) {
-      config = config || {};
-      config.method = verb.toUpperCase();
-      config.url = url;
-      return proxyHttp(config);
-    };
-  }
-
-  /**
-   * Handle $http helper call for PUT, PATCH, POST requests.
-   *
-   * @param  {string} verb the HTTP verb
-   * @return {function}    The function to attach
-   */
-  function _wrapperData(verb) {
-    return function(url, data, config) {
-      config = config || {};
-      config.method = verb.toUpperCase();
-      config.url = url;
-      config.data = data;
-      return proxyHttp(config);
-    };
+    /**
+     * Handle $http helper call for PUT, PATCH, POST requests.
+     *
+     * @param  {string} verb the HTTP verb
+     * @return {function}    The function to attach
+     */
+    function _wrapperData(verb) {
+      return function(url, data, config) {
+        config = config || {};
+        config.method = verb.toUpperCase();
+        config.url = url;
+        config.data = data;
+        return proxyHttp(config);
+      };
+    }
   }
 }
 

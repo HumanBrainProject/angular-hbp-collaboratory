@@ -4,7 +4,16 @@ angular.module('clb-app')
 
 function authProvider(clbAppHello, clbEnvProvider) {
   return {
-    $get: function($http, $log, $q, $rootScope, $timeout, clbEnv, clbError) {
+    $get: function(
+      $http,
+      $log,
+      $q,
+      $rootScope,
+      $timeout,
+      clbApp,
+      clbEnv,
+      clbError
+    ) {
       _addHbpProvider();
       _loadApplicationInfo();
       _bindEvents();
@@ -50,7 +59,21 @@ function authProvider(clbAppHello, clbEnvProvider) {
         }, function(err) {
           d.reject(_formatError(err));
         });
-        return d.promise;
+        return $q.all([
+          $http.get(clbEnv.get('auth.url') + '/session', {
+            withCredentials: true
+          }).catch(function(err) {
+            if (err.status >= 400 && err.status < 500) {
+              // no more session
+              clbApp.emit('oidc.logout', {
+                clientId: clbEnv.get('auth.clientId')
+              });
+            } else {
+              $log.error('Cannot state wether a session is still open', err);
+            }
+          }),
+          d.promise
+        ]);
       }
 
       function getAuthInfo(authResponse) {

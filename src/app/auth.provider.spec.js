@@ -69,29 +69,63 @@ describe('clbAuth', function() {
 
   describe('logout()', function() {
     var hello;
-    beforeEach(inject(function($q, clbAppHello) {
+    var httpBackend;
+    var sessionUrl;
+
+    beforeEach(inject(function(
+      $httpBackend,
+      $q,
+      clbAppHello,
+      clbEnv
+    ) {
+      httpBackend = $httpBackend;
       hello = clbAppHello;
+      sessionUrl = clbEnv.get('auth.url') + '/session';
+
       hello.utils.store('hbp', {
         token_type: 'Bearer', // eslint-disable-line camelcase
         access_token: 'aaaa', // eslint-disable-line camelcase
-        expires: Number.MAX_SAFE_INTEGER,
+        expires: ((new Date().getTime()) / 1e3) + 1,
         scope: ''
       });
       spyOn(hello, 'logout').and.returnValue($q.when({network: 'hbp'}));
     }));
 
-    it('should call the hello.js logout method', function() {
-      service.logout();
-      expect(hello.logout).toHaveBeenCalledWith('hbp', undefined);
+    afterEach(function() {
+      httpBackend.verifyNoOutstandingExpectation();
+      httpBackend.verifyNoOutstandingRequest();
     });
 
-    it('should call the single logout method', inject(function(
-      $httpBackend,
-      clbEnv
-    ) {
-      $httpBackend.expectPOST(clbEnv.get('auth.url') + '/slo', {token: 'aaaa'});
+    it('should call the hello.js logout method', function() {
+      httpBackend.expectGET(sessionUrl).respond(200);
+      service.logout();
+      expect(hello.logout).toHaveBeenCalledWith('hbp', undefined);
+      httpBackend.flush();
+    });
+
+    it('should call the single logout method', function() {
+      httpBackend.expectGET(sessionUrl).respond(200);
       service.logout({force: true});
+      httpBackend.flush(1);
       expect(hello.logout).toHaveBeenCalledWith('hbp', {force: true});
+    });
+
+    it('should send emit oidc.logout message',
+    inject(function(clbApp, clbEnv) {
+      spyOn(clbApp, 'emit');
+      httpBackend.expectGET(clbEnv.get('auth.url') + '/session').respond(404);
+      service.logout();
+      httpBackend.flush(1);
+      expect(clbApp.emit).toHaveBeenCalled();
+    }));
+
+    it('should not emit oidc.logout message if there is still a session',
+    inject(function(clbApp, clbEnv) {
+      spyOn(clbApp, 'emit');
+      httpBackend.expectGET(clbEnv.get('auth.url') + '/session').respond(200);
+      service.logout();
+      httpBackend.flush(1);
+      expect(clbApp.emit).not.toHaveBeenCalled();
     }));
   });
 });
