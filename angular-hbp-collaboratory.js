@@ -30,8 +30,6 @@
 clbApp.$inject = ['$log', '$q', '$rootScope', '$timeout', '$window', 'clbError'];
 authProvider.$inject = ['clbAppHello', 'clbEnvProvider'];
 clbAuthHttp.$inject = ['$http', 'clbAuth'];
-interceptorConfig.$inject = ['$httpProvider'];
-httpRequestInterceptor.$inject = ['$q'];
 clbAutomator.$inject = ['$q', '$log', 'clbError'];
 clbCollabTeamRole.$inject = ['clbAuthHttp', '$log', '$q', 'clbEnv', 'clbError'];
 clbCollabTeam.$inject = ['clbAuthHttp', '$log', '$q', 'lodash', 'clbEnv', 'clbError', 'clbCollabTeamRole', 'clbUser'];
@@ -45,9 +43,9 @@ clbUser.$inject = ['$rootScope', '$q', 'clbAuthHttp', '$cacheFactory', '$log', '
 clbIdentityUtil.$inject = ['$log', 'lodash'];
 clbResultSet.$inject = ['clbAuthHttp', '$q', 'clbError'];
 clbStorage.$inject = ['clbAuthHttp', '$q', '$log', 'uuid4', 'clbEnv', 'clbError', 'clbUser', 'clbResultSet'];
+clbConfirm.$inject = ['$rootScope', '$uibModal'];
 clbResourceLocator.$inject = ['$q', '$log', '$injector', 'clbError'];
 clbStream.$inject = ['clbAuthHttp', 'clbEnv', 'clbError', 'clbResultSet', 'moment'];
-clbConfirm.$inject = ['$rootScope', '$uibModal'];
 clbErrorDialog.$inject = ['$uibModal', 'clbError'];
 clbUsercardPopoverDirective.$inject = ['$log', '$q', 'clbUser', 'clbUsercardPopover'];
 clbUserCardPopoverService.$inject = ['$rootScope'];
@@ -117,14 +115,6 @@ angular.module('hbpCollaboratory', [
  */
 angular.module('clb-app', ['clb-env', 'clb-error'])
 .constant('clbAppHello', hello);
-
-/**
- * @module clb-auth
- * @desc
- * ``clb-auth`` provides a library based on hello.js
- * to authenticate into the Collaboratory.
- */
-angular.module('clb-auth', ['clb-env']);
 
 /**
  * @module clb-automator
@@ -231,6 +221,11 @@ angular.module('clb-storage', [
 ]);
 
 /**
+ * @module clb-ui-dialog
+ */
+angular.module('clb-ui-dialog', ['ui.bootstrap.modal']);
+
+/**
  * @module clb-stream
  * @desc
  * The `clb-stream` module contains a service and a few directives to retrieve
@@ -248,18 +243,11 @@ angular.module('clb-stream', [
 ]);
 
 /**
- * @module clb-ui-dialog
- */
-angular.module('clb-ui-dialog', ['ui.bootstrap.modal']);
-
-/**
  * @module clb-ui-error
  */
 angular.module('clb-ui-error', [
   'clb-error',
-  'ui.bootstrap.alert',
-  'ui.bootstrap.modal',
-  'uib/template/alert/alert.html'
+  'ui.bootstrap'
 ]);
 
 /**
@@ -795,56 +783,6 @@ function clbBootstrap(module, options) {
     }
   }];
   return deferredBootstrapper.bootstrap(options);
-}
-
-/* global hello */
-angular.module('clb-auth')
-.config(interceptorConfig)
-.factory('httpRequestInterceptor', httpRequestInterceptor)
-.provider('clbAuth', clbAuth);
-
-function interceptorConfig($httpProvider) {
-  $httpProvider.interceptors.push('httpRequestInterceptor');
-}
-
-function httpRequestInterceptor($q) {
-  return {
-    request: function(requestConfig) {
-      // TODO: get token from somewhere
-      var token = 'TOKEN';
-      requestConfig.headers.Authorization = 'Bearer ' + token;
-      return requestConfig;
-    },
-    responseError: function(rejection) {
-      // TODO: check bbpOidcClient...
-      return $q.reject(rejection);
-    }
-  };
-}
-
-function clbAuth() {
-  hello.init({
-    hbp: {
-      oauth: {
-        version: 2,
-        auth: 'https://services.humanbrainproject.eu/oidc/authorize',
-        grant: 'https://services.humanbrainproject.eu/oidc/token'
-      },
-      scope: {
-        basic: 'openid profiles'
-      },
-      scope_delim: ' ',
-      get: {
-        me: 'userinfo'
-      },
-      base: 'https://services.humanbrainproject.eu/oidc/'
-    }
-  }, {client_id: 'portal-client', redirect_uri: document.URL});
-  return {
-    $get: function() {
-      return hello('hbp');
-    }
-  };
 }
 
 angular.module('clb-automator')
@@ -5129,6 +5067,59 @@ function clbStorage(
   }
 }
 
+angular.module('clb-ui-dialog')
+.factory('clbConfirm', clbConfirm);
+
+/**
+ * Service to trigger modal dialog.
+ *
+ * @namespace clbDialog
+ * @memberof module:clb-ui-dialog
+ * @param  {object} $rootScope Angular DI
+ * @param  {object} $uibModal     Angular DI
+ * @return {object}            Service Descriptor
+ */
+function clbConfirm($rootScope, $uibModal) {
+  return {
+    open: open
+  };
+
+  /**
+   * Confirmation dialog
+   * @param  {object} options Parameters
+   * @return {Promise}        Resolve if the confirmation happens, reject otherwise
+   */
+  function open(options) {
+    options = angular.extend({
+      scope: $rootScope,
+      title: 'Confirm',
+      confirmLabel: 'Yes',
+      cancelLabel: 'No',
+      template: 'Are you sure?',
+      closable: true
+    }, options);
+
+    var modalScope = options.scope.$new();
+    modalScope.title = options.title;
+    modalScope.confirmLabel = options.confirmLabel;
+    modalScope.cancelLabel = options.cancelLabel;
+    modalScope.confirmationContent = options.template;
+    modalScope.confirmationContentUrl = options.templateUrl;
+    modalScope.closable = options.closable;
+    modalScope.securityQuestion = options.securityQuestion;
+    modalScope.securityAnswer = options.securityAnswer;
+
+    var instance = $uibModal.open({
+      template:'<div class=modal-header><button type=button ng-show=closable class=close ng-click="$dismiss(\'cancel\')" aria-hidden=true>&times;</button><h4 class=modal-title>{{title}}</h4></div><div class=modal-body><alert ng-if=error type=danger>{{error.reason}}</alert><div class="alert alert-warning" ng-show=securityQuestion>Unexpected bad things will happen if you don’t read this!</div><ng-include ng-if=confirmationContentUrl src=confirmationContentUrl></ng-include><p ng-if=!confirmationContentUrl>{{confirmationContent}}</p><fieldset class=form-group ng-show=securityQuestion><label for=securityAnswer>{{securityQuestion}}</label> <input type=text class=form-control name=securityAnswer ng-model=answer></fieldset></div><div class=modal-footer><button class="btn btn-default" ng-click="$dismiss(\'cancel\')">{{cancelLabel}}</button> <button class="btn btn-danger" ng-disabled="securityAnswer && answer !== securityAnswer" ng-click=$close()>{{confirmLabel}}</button></div>',
+      show: true,
+      backdrop: 'static',
+      scope: modalScope,
+      keyboard: options.keyboard || options.closable
+    });
+    return instance.result;
+  }
+}
+
 angular.module('clb-stream')
 .provider('clbResourceLocator', clbResourceLocatorProvider);
 
@@ -5387,59 +5378,6 @@ function clbStream(clbAuthHttp, clbEnv, clbError, clbResultSet, moment) {
   }
 }
 
-angular.module('clb-ui-dialog')
-.factory('clbConfirm', clbConfirm);
-
-/**
- * Service to trigger modal dialog.
- *
- * @namespace clbDialog
- * @memberof module:clb-ui-dialog
- * @param  {object} $rootScope Angular DI
- * @param  {object} $uibModal     Angular DI
- * @return {object}            Service Descriptor
- */
-function clbConfirm($rootScope, $uibModal) {
-  return {
-    open: open
-  };
-
-  /**
-   * Confirmation dialog
-   * @param  {object} options Parameters
-   * @return {Promise}        Resolve if the confirmation happens, reject otherwise
-   */
-  function open(options) {
-    options = angular.extend({
-      scope: $rootScope,
-      title: 'Confirm',
-      confirmLabel: 'Yes',
-      cancelLabel: 'No',
-      template: 'Are you sure?',
-      closable: true
-    }, options);
-
-    var modalScope = options.scope.$new();
-    modalScope.title = options.title;
-    modalScope.confirmLabel = options.confirmLabel;
-    modalScope.cancelLabel = options.cancelLabel;
-    modalScope.confirmationContent = options.template;
-    modalScope.confirmationContentUrl = options.templateUrl;
-    modalScope.closable = options.closable;
-    modalScope.securityQuestion = options.securityQuestion;
-    modalScope.securityAnswer = options.securityAnswer;
-
-    var instance = $uibModal.open({
-      template:'<div class="modal-header"><button type="button" ng-show="closable" class="close" ng-click="$dismiss(\'cancel\')" aria-hidden="true">&times;</button><h4 class="modal-title">{{title}}</h4></div><div class="modal-body"><alert ng-if="error" type="danger">{{error.reason}}</alert><div class="alert alert-warning" ng-show="securityQuestion">Unexpected bad things will happen if you don’t read this!</div><ng-include ng-if="confirmationContentUrl" src="confirmationContentUrl"></ng-include><p ng-if="!confirmationContentUrl">{{confirmationContent}}</p><fieldset class="form-group" ng-show="securityQuestion"><label for="securityAnswer">{{securityQuestion}}</label> <input type="text" class="form-control" name="securityAnswer" ng-model="answer"></fieldset></div><div class="modal-footer"><button class="btn btn-default" ng-click="$dismiss(\'cancel\')">{{cancelLabel}}</button> <button class="btn btn-danger" ng-disabled="securityAnswer && answer !== securityAnswer" ng-click="$close()">{{confirmLabel}}</button></div>',
-      show: true,
-      backdrop: 'static',
-      scope: modalScope,
-      keyboard: options.keyboard || options.closable
-    });
-    return instance.result;
-  }
-}
-
 angular.module('clb-ui-error')
 .factory('clbErrorDialog', clbErrorDialog);
 
@@ -5465,7 +5403,7 @@ function clbErrorDialog($uibModal, clbError) {
    */
   function open(error, options) {
     options = angular.extend({
-      template:'<div class="error-dialog panel panel-danger"><div class="panel-heading"><h4>{{vm.error.type}}</h4></div><div class="panel-body"><p>{{vm.error.message}}</p></div><div class="panel-footer"><div><button type="button" ng-click="$close(true)" class="btn btn-primary"><span class="glyphicon glyphicon-remove"></span> Close</button> <button type="button" class="btn btn-default pull-right" ng-click="isErrorSourceDisplayed = !isErrorSourceDisplayed">{{isErrorSourceDisplayed ? \'Hide\' : \'Show\'}} scary details <span class="caret"></span></button></div><div uib-collapse="!isErrorSourceDisplayed"><h5>Error Type</h5><pre>{{vm.error.type}}</pre><h6>Error Code</h6><pre>{{vm.error.code}}</pre><h6>Message</h6><pre>{{vm.error.message}}</pre><div ng-if="vm.error.data"><h6>Data</h6><pre>{{vm.error.data}}</pre></div><div><h6>Stack Trace</h6><pre>{{vm.error.stack}}</pre></div></div></div></div>',
+      template:'<div class="error-dialog panel panel-danger"><div class=panel-heading><h4>{{vm.error.type}}</h4></div><div class=panel-body><p>{{vm.error.message}}</p></div><div class=panel-footer><div><button type=button ng-click=$close(true) class="btn btn-primary"><span class="glyphicon glyphicon-remove"></span> Close</button> <button type=button class="btn btn-default pull-right" ng-click="isErrorSourceDisplayed = !isErrorSourceDisplayed">{{isErrorSourceDisplayed ? \'Hide\' : \'Show\'}} scary details <span class=caret></span></button></div><div uib-collapse=!isErrorSourceDisplayed><h5>Error Type</h5><pre>{{vm.error.type}}</pre><h6>Error Code</h6><pre>{{vm.error.code}}</pre><h6>Message</h6><pre>{{vm.error.message}}</pre><div ng-if=vm.error.data><h6>Data</h6><pre>{{vm.error.data}}</pre></div><div><h6>Stack Trace</h6><pre>{{vm.error.stack}}</pre></div></div></div></div>',
       class: 'error-dialog',
       controller: function() {
         var vm = this;
@@ -5507,7 +5445,7 @@ function clbErrorMessage() {
     scope: {
       error: '=?clbError'
     },
-    template:'<uib-alert type="danger" ng-if="error"><div ng-switch on="error.type"><div ng-switch-when="Validation">Validation errors<span ng-show="error.data">:</span><ul><li ng-repeat="(attr, errors) in error.data">{{attr}}: {{errors.join(\', \')}}</li></ul></div><div ng-switch-default>{{error.message}}</div></div></uib-alert>'
+    template:'<uib-alert type=danger ng-if=error><div ng-switch on=error.type><div ng-switch-when=Validation>Validation errors<span ng-show=error.data>:</span><ul><li ng-repeat="(attr, errors) in error.data">{{attr}}: {{errors.join(\', \')}}</li></ul></div><div ng-switch-default>{{error.message}}</div></div></uib-alert>'
   };
 }
 
@@ -5601,7 +5539,7 @@ function clbUserAvatar() {
     scope: {
       user: '=clbUser'
     },
-    template:'<img class="clb-user-avatar-img" ng-if="user.picture" ng-src="{{user.picture}}"><svg class="clb-user-avatar-icon" viewBox="0 0 40 40" preserveAspectRatio="xMidYMid meet" ng-cloak ng-if="!user.picture" ng-class="\'clb-user-avatar-icon-hue-\' + hueNumber"><rect x="0" y="0" width="40" height="40" class="clb-user-avatar-icon-fill"></rect><text x="50%" y="58%" font-size="26px" class="clb-user-avatar-icon-text" dominant-baseline="middle" text-anchor="middle">{{char}}</text></svg>',
+    template:'<img class=clb-user-avatar-img ng-if=user.picture ng-src={{user.picture}}><svg class=clb-user-avatar-icon viewBox="0 0 40 40" preserveAspectRatio="xMidYMid meet" ng-cloak ng-if=!user.picture ng-class="\'clb-user-avatar-icon-hue-\' + hueNumber"><rect x=0 y=0 width=40 height=40 class=clb-user-avatar-icon-fill></rect><text x=50% y=58% font-size=26px class=clb-user-avatar-icon-text dominant-baseline=middle text-anchor=middle>{{char}}</text></svg>',
     link: function(scope, elt) {
       elt.addClass('clb-user-avatar');
       scope.$watch('user', function() {
@@ -5658,7 +5596,7 @@ function clbUsercardPopoverDirective(
       user: '=clbUsercardPopover'
     },
     transclude: true,
-    template:'<span class="clb-usercard-popover" popover-append-to-body="vm.popover.appendToBody" popover-is-open="vm.popover.isOpen" popover-trigger="outsideClick" ng-click="togglePopover($event)" uib-popover-template="\'usercard-popover.tpl.html\'" ng-transclude></span>',
+    template:'<span class=clb-usercard-popover popover-append-to-body=vm.popover.appendToBody popover-is-open=vm.popover.isOpen popover-trigger=outsideClick ng-click=togglePopover($event) uib-popover-template="\'usercard-popover.tpl.html\'" ng-transclude></span>',
     controller: function() {
       var vm = this;
       vm.popover = {
@@ -5726,7 +5664,7 @@ angular.module('clb-ui-identity')
   // We need to inject it in template cache as it is used for displaying
   // the tooltip. Does it smell like a hack? sure, it is a hack!
   var injector = {
-    template:'<clb-usercard clb-user="vm.popover.user" ng-click="togglePopover($event, \'close\')"></clb-usercard>'
+    template:'<clb-usercard clb-user=vm.popover.user ng-click="togglePopover($event, \'close\')"></clb-usercard>'
   };
   // If defined, it means that the template has been inlined during build.
   if (injector.template) {
@@ -5797,7 +5735,7 @@ function clbUsercard(lodash) {
 function clbUsercardCacheTemplate($templateCache) {
   //
   var injector = {
-    template:'<div ng-if="user" class="clb-usercard clb-card clb-card-default"><h3 class="clb-usercard-header"><span class="clb-usercard-name">{{user.displayName}}</span> <span class="text-muted clb-usercard-username" uib-popover="{{user.id}}" popover-trigger="mouseenter" popover-popup-close-delay="2000" popover-placement="right">@{{user.username}}</span></h3><div class="clb-usercard-pix"><clb-user-avatar clb-user="user"></clb-user-avatar></div><div class="clb-usercard-institution" ng-if="institution"><span class="clb-usercard-institution-title">{{institution.title}}</span> <span ng-if="institution.title && (institution.name || institution.department)">,</span> <span class="clb-usercard-institution-name">{{institution.name}}</span> <span ng-if="institution.name && institution.department">,</span> <span class="clb-usercard-institution-dept">{{institution.department}}</span></div><div class="clb-usercard-contact"><a class="clb-usercard-contact-item clb-usercard-email" target="_top" href="mailto:{{email}}" ng-if="email"><span class="glyphicon glyphicon-envelope"></span> {{email}}</a> <span class="clb-usercard-contact-item clb-usercard-phone" ng-if="phone"><span class="glyphicon glyphicon-phone"></span> {{phone}}</span> <span class="clb-usercard-contact-item clb-usercard-im-list" ng-if="ims.length"><span class="glyphicon glyphicon-bullhorn"></span> <span ng-repeat-start="im in ims"></span> <span class="clb-usercard-im">{{im.value}}({{im.type}})</span> <span ng-repeat-end></span></span></div></div>'
+    template:'<div ng-if=user class="clb-usercard clb-card clb-card-default"><h3 class=clb-usercard-header><span class=clb-usercard-name>{{user.displayName}}</span> <span class="text-muted clb-usercard-username" uib-popover={{user.id}} popover-trigger=mouseenter popover-popup-close-delay=2000 popover-placement=right>@{{user.username}}</span></h3><div class=clb-usercard-pix><clb-user-avatar clb-user=user></clb-user-avatar></div><div class=clb-usercard-institution ng-if=institution><span class=clb-usercard-institution-title>{{institution.title}}</span> <span ng-if="institution.title && (institution.name || institution.department)">,</span> <span class=clb-usercard-institution-name>{{institution.name}}</span> <span ng-if="institution.name && institution.department">,</span> <span class=clb-usercard-institution-dept>{{institution.department}}</span></div><div class=clb-usercard-contact><a class="clb-usercard-contact-item clb-usercard-email" target=_top href=mailto:{{email}} ng-if=email><span class="glyphicon glyphicon-envelope"></span> {{email}}</a> <span class="clb-usercard-contact-item clb-usercard-phone" ng-if=phone><span class="glyphicon glyphicon-phone"></span> {{phone}}</span> <span class="clb-usercard-contact-item clb-usercard-im-list" ng-if=ims.length><span class="glyphicon glyphicon-bullhorn"></span> <span ng-repeat-start="im in ims"></span> <span class=clb-usercard-im>{{im.value}}({{im.type}})</span> <span ng-repeat-end></span></span></div></div>'
   };
   // If defined, it means that the template has been inlined during build.
   if (injector.template) {
@@ -5835,7 +5773,7 @@ function clbLoading() {
       promise: '=?clbPromise',
       message: '=?clbMessage'
     },
-    template:'<div class="clb-loading" ng-if="loading"><span class="glyphicon glyphicon-refresh clb-spinning"></span> {{message}}</div>',
+    template:'<div class=clb-loading ng-if=loading><span class="glyphicon glyphicon-refresh clb-spinning"></span> {{message}}</div>',
     link: function(scope) {
       scope.loading = true;
       scope.message = scope.message || 'Loading...';
@@ -5927,7 +5865,7 @@ function clbFileBrowserFolder() {
   return {
     restrict: 'A',
     require: '^clbFileBrowser',
-    template:'<div class="clb-file-browser-item clb-file-browser-folder" ng-dblclick="browserView.handleNavigation(folder)" ng-click="browserView.handleFocus(folder)" hbp-on-touch="browserView.handleNavigation(folder)" ng-class="{\'clb-file-browser-item-selected\': browserView.selectedEntity === folder}"><div class="clb-file-browser-label"><i class="fa" ng-class="folderIcon ? folderIcon : \'fa-folder\'"></i><span>{{folderLabel || folder._name}}</span></div></div>',
+    template:'<div class="clb-file-browser-item clb-file-browser-folder" ng-dblclick=browserView.handleNavigation(folder) ng-click=browserView.handleFocus(folder) hbp-on-touch=browserView.handleNavigation(folder) ng-class="{\'clb-file-browser-item-selected\': browserView.selectedEntity === folder}"><div class=clb-file-browser-label><i class=fa ng-class="folderIcon ? folderIcon : \'fa-folder\'"></i><span>{{folderLabel || folder._name}}</span></div></div>',
     scope: {
       folder: '=clbFileBrowserFolder',
       folderIcon: '@clbFileBrowserFolderIcon',
@@ -5960,7 +5898,7 @@ function clbFileBrowserPath(clbStorage) {
   return {
     restrict: 'E',
     require: '^clbFileBrowser',
-    template:'<ul class="breadcrumb clb-file-browser-path"><li class="root" ng-if="!browserView.isRoot"><a ng-click="browserView.handleNavigation(browserView.rootEntity)">{{browserView.rootEntity._name || \'[top]\'}}</a></li><li ng-repeat="entity in ancestors"><a ng-click="browserView.handleNavigation(entity)">{{entity._name}}</a></li><li><span class="active">{{browserView.currentEntity._name || \'[top]\'}}</span></li></ul>',
+    template:'<ul class="breadcrumb clb-file-browser-path"><li class=root ng-if=!browserView.isRoot><a ng-click=browserView.handleNavigation(browserView.rootEntity)>{{browserView.rootEntity._name || \'[top]\'}}</a></li><li ng-repeat="entity in ancestors"><a ng-click=browserView.handleNavigation(entity)>{{entity._name}}</a></li><li><span class=active>{{browserView.currentEntity._name || \'[top]\'}}</span></li></ul>',
     link: function(scope, element, attrs, ctrl) {
       var handleAncestors = function(ancestors) {
         scope.ancestors = ancestors;
@@ -5990,7 +5928,7 @@ angular.module('clb-ui-storage')
   // We need to inject it in template cache as it is used for displaying
   // the tooltip. Does it smell like a hack? sure, it is a hack!
   var injector = {
-    template:'<div ng-init="browserView.defineThumbnailUrl(file)"><div class="file-browser-thumbnail thumbnail" ng-if="browserView.thumbnailUrl" aria-hidden="true"><img ng-src="{{browserView.thumbnailUrl}}"></div>{{file._name}}</div>'
+    template:'<div ng-init=browserView.defineThumbnailUrl(file)><div class="file-browser-thumbnail thumbnail" ng-if=browserView.thumbnailUrl aria-hidden=true><img ng-src={{browserView.thumbnailUrl}}></div>{{file._name}}</div>'
   };
   // If defined, it means that the template has been inlined during build.
   if (injector.template) {
@@ -6049,7 +5987,7 @@ function clbFileBrowser(lodash) {
       entity: '=?clbEntity',
       root: '=clbRoot'
     },
-    template:'<div class="clb-file-browser" in-view-container ng-click="selectItem()"><clb-error-message clb-error="browserView.error"></clb-error-message><div class="navbar navbar-default"><div class="container-fluid"><div class="nav navbar-nav navbar-text"><clb-file-browser-path></clb-file-browser-path></div><div class="dropdown nav navbar-nav pull-right" uib-dropdown ng-if="browserView.canEdit"><button type="button" href class="btn btn-default navbar-btn dropdown-toggle" uib-dropdown-toggle><span class="glyphicon glyphicon-plus"></span> <span class="caret"></span></button><ul class="dropdown-menu" role="menu" uib-dropdown-menu><li ng-if="browserView.canEdit"><a ng-click="browserView.startCreateFolder()"><span class="fa fa-folder"></span> Create Folder</a></li><li ng-if="browserView.canEdit"><a ng-click="browserView.showFileUpload = true"><span class="fa fa-file"></span> Upload File</a></li></ul></div></div></div><div class="clb-file-browser-content"><div ng-if="browserView.isLoading" class="alert alert-info" role="alert">Loading...</div><div class="file-browser-upload" ng-if="browserView.showFileUpload"><button type="button" class="btn close pull-right" ng-click="browserView.showFileUpload = false"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><clb-file-upload on-drop="browserView.onFileChanged(files)" on-error="browserView.setError(error)"></clb-file-upload></div><div ng-if="browserView.isRoot && browserView.isEmpty()" class="alert alert-info" role="alert">The collab storage is still empty, use the \'+\' button to upload some content.</div><ul><li ng-if="!browserView.isRoot" clb-file-browser-folder="browserView.parent" clb-file-browser-folder-label=".." clb-file-browser-folder-icon="fa-level-up"></li><li ng-repeat="folder in browserView.folders" clb-file-browser-folder="folder"></li><li ng-if="browserView.showCreateFolder" class="clb-file-browser-item"><div class="clb-file-browser-folder"><form class="form form-inline" action="index.html" method="post" ng-submit="browserView.doCreateFolder($event)"><div class="input-group"><input type="text" class="form-control new-folder-name" name="newFolderName" ng-model="browserView.newFolderName"> <span class="input-group-btn"><input class="btn btn-primary" type="submit" name="name" value="Ok"> <button class="btn btn-default" type="button" ng-click="browserView.cancelCreateFolder()"><span aria-hidden="true">&times;</span><span class="sr-only">Cancel</span></button></span></div></form></div></li><li class="clb-file-browser-item" ng-if="browserView.hasMoreFolders"><a class="clb-file-browser-label btn" clb-perform-action="browserView.loadMoreFolders()"><span class="fa fa-refresh"></span> Load More Folders</a></li><li ng-repeat="file in browserView.files" ng-dblclick="browseToEntity(file)" ng-click="browserView.handleFocus(file)" uib-tooltip-template="\'file-browser-tooltip.tpl.html\'" tooltip-placement="bottom" tooltip-popup-delay="600" class="clb-file-browser-item" ng-class="{ \'clb-file-browser-item-selected\': browserView.selectedEntity === file }"><div class="clb-file-browser-label"><hbp-content-icon content="file._contentType"></hbp-content-icon><span>{{file._name || file._uuid}}</span></div></li><li ng-repeat="uploadInfo in browserView.uploads" ng-click="browserView.handleFocus(null)" uib-tooltip="{{uploadInfo.content.name}}" tooltip-placement="bottom" tooltip-popup-delay="600" class="clb-file-browser-item" ng-class="\'clb-file-browser-state-\' + uploadInfo.state"><div class="clb-file-browser-label"><hbp-content-icon content="file._contentType"></hbp-content-icon><span>{{uploadInfo.content.name}}</span></div><div class="clb-file-browser-item-upload progress"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploadInfo.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploadInfo.progress.percentage}}%"><span class="sr-only">{{uploadInfo.progress.percentage}}% Complete</span></div></div></li><li class="clb-file-browser-item" ng-if="browserView.hasMoreFiles"><a class="clb-file-browser-label btn" clb-perform-action="browserView.loadMoreFiles()"><span class="fa fa-refresh"></span> Load more files</a></li></ul></div></div>',
+    template:'<div class=clb-file-browser in-view-container ng-click=selectItem()><clb-error-message clb-error="{ message: \'aaa\'}"></clb-error-message><clb-error-message clb-error=browserView.error></clb-error-message><div class="navbar navbar-default"><div class=container-fluid><div class="nav navbar-nav navbar-text"><clb-file-browser-path></clb-file-browser-path></div><div class="dropdown nav navbar-nav pull-right" uib-dropdown ng-if=browserView.canEdit><button type=button href class="btn btn-default navbar-btn dropdown-toggle" uib-dropdown-toggle><span class="glyphicon glyphicon-plus"></span> <span class=caret></span></button><ul class=dropdown-menu role=menu uib-dropdown-menu><li ng-if=browserView.canEdit><a ng-click=browserView.startCreateFolder()><span class="fa fa-folder"></span> Create Folder</a></li><li ng-if=browserView.canEdit><a ng-click="browserView.showFileUpload = true"><span class="fa fa-file"></span> Upload File</a></li></ul></div></div></div><div class=clb-file-browser-content><div ng-if=browserView.isLoading class="alert alert-info" role=alert>Loading...</div><div class=file-browser-upload ng-if=browserView.showFileUpload><button type=button class="btn close pull-right" ng-click="browserView.showFileUpload = false"><span aria-hidden=true>&times;</span><span class=sr-only>Close</span></button><clb-file-upload on-drop=browserView.onFileChanged(files) on-error=browserView.setError(error)></clb-file-upload></div><div ng-if="browserView.isRoot && browserView.isEmpty()" class="alert alert-info" role=alert>The collab storage is still empty, use the \'+\' button to upload some content.</div><ul><li ng-if=!browserView.isRoot clb-file-browser-folder=browserView.parent clb-file-browser-folder-label=.. clb-file-browser-folder-icon=fa-level-up></li><li ng-repeat="folder in browserView.folders" clb-file-browser-folder=folder></li><li ng-if=browserView.showCreateFolder class=clb-file-browser-item><div class=clb-file-browser-folder><form class="form form-inline" action=index.html method=post ng-submit=browserView.doCreateFolder($event)><div class=input-group><input type=text class="form-control new-folder-name" name=newFolderName ng-model=browserView.newFolderName> <span class=input-group-btn><input class="btn btn-primary" type=submit name=name value=Ok> <button class="btn btn-default" type=button ng-click=browserView.cancelCreateFolder()><span aria-hidden=true>&times;</span><span class=sr-only>Cancel</span></button></span></div></form></div></li><li class=clb-file-browser-item ng-if=browserView.hasMoreFolders><a class="clb-file-browser-label btn" clb-perform-action=browserView.loadMoreFolders()><span class="fa fa-refresh"></span> Load More Folders</a></li><li ng-repeat="file in browserView.files" ng-dblclick=browseToEntity(file) ng-click=browserView.handleFocus(file) uib-tooltip-template="\'file-browser-tooltip.tpl.html\'" tooltip-placement=bottom tooltip-popup-delay=600 class=clb-file-browser-item ng-class="{ \'clb-file-browser-item-selected\': browserView.selectedEntity === file }"><div class=clb-file-browser-label><hbp-content-icon content=file._contentType></hbp-content-icon><span>{{file._name || file._uuid}}</span></div></li><li ng-repeat="uploadInfo in browserView.uploads" ng-click=browserView.handleFocus(null) uib-tooltip={{uploadInfo.content.name}} tooltip-placement=bottom tooltip-popup-delay=600 class=clb-file-browser-item ng-class="\'clb-file-browser-state-\' + uploadInfo.state"><div class=clb-file-browser-label><hbp-content-icon content=file._contentType></hbp-content-icon><span>{{uploadInfo.content.name}}</span></div><div class="clb-file-browser-item-upload progress"><div class=progress-bar role=progressbar aria-valuenow={{uploadInfo.progress}} aria-valuemin=0 aria-valuemax=100 style="width: {{uploadInfo.progress.percentage}}%"><span class=sr-only>{{uploadInfo.progress.percentage}}% Complete</span></div></div></li><li class=clb-file-browser-item ng-if=browserView.hasMoreFiles><a class="clb-file-browser-label btn" clb-perform-action=browserView.loadMoreFiles()><span class="fa fa-refresh"></span> Load more files</a></li></ul></div></div>',
     link: clbFileBrowserLink,
     controllerAs: 'browserView',
     controller: FileBrowserViewModel
@@ -6525,7 +6463,7 @@ function clbFileChooser($q, $log) {
       ngModel: '=',
       validate: '=?clbValidate'
     },
-    template:'<div class="clb-file-chooser"><clb-file-browser clb-entity="initialValue" clb-root="root"></clb-file-browser><div class="navbar navbar-form"><button type="button" ng-click="doChooseEntity()" class="btn btn-primary" ng-disabled="!canChooseCurrentEntity">Choose</button> <button type="button" ng-click="doCancel()" class="btn btn-default">Cancel</button></div></div>',
+    template:'<div class=clb-file-chooser><clb-file-browser clb-entity=initialValue clb-root=root></clb-file-browser><div class="navbar navbar-form"><button type=button ng-click=doChooseEntity() class="btn btn-primary" ng-disabled=!canChooseCurrentEntity>Choose</button> <button type=button ng-click=doCancel() class="btn btn-default">Cancel</button></div></div>',
     link: clbFileChooserLink
   };
 
@@ -6617,7 +6555,7 @@ angular.module('clb-ui-storage')
 .directive('clbFileUpload', function() {
   'use strict';
   return {
-    template:'<div class="clb-file-upload" ng-class="{\'clb-file-upload-drag-enter\': dragEntered, \'clb-file-upload-drag-leave\': !dragEntered}" ng-cloak><h4>Drop Files Here to Upload</h4><span>or</span><div class="btn btn-default clb-file-upload-btn-file">Select Files <input type="file" multiple onchange="angular.element(this).scope().onFileChanged(this.files)"></div></div>',
+    template:'<div class=clb-file-upload ng-class="{\'clb-file-upload-drag-enter\': dragEntered, \'clb-file-upload-drag-leave\': !dragEntered}" ng-cloak><h4>Drop Files Here to Upload</h4><span>or</span><div class="btn btn-default clb-file-upload-btn-file">Select Files <input type=file multiple onchange=angular.element(this).scope().onFileChanged(this.files)></div></div>',
     restrict: 'E',
     scope: {
       onDrop: '&',
@@ -6744,7 +6682,7 @@ function clbActivity() {
     controller: ActivityController,
     controllerAs: 'vm',
     bindToController: true,
-    template:'<div class="clb-activity-metadata"><div class="clb-activity-time" am-time-ago="vm.activity.time"></div><a clb-usercard-popover="vm.activity.actor.data" ng-click="vm.navigate($event, false)"><clb-user-avatar class="clb-activity-avatar" clb-user="vm.activity.actor.data" ng-if="vm.activity.actor.data"></clb-user-avatar></a></div><div class="clb-activity-summary"><span class="clb-activity-link" ng-repeat="p in vm.parts" ng-class="\'clb-activity-link-\' + p.tag"><a ng-if="p.tag && p.ref.type === \'HBPUser\'" clb-usercard-popover="p.ref.id" ng-click="vm.navigate($event, false)">{{p.text}}</a> <a ng-if="p.tag && p.ref.type !== \'HBPUser\'" ng-init="vm.resolveUrl(p)" ng-href="{{p.url}}">{{p.text}}</a> <span ng-if="!p.tag">{{p.text}}</span></span></div>',
+    template:'<div class=clb-activity-metadata><div class=clb-activity-time am-time-ago=vm.activity.time></div><a clb-usercard-popover=vm.activity.actor.data ng-click="vm.navigate($event, false)"><clb-user-avatar class=clb-activity-avatar clb-user=vm.activity.actor.data ng-if=vm.activity.actor.data></clb-user-avatar></a></div><div class=clb-activity-summary><span class=clb-activity-link ng-repeat="p in vm.parts" ng-class="\'clb-activity-link-\' + p.tag"><a ng-if="p.tag && p.ref.type === \'HBPUser\'" clb-usercard-popover=p.ref.id ng-click="vm.navigate($event, false)">{{p.text}}</a> <a ng-if="p.tag && p.ref.type !== \'HBPUser\'" ng-init=vm.resolveUrl(p) ng-href={{p.url}}>{{p.text}}</a> <span ng-if=!p.tag>{{p.text}}</span></span></div>',
     link: {
       post: function(scope, elt, attr, ctrl) {
         elt.addClass('clb-activity').addClass(ctrl.verbClass);
@@ -6990,7 +6928,7 @@ function clbFeed() {
     controller: FeedController,
     controllerAs: 'vm',
     bindToController: true,
-    template:'<div ng-if="vm.loadingFeed" class="alert alert-info"><div ng-switch on="vm.feedDate"><div ng-switch-when="null">Loading all activities...</div><div class="animate-switch" ng-switch-default>Loading Feed for {{vm.feedDate}}...</div></div></div><p ng-if="vm.feedDate != null">Selected date: {{vm.feedDate}}</p><ul class="feed list-group" ng-if="!vm.loadingFeed" ng-class="{\'feed-empty\': vm.activities.results.length === 0}"><li ng-if="vm.error" class="list-group-item"><div class="alert alert-error"><strong>Load Error:</strong> {{vm.error}}</div></li><li class="list-group-item" ng-if="!vm.activities && !vm.error"><hbp-loading></hbp-loading></li><li class="list-group-item" ng-if="vm.activities.results.length === 0 && vm.feedDate"><div class="alert alert-info">No activities on {{vm.feedDate}}</div></li><li class="list-group-item" ng-if="vm.activities.results.length === 0 && !vm.feedDate"><div class="alert alert-info">No activities to show</div></li><li class="list-group-item" ng-repeat="a in vm.activities.results track by $index" clb-activity="a"></li><li class="list-group-item" ng-if="vm.activities.hasNext"><a clb-perform-action="vm.activities.next()" class="btn btn-default">Show More</a></li></ul>',
+    template:'<div ng-if=vm.loadingFeed class="alert alert-info"><div ng-switch on=vm.feedDate><div ng-switch-when=null>Loading all activities...</div><div class=animate-switch ng-switch-default>Loading Feed for {{vm.feedDate}}...</div></div></div><p ng-if="vm.feedDate != null">Selected date: {{vm.feedDate}}</p><ul class="feed list-group" ng-if=!vm.loadingFeed ng-class="{\'feed-empty\': vm.activities.results.length === 0}"><li ng-if=vm.error class=list-group-item><div class="alert alert-error"><strong>Load Error:</strong> {{vm.error}}</div></li><li class=list-group-item ng-if="!vm.activities && !vm.error"><hbp-loading></hbp-loading></li><li class=list-group-item ng-if="vm.activities.results.length === 0 && vm.feedDate"><div class="alert alert-info">No activities on {{vm.feedDate}}</div></li><li class=list-group-item ng-if="vm.activities.results.length === 0 && !vm.feedDate"><div class="alert alert-info">No activities to show</div></li><li class=list-group-item ng-repeat="a in vm.activities.results track by $index" clb-activity=a></li><li class=list-group-item ng-if=vm.activities.hasNext><a clb-perform-action=vm.activities.next() class="btn btn-default">Show More</a></li></ul>',
     link: function(scope, elt) {
       elt.addClass('clb-feed');
       var unbind = scope.$on(
