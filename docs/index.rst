@@ -226,7 +226,7 @@ in your source code folder:
 
 .. code-block:: bash
 
-  grep -ro '<accordion\|<accordion-group\|<accordion-heading\|<accordionConfig\|<alert\|<btn-checkbox\|<btn-radio\|<buttonConfig\|<carousel\|<slide\|<collapse\|<dateParser\|<datepicker\|<datepicker-popup\|<daypicker\|<monthpicker\|<yearpicker\|<datepickerConfig\|<datepickerPopupConfig\|dropdown=\|dropdown-toggle=\|dropdown-menu=\|<keyboard-nav\|<dropdownService\|<$modal\|<$modalInstance\|<$modalStack\|<modal-transclude\|<pagination\|<pager\|<pagerConfig\|<paginationConfig\|popover=\|popover-template=\|popover-html=\|$position\|<progressbar\|<bar\|<progress\|<progressConfig\|<rating\|<ratingConfig\|<tabset\|<tab\|<tab-heading\|timepicker\|timepickerConfig\|tooltip=\|tooltip-template=\|tooltip-html=\|$tooltip\|typeahead\|typeahead-match\|typeaheadHighlightFilter\|typeaheadParser' .
+  grep -ro '<accordion\|<accordion-group\|<accordion-heading\|<accordionConfig\|<alert\|<btn-checkbox\|<btn-radio\|<buttonConfig\|<carousel\|<slide\|collapse\|<dateParser\|<datepicker\|<datepicker-popup\|<daypicker\|<monthpicker\|<yearpicker\|<datepickerConfig\|<datepickerPopupConfig\|dropdown=\|dropdown-toggle=\|dropdown-menu=\|<keyboard-nav\|<dropdownService\|<$modal\|<$modalInstance\|<$modalStack\|<modal-transclude\|<pagination\|<pager\|<pagerConfig\|<paginationConfig\|popover=\|popover-template=\|popover-html=\|$position\|<progressbar\|<bar\|<progress\|<progressConfig\|<rating\|<ratingConfig\|<tabset\|<tab\|<tab-heading\|timepicker\|timepickerConfig\|tooltip=\|tooltip-template=\|tooltip-html=\|$tooltip\|typeahead\|typeahead-match\|typeaheadHighlightFilter\|typeaheadParser' .
 
 You can also use the directives provided by this package.
 Please be sure to check the change in the directive attributes prefix as well.::
