@@ -30,6 +30,8 @@
 clbApp.$inject = ['$log', '$q', '$rootScope', '$timeout', '$window', 'clbError'];
 authProvider.$inject = ['clbAppHello', 'clbEnvProvider'];
 clbAuthHttp.$inject = ['$http', 'clbAuth'];
+interceptorConfig.$inject = ['$httpProvider'];
+httpRequestInterceptor.$inject = ['$q'];
 clbAutomator.$inject = ['$q', '$log', 'clbError'];
 clbCollabTeamRole.$inject = ['clbAuthHttp', '$log', '$q', 'clbEnv', 'clbError'];
 clbCollabTeam.$inject = ['clbAuthHttp', '$log', '$q', 'lodash', 'clbEnv', 'clbError', 'clbCollabTeamRole', 'clbUser'];
@@ -115,6 +117,14 @@ angular.module('hbpCollaboratory', [
  */
 angular.module('clb-app', ['clb-env', 'clb-error'])
 .constant('clbAppHello', hello);
+
+/**
+ * @module clb-auth
+ * @desc
+ * ``clb-auth`` provides a library based on hello.js
+ * to authenticate into the Collaboratory.
+ */
+angular.module('clb-auth', ['clb-env']);
 
 /**
  * @module clb-automator
@@ -258,16 +268,16 @@ angular.module('clb-ui-error', [
 angular.module('clb-ui-form', []);
 
 /**
- * Provides UI widgets around user and groups.
- * @module clb-ui-identity
- */
-angular.module('clb-ui-identity', ['lodash', 'clb-identity']);
-
-/**
  * Provides a simple loading directive.
  * @module clb-ui-loading
  */
 angular.module('clb-ui-loading', []);
+
+/**
+ * Provides UI widgets around user and groups.
+ * @module clb-ui-identity
+ */
+angular.module('clb-ui-identity', ['lodash', 'clb-identity']);
 
 /**
  * The ``clb-ui-storage`` module provides Angular directive to work
@@ -783,6 +793,57 @@ function clbBootstrap(module, options) {
     }
   }];
   return deferredBootstrapper.bootstrap(options);
+}
+
+/* global hello, document */
+angular.module('clb-auth')
+.config(interceptorConfig)
+.factory('httpRequestInterceptor', httpRequestInterceptor)
+.provider('clbAuth', clbAuth);
+
+function interceptorConfig($httpProvider) {
+  $httpProvider.interceptors.push('httpRequestInterceptor');
+}
+
+function httpRequestInterceptor($q) {
+  return {
+    request: function(requestConfig) {
+      // TODO: get token from somewhere
+      var token = 'TOKEN';
+      requestConfig.headers.Authorization = 'Bearer ' + token;
+      return requestConfig;
+    },
+    responseError: function(rejection) {
+      // TODO: check bbpOidcClient...
+      return $q.reject(rejection);
+    }
+  };
+}
+
+function clbAuth() {
+  /* eslint camelcase:[2, {properties: "never"}] */
+  hello.init({
+    hbp: {
+      oauth: {
+        version: 2,
+        auth: 'https://services.humanbrainproject.eu/oidc/authorize',
+        grant: 'https://services.humanbrainproject.eu/oidc/token'
+      },
+      scope: {
+        basic: 'openid profiles'
+      },
+      scope_delim: ' ',
+      get: {
+        me: 'userinfo'
+      },
+      base: 'https://services.humanbrainproject.eu/oidc/'
+    }
+  }, {client_id: 'portal-client', redirect_uri: document.URL});
+  return {
+    $get: function() {
+      return hello('hbp');
+    }
+  };
 }
 
 angular.module('clb-automator')
@@ -1682,10 +1743,11 @@ angular.module('clb-collab')
    *
    * @memberof module:clb-collab.clbCollabNav
    * @param  {number} collabId collab ID
+   * @param  {boolean} refresh if true the nav root will not be loaded from cache
    * @return {Promise} promise the root nav item
    */
-  var getRoot = function(collabId) {
-    var treePromise = cacheNavRoots.get(collabId);
+  var getRoot = function(collabId, refresh) {
+    var treePromise = refresh ? null : cacheNavRoots.get(collabId);
 
     if (!treePromise) {
       treePromise = clbAuthHttp.get(collabApiUrl + collabId + '/nav/all/').then(
@@ -1727,10 +1789,11 @@ angular.module('clb-collab')
    * @memberof module:clb-collab.clbCollabNav
    * @param  {number} collabId collab ID
    * @param  {number} nodeId   node ID
+   * @param  {refresh} refresh if true the nav root will not be loaded from cache
    * @return {NavItem} the matching nav item
    */
-  var getNode = function(collabId, nodeId) {
-    return getRoot(collabId).then(function() {
+  var getNode = function(collabId, nodeId, refresh) {
+    return getRoot(collabId, refresh).then(function() {
       var k = key(collabId, nodeId);
       var item = cacheNavItems.get(k);
 
@@ -5511,6 +5574,98 @@ angular.module('clb-ui-form')
   };
 });
 
+angular.module('clb-ui-loading')
+.directive('clbLoading', clbLoading);
+
+/**
+ * The directive clbLoading displays a simple loading message. If a promise
+ * is given, the loading indicator will disappear once it is resolved.
+ *
+ * Attributes
+ * ----------
+ *
+ * =======================  ===================================================
+ * Name                     Description
+ * =======================  ===================================================
+ * {Promise} [clb-promise]  Hide the loading message upon fulfilment.
+ * {string} [clb-message]   Displayed loading string (default=``'loading...'``)
+ * =======================  ===================================================
+ *
+ * @memberof module:clb-ui-loading
+ * @return {object} Angular directive descriptor
+ * @example <caption>Directive Usage Example</caption>
+ * <hbp-loading hbp-promise="myAsyncFunc()" hbp-message="'Loading My Async Func'">
+ * </hbp-loading>
+ */
+function clbLoading() {
+  return {
+    restrict: 'E',
+    scope: {
+      promise: '=?clbPromise',
+      message: '=?clbMessage'
+    },
+    template:'<div class="clb-loading" ng-if="loading"><span class="glyphicon glyphicon-refresh clb-spinning"></span> {{message}}</div>',
+    link: function(scope) {
+      scope.loading = true;
+      scope.message = scope.message || 'Loading...';
+      if (scope.promise) {
+        var complete = function() {
+          scope.loading = false;
+        };
+        scope.promise.then(complete, complete);
+      }
+    }
+  };
+}
+
+angular.module('clb-ui-loading')
+.directive('clbPerformAction', clbPerformAction);
+
+/**
+ * @namespace clbPerformAction
+ * @memberof module:clb-ui-loading
+ *
+ * @desc
+ * clbPerformAction directive run an action when the given control is clicked.
+ * it can be added as an attribute. While the action is running, the control
+ * is disabled.
+ *
+ * @param {function} clbPerformAction  the code to run when the button is clicked.
+ *                     this function must return a promise.
+ * @param {string}   clbLoadingMessage text replacement for the element content.
+ * @return {object}                      Directive Descriptor
+ * @example <caption>use perform action to disable a button while code is running</caption>
+ * <div ng-controller="myController">
+ *  <input class="btn btn-primary" type="submit" clb-perform-action="doSomething()">
+ * </div>
+ */
+function clbPerformAction() {
+  return {
+    restrict: 'A',
+    scope: {
+      action: '&clbPerformAction'
+    },
+    link: function(scope, element, attrs) {
+      var onComplete = function() {
+        element.html(scope.text);
+        element.attr('disabled', false);
+        element.removeClass('loading');
+      };
+      var run = function() {
+        if (scope.loadingMessage) {
+          element.html(scope.loadingMessage);
+        }
+        element.addClass('loading');
+        element.attr('disabled', true);
+        scope.action().then(onComplete, onComplete);
+      };
+      scope.loadingMessage = attrs.clbLoadingMessage;
+      scope.text = scope.text || element.html();
+      element.on('click', run);
+    }
+  };
+}
+
 angular.module('clb-ui-identity')
 .directive('clbUserAvatar', clbUserAvatar);
 
@@ -5741,98 +5896,6 @@ function clbUsercardCacheTemplate($templateCache) {
   if (injector.template) {
     $templateCache.put('usercard.directive.html', injector.template);
   }
-}
-
-angular.module('clb-ui-loading')
-.directive('clbLoading', clbLoading);
-
-/**
- * The directive clbLoading displays a simple loading message. If a promise
- * is given, the loading indicator will disappear once it is resolved.
- *
- * Attributes
- * ----------
- *
- * =======================  ===================================================
- * Name                     Description
- * =======================  ===================================================
- * {Promise} [clb-promise]  Hide the loading message upon fulfilment.
- * {string} [clb-message]   Displayed loading string (default=``'loading...'``)
- * =======================  ===================================================
- *
- * @memberof module:clb-ui-loading
- * @return {object} Angular directive descriptor
- * @example <caption>Directive Usage Example</caption>
- * <hbp-loading hbp-promise="myAsyncFunc()" hbp-message="'Loading My Async Func'">
- * </hbp-loading>
- */
-function clbLoading() {
-  return {
-    restrict: 'E',
-    scope: {
-      promise: '=?clbPromise',
-      message: '=?clbMessage'
-    },
-    template:'<div class="clb-loading" ng-if="loading"><span class="glyphicon glyphicon-refresh clb-spinning"></span> {{message}}</div>',
-    link: function(scope) {
-      scope.loading = true;
-      scope.message = scope.message || 'Loading...';
-      if (scope.promise) {
-        var complete = function() {
-          scope.loading = false;
-        };
-        scope.promise.then(complete, complete);
-      }
-    }
-  };
-}
-
-angular.module('clb-ui-loading')
-.directive('clbPerformAction', clbPerformAction);
-
-/**
- * @namespace clbPerformAction
- * @memberof module:clb-ui-loading
- *
- * @desc
- * clbPerformAction directive run an action when the given control is clicked.
- * it can be added as an attribute. While the action is running, the control
- * is disabled.
- *
- * @param {function} clbPerformAction  the code to run when the button is clicked.
- *                     this function must return a promise.
- * @param {string}   clbLoadingMessage text replacement for the element content.
- * @return {object}                      Directive Descriptor
- * @example <caption>use perform action to disable a button while code is running</caption>
- * <div ng-controller="myController">
- *  <input class="btn btn-primary" type="submit" clb-perform-action="doSomething()">
- * </div>
- */
-function clbPerformAction() {
-  return {
-    restrict: 'A',
-    scope: {
-      action: '&clbPerformAction'
-    },
-    link: function(scope, element, attrs) {
-      var onComplete = function() {
-        element.html(scope.text);
-        element.attr('disabled', false);
-        element.removeClass('loading');
-      };
-      var run = function() {
-        if (scope.loadingMessage) {
-          element.html(scope.loadingMessage);
-        }
-        element.addClass('loading');
-        element.attr('disabled', true);
-        scope.action().then(onComplete, onComplete);
-      };
-      scope.loadingMessage = attrs.clbLoadingMessage;
-      scope.text = scope.text || element.html();
-      element.on('click', run);
-    }
-  };
 }
 
 angular.module('clb-ui-storage')
