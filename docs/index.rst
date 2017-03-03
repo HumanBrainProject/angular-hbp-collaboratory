@@ -12,6 +12,7 @@ Contents
 
    
    module-clb-app
+   module-clb-auth
    module-clb-automator
    module-clb-collab
    module-clb-context-data
@@ -67,7 +68,7 @@ Bower, Gulp and ESLint should be installed globally:
 
 .. code-block:: bash
 
-   npm install -g bower gulp eslint
+   npm install -g bower gulp eslint jsdoc
 
 
 Install:
@@ -76,6 +77,8 @@ Install:
 
    git clone git@github.com:HumanBrainProject/angular-hbp-collaboratory.git
    cd angular-hbp-collaboratory
+   nvm install # optional
+   nvm use # optional
    npm install
    bower install
 

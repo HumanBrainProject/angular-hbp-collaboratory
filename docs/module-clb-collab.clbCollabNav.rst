@@ -31,10 +31,11 @@ Function: ``getRoot``
 
 Retrieve the root item of the given collab.
 
-.. js:function:: getRoot(collabId)
+.. js:function:: getRoot(collabId, refresh)
 
     
     :param number collabId: collab ID
+    :param boolean refresh: if true the nav root will not be loaded from cache
     :return Promise: promise the root nav item
     
 .. _module-clb-collab.clbCollabNav.getNode:
@@ -45,11 +46,12 @@ Function: ``getNode``
 
 
 
-.. js:function:: getNode(collabId, nodeId)
+.. js:function:: getNode(collabId, nodeId, refresh)
 
     
     :param number collabId: collab ID
     :param number nodeId: node ID
+    :param refresh refresh: if true the nav root will not be loaded from cache
     :return NavItem: the matching nav item
     
 .. _module-clb-collab.clbCollabNav.getNodeFromContext:

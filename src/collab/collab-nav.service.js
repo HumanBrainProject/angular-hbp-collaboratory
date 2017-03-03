@@ -143,10 +143,11 @@ angular.module('clb-collab')
    *
    * @memberof module:clb-collab.clbCollabNav
    * @param  {number} collabId collab ID
+   * @param  {boolean} refresh if true the nav root will not be loaded from cache
    * @return {Promise} promise the root nav item
    */
-  var getRoot = function(collabId) {
-    var treePromise = cacheNavRoots.get(collabId);
+  var getRoot = function(collabId, refresh) {
+    var treePromise = refresh ? null : cacheNavRoots.get(collabId);
 
     if (!treePromise) {
       treePromise = clbAuthHttp.get(collabApiUrl + collabId + '/nav/all/').then(
@@ -188,10 +189,11 @@ angular.module('clb-collab')
    * @memberof module:clb-collab.clbCollabNav
    * @param  {number} collabId collab ID
    * @param  {number} nodeId   node ID
+   * @param  {refresh} refresh if true the nav root will not be loaded from cache
    * @return {NavItem} the matching nav item
    */
-  var getNode = function(collabId, nodeId) {
-    return getRoot(collabId).then(function() {
+  var getNode = function(collabId, nodeId, refresh) {
+    return getRoot(collabId, refresh).then(function() {
       var k = key(collabId, nodeId);
       var item = cacheNavItems.get(k);
 
