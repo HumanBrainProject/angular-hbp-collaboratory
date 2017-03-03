@@ -27,28 +27,28 @@
  * Module to load all the core modules. Try to use the sub-modules instead.
  * @module hbpCollaboratoryCore
  */
-clbApp.$inject = ['$log', '$q', '$rootScope', '$timeout', '$window', 'clbError'];
-authProvider.$inject = ['clbAppHello', 'clbEnvProvider'];
-clbAuthHttp.$inject = ['$http', 'clbAuth'];
 interceptorConfig.$inject = ['$httpProvider'];
 httpRequestInterceptor.$inject = ['$q'];
 clbAutomator.$inject = ['$q', '$log', 'clbError'];
+clbApp.$inject = ['$log', '$q', '$rootScope', '$timeout', '$window', 'clbError'];
+authProvider.$inject = ['clbAppHello', 'clbEnvProvider'];
+clbAuthHttp.$inject = ['$http', 'clbAuth'];
 clbCollabTeamRole.$inject = ['clbAuthHttp', '$log', '$q', 'clbEnv', 'clbError'];
 clbCollabTeam.$inject = ['clbAuthHttp', '$log', '$q', 'lodash', 'clbEnv', 'clbError', 'clbCollabTeamRole', 'clbUser'];
 clbCollab.$inject = ['$log', '$q', '$cacheFactory', 'clbAuthHttp', 'lodash', 'clbContext', 'clbEnv', 'clbError', 'clbResultSet', 'clbUser', 'ClbCollabModel', 'ClbContextModel'];
 clbContext.$inject = ['clbAuthHttp', '$q', 'clbError', 'clbEnv', 'ClbContextModel'];
-clbCtxData.$inject = ['clbAuthHttp', '$q', 'uuid4', 'clbEnv', 'clbError'];
 clbEnv.$inject = ['$injector'];
+clbCtxData.$inject = ['clbAuthHttp', '$q', 'uuid4', 'clbEnv', 'clbError'];
 clbError.$inject = ['$q'];
 clbGroup.$inject = ['$rootScope', '$q', 'clbAuthHttp', '$cacheFactory', 'lodash', 'clbEnv', 'clbError', 'clbResultSet', 'clbIdentityUtil'];
 clbUser.$inject = ['$rootScope', '$q', 'clbAuthHttp', '$cacheFactory', '$log', 'lodash', 'clbEnv', 'clbError', 'clbResultSet', 'clbIdentityUtil'];
 clbIdentityUtil.$inject = ['$log', 'lodash'];
 clbResultSet.$inject = ['clbAuthHttp', '$q', 'clbError'];
 clbStorage.$inject = ['clbAuthHttp', '$q', '$log', 'uuid4', 'clbEnv', 'clbError', 'clbUser', 'clbResultSet'];
-clbResourceLocator.$inject = ['$q', '$log', '$injector', 'clbError'];
-clbStream.$inject = ['clbAuthHttp', 'clbEnv', 'clbError', 'clbResultSet', 'moment'];
 clbConfirm.$inject = ['$rootScope', '$uibModal'];
 clbErrorDialog.$inject = ['$uibModal', 'clbError'];
+clbResourceLocator.$inject = ['$q', '$log', '$injector', 'clbError'];
+clbStream.$inject = ['clbAuthHttp', 'clbEnv', 'clbError', 'clbResultSet', 'moment'];
 clbUsercardPopoverDirective.$inject = ['$log', '$q', 'clbUser', 'clbUsercardPopover'];
 clbUserCardPopoverService.$inject = ['$rootScope'];
 clbUsercard.$inject = ['lodash'];
@@ -102,22 +102,6 @@ angular.module('hbpCollaboratory', [
  * @typedef {string} UUID A string formatted as a valid UUID4
  */
 
-/* global hello */
-
-/**
- * @module clb-app
- * @desc
- * ``clb-app`` module provides utilities to retrieve current
- * HBP Collaboratory Context in an app and to communicate with the current
- * Collaboratory instance.
- *
- * This module must be bootstraped using ``angular.clbBootstrap`` function as
- * it needs to load the global environment loaded in CLB_ENBIRONMENT angular
- * constant.
- */
-angular.module('clb-app', ['clb-env', 'clb-error'])
-.constant('clbAppHello', hello);
-
 /**
  * @module clb-auth
  * @desc
@@ -145,6 +129,22 @@ angular.module('clb-automator', [
   'clb-storage'
 ]);
 
+/* global hello */
+
+/**
+ * @module clb-app
+ * @desc
+ * ``clb-app`` module provides utilities to retrieve current
+ * HBP Collaboratory Context in an app and to communicate with the current
+ * Collaboratory instance.
+ *
+ * This module must be bootstraped using ``angular.clbBootstrap`` function as
+ * it needs to load the global environment loaded in CLB_ENBIRONMENT angular
+ * constant.
+ */
+angular.module('clb-app', ['clb-env', 'clb-error'])
+.constant('clbAppHello', hello);
+
 /**
  * @module clb-collab
  * @desc
@@ -162,20 +162,20 @@ angular.module('clb-collab', [
 ]);
 
 /**
- * Provides a key value store where keys are context UUID
- * and values are string.
- *
- * @module clb-context-data
- */
-angular.module('clb-ctx-data', ['uuid4', 'clb-app', 'clb-env', 'clb-error']);
-
-/**
  * @module clb-env
  * @desc
  * ``clb-env`` module provides a way to information from the global environment.
  */
 
 angular.module('clb-env', []);
+
+/**
+ * Provides a key value store where keys are context UUID
+ * and values are string.
+ *
+ * @module clb-context-data
+ */
+angular.module('clb-ctx-data', ['uuid4', 'clb-app', 'clb-env', 'clb-error']);
 
 angular.module('clb-error', []);
 
@@ -186,27 +186,6 @@ angular.module('clb-identity', [
   'clb-error',
   'clb-rest'
 ]);
-
-/* global _ */
-/**
- * Fix some compatibility issues with previous angular-hbp-common.
- * @module lodash
- * @private
- */
-angular.module('lodash', [])
-.constant('lodash', _)
-.run(['$log', 'lodash', function($log, lodash) {
-  // keep lodash compatibility with older versions
-  if (!lodash.indexBy) {
-    $log.debug('define some lodash 3 functions from lodash 3');
-    lodash.indexBy = lodash.keyBy;
-    lodash.pluck = lodash.map;
-  }
-  if (!lodash.keyBy) {
-    $log.debug('define some lodash 4 functions from lodash 3');
-    lodash.keyBy = lodash.indexBy;
-  }
-}]);
 
 /**
  * @module clb-rest
@@ -231,6 +210,19 @@ angular.module('clb-storage', [
 ]);
 
 /**
+ * @module clb-ui-dialog
+ */
+angular.module('clb-ui-dialog', ['ui.bootstrap.modal']);
+
+/**
+ * @module clb-ui-error
+ */
+angular.module('clb-ui-error', [
+  'clb-error',
+  'ui.bootstrap'
+]);
+
+/**
  * @module clb-stream
  * @desc
  * The `clb-stream` module contains a service and a few directives to retrieve
@@ -248,19 +240,6 @@ angular.module('clb-stream', [
 ]);
 
 /**
- * @module clb-ui-dialog
- */
-angular.module('clb-ui-dialog', ['ui.bootstrap.modal']);
-
-/**
- * @module clb-ui-error
- */
-angular.module('clb-ui-error', [
-  'clb-error',
-  'ui.bootstrap'
-]);
-
-/**
  * @module clb-ui-form
  * @desc
  * clb-ui-form provides directive to ease creation of forms.
@@ -268,16 +247,37 @@ angular.module('clb-ui-error', [
 angular.module('clb-ui-form', []);
 
 /**
+ * Provides UI widgets around user and groups.
+ * @module clb-ui-identity
+ */
+angular.module('clb-ui-identity', ['lodash', 'clb-identity']);
+
+/**
  * Provides a simple loading directive.
  * @module clb-ui-loading
  */
 angular.module('clb-ui-loading', []);
 
+/* global _ */
 /**
- * Provides UI widgets around user and groups.
- * @module clb-ui-identity
+ * Fix some compatibility issues with previous angular-hbp-common.
+ * @module lodash
+ * @private
  */
-angular.module('clb-ui-identity', ['lodash', 'clb-identity']);
+angular.module('lodash', [])
+.constant('lodash', _)
+.run(['$log', 'lodash', function($log, lodash) {
+  // keep lodash compatibility with older versions
+  if (!lodash.indexBy) {
+    $log.debug('define some lodash 3 functions from lodash 3');
+    lodash.indexBy = lodash.keyBy;
+    lodash.pluck = lodash.map;
+  }
+  if (!lodash.keyBy) {
+    $log.debug('define some lodash 4 functions from lodash 3');
+    lodash.keyBy = lodash.indexBy;
+  }
+}]);
 
 /**
  * The ``clb-ui-storage`` module provides Angular directive to work
@@ -306,494 +306,6 @@ angular.module('clb-ui-stream', [
   'clb-stream',
   'clb-ui-error'
 ]);
-
-angular.module('clb-app')
-.factory('clbApp', clbApp);
-
-/**
- * @namespace clbApp
- * @memberof module:clb-app
- * @desc
- * An AngularJS service to interface a web application with the HBP Collaboratory.
- * This library provides a few helper to work within the Collaboratory environment.
- *
- * Usage
- * -----
- *
- * - :ref:`module-clb-app.clbApp.context` is used to set and retrieve
- *   the current context.
- * - :ref:`module-clb-app.clbApp.emit` is used to send a command
- *   to the HBP Collaboratory and wait for its answer.
- *
- * @example <caption>Retrieve the current context object</caption>
- * clbApp.context()
- * .then(function(context) {
- *   console.log(context.ctx, context.state, context.collab);
- * })
- * .catch(function(err) {
- *   // Cannot set the state
- * });
- *
- * @example <caption>Set the current state in order for a user to be able to copy-paste its current URL and reopen the same collab with your app loaded at the same place.</caption>
- * clbApp.context({state: 'lorem ipsum'})
- * .then(function(context) {
- *   console.log(context.ctx, context.state, context.collab);
- * })
- * .catch(function(err) {
- *   // Cannot set the state
- * });
- *
- * @param  {object} $log AngularJS service injection
- * @param  {object} $q AngularJS service injection
- * @param  {object} $rootScope AngularJS service injection
- * @param  {object} $timeout AngularJS service injection
- * @param  {object} $window AngularJS service injection
- * @param  {object} clbError AngularJS service injection
- * @return {object}         the service singleton
- */
-function clbApp(
-  $log,
-  $q,
-  $rootScope,
-  $timeout,
-  $window,
-  clbError
-) {
-  var eventId = 0;
-  var sentMessages = {};
-
-  /**
-   * Singleton class
-   */
-  function AppToolkit() { }
-  AppToolkit.prototype = {
-    emit: emit,
-    context: context,
-    open: open
-  };
-
-  $window.addEventListener('message', function(event) {
-    $rootScope.$emit('message', event.data);
-  });
-
-  $rootScope.$on('message', function(event, message) {
-    if (!message || !message.origin || !sentMessages[message.origin]) {
-      return;
-    }
-    if (message.eventName === 'resolved') {
-      sentMessages[message.origin].resolve(message.data);
-    } else if (message.eventName === 'error') {
-      sentMessages[message.origin].reject(clbError.error(message.data));
-    }
-    sentMessages[message.origin] = null;
-  });
-
-  /**
-   * Send a message to the HBP Collaboratory.
-   * @memberof module:clb-app.clbApp
-   * @param  {string} name name of the event to be propagated
-   * @param  {object} data corresponding data to be sent alongside the event
-   * @return  {Promise} resolve with the message response
-   */
-  function emit(name, data) {
-    eventId++;
-    sentMessages[eventId] = $q.defer();
-    var promise = sentMessages[eventId].promise;
-    $window.parent.postMessage({
-      apiVersion: 1,
-      eventName: name,
-      data: data,
-      ticket: eventId
-    }, '*');
-    return promise;
-  }
-
-  var currentContext;
-
-  /**
-   * @typedef HbpCollaboratoryContext
-   * @memberof module:clb-app.clbApp
-   * @type {object}
-   * @property {string} mode - the current mode, either 'run' or 'edit'
-   * @property {string} ctx - the UUID of the current context
-   * @property {string} state - an application defined state string
-   */
-
-   /**
-    * @memberof module:clb-app.clbApp
-    * @desc
-    * Asynchronously retrieve the current HBP Collaboratory Context, including
-    * the mode, the ctx UUID and the application state if any.
-    * @function context
-    * @param {object} data new values to send to HBP Collaboratory frontend
-    * @return {Promise} resolve to the context
-    * @static
-    */
-  function context(data) {
-    var d = $q.defer();
-    var kill = $timeout(function() {
-      d.reject(clbError.error({
-        type: 'TimeoutException',
-        message: 'No context can be retrieved'
-      }));
-    }, 250);
-
-    if (data) {
-      // discard context if new data should be set.
-      currentContext = null;
-    }
-
-    if (currentContext) {
-      // directly return context when cached.
-      return d.resolve(currentContext);
-    }
-    emit('workspace.context', data)
-    .then(function(context) {
-      $timeout.cancel(kill);
-      currentContext = context;
-      d.resolve(context);
-    })
-    .catch(function(err) {
-      d.reject(clbError.error(err));
-    });
-    return d.promise;
-  }
-  return new AppToolkit();
-
-  /**
-   * @desc
-   * Open a resource described by the given ObjectReference.
-   *
-   * The promise will fulfill only if the navigation is possible. Otherwise,
-   * an error will be returned.
-   * @function open
-   * @memberof module:clb-app.clbApp
-   * @param {ObjectReference} ref  The object reference to navigate to
-   * @return {Promise}  The promise retrieved by the call to emit
-   */
-  function open(ref) {
-    $log.debug('Ask the frontend to navigate to:', ref);
-    return emit('resourceLocator.open', {ref: ref});
-  }
-}
-
-/* eslint require-jsdoc:0 valid-jsdoc:0 */
-angular.module('clb-app')
-.provider('clbAuth', authProvider);
-
-function authProvider(clbAppHello, clbEnvProvider) {
-  return {
-    $get: ['$http', '$log', '$q', '$rootScope', '$timeout', 'clbEnv', 'clbError', function($http, $log, $q, $rootScope, $timeout, clbEnv, clbError) {
-      _addHbpProvider();
-      _loadApplicationInfo();
-      _bindEvents();
-      var _readEnvOnce = false;
-
-      return {
-        login: login,
-        logout: logout,
-        getAuthInfo: getAuthInfo
-      };
-
-      function login(options) {
-        var d = $q.defer();
-        if (!_readEnvOnce) {
-          _readEnvOnce = true;
-          var envToken = _readTokenFromEnv();
-          if (envToken) {
-            // The token delivered by the backend is considered valid.
-            var authInfo = getAuthInfo(envToken);
-            d.resolve(authInfo);
-            $rootScope.$broadcast('clbAuth.changed', authInfo);
-            return d.promise;
-          }
-        }
-        clbAppHello.login('hbp', options)
-        .then(function(res) {
-          d.resolve(getAuthInfo(res.authResponse));
-        }, function(err) {
-          d.reject(_formatError(err));
-        });
-        return d.promise;
-      }
-
-      function logout(options) {
-        var info = getAuthInfo();
-        if (!info) {
-          return $q.when(true);
-        }
-        var d = $q.defer();
-        clbAppHello.logout('hbp', options)
-        .then(function() {
-          return d.resolve(true);
-        }, function(err) {
-          d.reject(_formatError(err));
-        });
-        return d.promise;
-      }
-
-      function getAuthInfo(authResponse) {
-        authResponse = authResponse || clbAppHello.getAuthResponse('hbp');
-        if (!authResponse) {
-          return null;
-        }
-        return {
-          accessToken: authResponse.access_token,
-          tokenType: authResponse.token_type,
-          // When no scopes are specified, the server will generate a token
-          // with the app default scopes. In this case hello.js don't know what
-          // they are so we set the value to undefined by convention.
-          scope: authResponse.scope || undefined,
-          expires: authResponse.expires
-        };
-      }
-
-      function _readTokenFromEnv() {
-        var authInfo = clbEnv.get('auth.token', false);
-        if (!authInfo) {
-          return;
-        }
-        var now = (new Date()).getTime() / 1e3;
-        if (!authInfo.expires && authInfo.expires_in) {
-          authInfo.expires = (now) + authInfo.expires_in;
-        }
-        if (!authInfo.expires || now < authInfo.expires) {
-          clbAppHello.utils.store('hbp', authInfo);
-          return authInfo;
-        }
-      }
-
-      function _formatError(err) {
-        return clbError.error({
-          type: err.error.code,
-          message: err.error.message,
-          data: err
-        });
-      }
-
-      function _bindEvents() {
-        clbAppHello.on('auth.login', _handleAuthInfoChange);
-        clbAppHello.on('auth.logout', _handleAuthInfoChange);
-      }
-
-      function _handleAuthInfoChange(data, name) {
-        if (data.network !== 'hbp') {
-          return;
-        }
-        $log.debug('propagate auth event from original event', name);
-        $timeout(function() {
-          $rootScope.$broadcast('clbAuth.changed', getAuthInfo());
-        }, 0);
-      }
-
-      /**
-       * Define a new provider Hello.js provider for HBP
-       */
-      function _addHbpProvider() {
-        clbAppHello.init({
-          hbp: {
-            name: 'Human Brain Project',
-            oauth: {
-              version: '2',
-              auth: clbEnvProvider.get('auth.url') + '/authorize',
-              grant: clbEnvProvider.get('auth.url') + '/token'
-            },
-            // API base URL
-            base: clbEnvProvider.get('auth.url') + '/',
-            scope_delim: ' ', // eslint-disable-line camelcase
-            login: function(p) {
-              // Reauthenticate
-              if (p.options.force) {
-                p.qs.prompt = 'login';
-              }
-              if (!p.qs.scope) {
-                delete p.qs.scope;
-              }
-            },
-            logout: function(callback, p) {
-              $http.post(clbEnv.get('auth.url') + '/slo', {
-                token: p.authResponse.access_token
-              }, {
-                withCredentials: true
-              })
-              .then(function() {
-                callback();
-              })
-              .catch(function(err) {
-                $log.error('Cannot kill the global session');
-                $log.debug(err);
-                callback();
-              });
-            }
-          }
-        });
-      }
-
-      /**
-       * Set the current application data.
-       */
-      function _loadApplicationInfo() {
-        clbAppHello.init({
-          hbp: clbEnvProvider.get('auth.clientId')
-        }, {
-          default_service: 'hbp', // eslint-disable-line camelcase
-          display: 'page',
-          scope: clbEnvProvider.get('auth.scopes', null),
-          force: false
-        });
-      }
-    }]
-  };
-}
-
-angular.module('clb-app')
-.factory('clbAuthHttp', clbAuthHttp);
-
-/**
- * Proxy $http to add the HBP bearer token.
- * Also handle 401 Authentication Required errors.
- * See $http service
- *
- * @param  {object} $http   DI
- * @param  {object} clbAuth DI
- * @return {function}       the service
- */
-function clbAuthHttp($http, clbAuth) {
-  var proxyHttp = function(config) {
-    var auth = clbAuth.getAuthInfo();
-    if (!auth) {
-      return $http(config);
-    }
-    var authToken = auth.tokenType + ' ' + auth.accessToken;
-    if (!config.headers) {
-      config.headers = {
-        Authorization: authToken
-      };
-    }
-    config.headers.Authorization = authToken;
-    return $http(config);
-  };
-  proxyHttp.get = _wrapper('GET');
-  proxyHttp.head = _wrapper('HEAD');
-  proxyHttp.delete = _wrapper('DELETE');
-  proxyHttp.post = _wrapperData('POST');
-  proxyHttp.put = _wrapperData('PUT');
-  proxyHttp.patch = _wrapperData('PATCH');
-  return proxyHttp;
-
-  /**
-   * Handle $http helper call for GET, DELETE, HEAD requests.
-   *
-   * @param  {string} verb the HTTP verb
-   * @return {function}    The function to attach
-   */
-  function _wrapper(verb) {
-    return function(url, config) {
-      config = config || {};
-      config.method = verb.toUpperCase();
-      config.url = url;
-      return proxyHttp(config);
-    };
-  }
-
-  /**
-   * Handle $http helper call for PUT, PATCH, POST requests.
-   *
-   * @param  {string} verb the HTTP verb
-   * @return {function}    The function to attach
-   */
-  function _wrapperData(verb) {
-    return function(url, data, config) {
-      config = config || {};
-      config.method = verb.toUpperCase();
-      config.url = url;
-      config.data = data;
-      return proxyHttp(config);
-    };
-  }
-}
-
-/* global deferredBootstrapper, window, document */
-
-/**
- * @namespace angular
- */
-
-angular.clbBootstrap = clbBootstrap;
-
-/**
- * Bootstrap AngularJS application with the HBP environment loaded.
- *
- * It is very important to load the HBP environement *before* starting
- * the application. This method let you do that synchronously or asynchronously.
- * Whichever method you choose, the values in your environment should look
- * very similar to the one in _`https://collab.humanbrainproject.eu/config.json`,
- * customized with your own values.
- *
- * At least ``auth.clientId`` should be edited in the config.json file.
- *
- * @memberof angular
- * @param {string} module the name of the Angular application module to load.
- * @param {object} options pass those options to deferredBootstrap
- * @param {object} options.env HBP environment JSON (https://collab.humanbrainproject.eu/config.json)
- * @return {Promise} return once the environment has been bootstrapped
- * @example <caption>Bootstrap the environment synchronously</caption>
- * angular.clbBootstrap('myApp', {
- *   env: { } // content from https://collab.humanbrainproject.eu/config.json
- * })
- * @example <caption>Bootstrap the environment asynchronously</caption>
- * angular.clbBootstrap('myApp', {
- *   env: 'https://my-project-website/config.json'
- * })
- * @example <caption>Using backward compatibility</caption>
- * window.bbpConfig = { } // content from https://collab.humanbrainproject.eu/config.json
- * angular.clbBoostrap('myApp')
- */
-function clbBootstrap(module, options) {
-  if (window.bbpConfig) {
-    options.env = window.bbpConfig;
-  }
-  if (!options.element) {
-    options.element = document.body;
-  }
-  options.module = module;
-  if (!options.moduleResolves) {
-    options.moduleResolves = {};
-  }
-  options.moduleResolves = [{
-    module: 'clb-env',
-    resolve: {
-      // use injection here as it is not resolved automatically on build.
-      CLB_ENVIRONMENT: ['$q', '$http', function($q, $http) {
-        // Remove any previously defined CLB_ENVIRONMENT
-        // As this results in unpredictable results when multiple apps
-        // use this strategy.
-        var invoker = angular.module(['clb-env'])._invokeQueue;
-        for (var i = 0; i < invoker.length; i++) {
-          var inv = invoker[i];
-          if (inv[2][0] === 'CLB_ENVIRONMENT') {
-            invoker.splice(i, 1);
-            i--;
-          }
-        }
-        if (angular.isString(options.env)) {
-          return $http.get(options.env)
-          .then(function(res) {
-            // Set bbpConfig for backward compatibility
-            window.bbpConfig = res.data;
-            return res.data;
-          });
-        }
-        // Set bbpConfig for backward compatibility
-        if (!window.bbpConfig) {
-          window.bbpConfig = options.env;
-        }
-        return $q.when(options.env);
-      }]
-    }
-  }];
-  return deferredBootstrapper.bootstrap(options);
-}
 
 /* global hello, document */
 angular.module('clb-auth')
@@ -1444,6 +956,494 @@ angular.module('clb-automator')
   }
 }]);
 
+angular.module('clb-app')
+.factory('clbApp', clbApp);
+
+/**
+ * @namespace clbApp
+ * @memberof module:clb-app
+ * @desc
+ * An AngularJS service to interface a web application with the HBP Collaboratory.
+ * This library provides a few helper to work within the Collaboratory environment.
+ *
+ * Usage
+ * -----
+ *
+ * - :ref:`module-clb-app.clbApp.context` is used to set and retrieve
+ *   the current context.
+ * - :ref:`module-clb-app.clbApp.emit` is used to send a command
+ *   to the HBP Collaboratory and wait for its answer.
+ *
+ * @example <caption>Retrieve the current context object</caption>
+ * clbApp.context()
+ * .then(function(context) {
+ *   console.log(context.ctx, context.state, context.collab);
+ * })
+ * .catch(function(err) {
+ *   // Cannot set the state
+ * });
+ *
+ * @example <caption>Set the current state in order for a user to be able to copy-paste its current URL and reopen the same collab with your app loaded at the same place.</caption>
+ * clbApp.context({state: 'lorem ipsum'})
+ * .then(function(context) {
+ *   console.log(context.ctx, context.state, context.collab);
+ * })
+ * .catch(function(err) {
+ *   // Cannot set the state
+ * });
+ *
+ * @param  {object} $log AngularJS service injection
+ * @param  {object} $q AngularJS service injection
+ * @param  {object} $rootScope AngularJS service injection
+ * @param  {object} $timeout AngularJS service injection
+ * @param  {object} $window AngularJS service injection
+ * @param  {object} clbError AngularJS service injection
+ * @return {object}         the service singleton
+ */
+function clbApp(
+  $log,
+  $q,
+  $rootScope,
+  $timeout,
+  $window,
+  clbError
+) {
+  var eventId = 0;
+  var sentMessages = {};
+
+  /**
+   * Singleton class
+   */
+  function AppToolkit() { }
+  AppToolkit.prototype = {
+    emit: emit,
+    context: context,
+    open: open
+  };
+
+  $window.addEventListener('message', function(event) {
+    $rootScope.$emit('message', event.data);
+  });
+
+  $rootScope.$on('message', function(event, message) {
+    if (!message || !message.origin || !sentMessages[message.origin]) {
+      return;
+    }
+    if (message.eventName === 'resolved') {
+      sentMessages[message.origin].resolve(message.data);
+    } else if (message.eventName === 'error') {
+      sentMessages[message.origin].reject(clbError.error(message.data));
+    }
+    sentMessages[message.origin] = null;
+  });
+
+  /**
+   * Send a message to the HBP Collaboratory.
+   * @memberof module:clb-app.clbApp
+   * @param  {string} name name of the event to be propagated
+   * @param  {object} data corresponding data to be sent alongside the event
+   * @return  {Promise} resolve with the message response
+   */
+  function emit(name, data) {
+    eventId++;
+    sentMessages[eventId] = $q.defer();
+    var promise = sentMessages[eventId].promise;
+    $window.parent.postMessage({
+      apiVersion: 1,
+      eventName: name,
+      data: data,
+      ticket: eventId
+    }, '*');
+    return promise;
+  }
+
+  var currentContext;
+
+  /**
+   * @typedef HbpCollaboratoryContext
+   * @memberof module:clb-app.clbApp
+   * @type {object}
+   * @property {string} mode - the current mode, either 'run' or 'edit'
+   * @property {string} ctx - the UUID of the current context
+   * @property {string} state - an application defined state string
+   */
+
+   /**
+    * @memberof module:clb-app.clbApp
+    * @desc
+    * Asynchronously retrieve the current HBP Collaboratory Context, including
+    * the mode, the ctx UUID and the application state if any.
+    * @function context
+    * @param {object} data new values to send to HBP Collaboratory frontend
+    * @return {Promise} resolve to the context
+    * @static
+    */
+  function context(data) {
+    var d = $q.defer();
+    var kill = $timeout(function() {
+      d.reject(clbError.error({
+        type: 'TimeoutException',
+        message: 'No context can be retrieved'
+      }));
+    }, 250);
+
+    if (data) {
+      // discard context if new data should be set.
+      currentContext = null;
+    }
+
+    if (currentContext) {
+      // directly return context when cached.
+      return d.resolve(currentContext);
+    }
+    emit('workspace.context', data)
+    .then(function(context) {
+      $timeout.cancel(kill);
+      currentContext = context;
+      d.resolve(context);
+    })
+    .catch(function(err) {
+      d.reject(clbError.error(err));
+    });
+    return d.promise;
+  }
+  return new AppToolkit();
+
+  /**
+   * @desc
+   * Open a resource described by the given ObjectReference.
+   *
+   * The promise will fulfill only if the navigation is possible. Otherwise,
+   * an error will be returned.
+   * @function open
+   * @memberof module:clb-app.clbApp
+   * @param {ObjectReference} ref  The object reference to navigate to
+   * @return {Promise}  The promise retrieved by the call to emit
+   */
+  function open(ref) {
+    $log.debug('Ask the frontend to navigate to:', ref);
+    return emit('resourceLocator.open', {ref: ref});
+  }
+}
+
+/* eslint require-jsdoc:0 valid-jsdoc:0 */
+angular.module('clb-app')
+.provider('clbAuth', authProvider);
+
+function authProvider(clbAppHello, clbEnvProvider) {
+  return {
+    $get: ['$http', '$log', '$q', '$rootScope', '$timeout', 'clbEnv', 'clbError', function($http, $log, $q, $rootScope, $timeout, clbEnv, clbError) {
+      _addHbpProvider();
+      _loadApplicationInfo();
+      _bindEvents();
+      var _readEnvOnce = false;
+
+      return {
+        login: login,
+        logout: logout,
+        getAuthInfo: getAuthInfo
+      };
+
+      function login(options) {
+        var d = $q.defer();
+        if (!_readEnvOnce) {
+          _readEnvOnce = true;
+          var envToken = _readTokenFromEnv();
+          if (envToken) {
+            // The token delivered by the backend is considered valid.
+            var authInfo = getAuthInfo(envToken);
+            d.resolve(authInfo);
+            $rootScope.$broadcast('clbAuth.changed', authInfo);
+            return d.promise;
+          }
+        }
+        clbAppHello.login('hbp', options)
+        .then(function(res) {
+          d.resolve(getAuthInfo(res.authResponse));
+        }, function(err) {
+          d.reject(_formatError(err));
+        });
+        return d.promise;
+      }
+
+      function logout(options) {
+        var info = getAuthInfo();
+        if (!info) {
+          return $q.when(true);
+        }
+        var d = $q.defer();
+        clbAppHello.logout('hbp', options)
+        .then(function() {
+          return d.resolve(true);
+        }, function(err) {
+          d.reject(_formatError(err));
+        });
+        return d.promise;
+      }
+
+      function getAuthInfo(authResponse) {
+        authResponse = authResponse || clbAppHello.getAuthResponse('hbp');
+        if (!authResponse) {
+          return null;
+        }
+        return {
+          accessToken: authResponse.access_token,
+          tokenType: authResponse.token_type,
+          // When no scopes are specified, the server will generate a token
+          // with the app default scopes. In this case hello.js don't know what
+          // they are so we set the value to undefined by convention.
+          scope: authResponse.scope || undefined,
+          expires: authResponse.expires
+        };
+      }
+
+      function _readTokenFromEnv() {
+        var authInfo = clbEnv.get('auth.token', false);
+        if (!authInfo) {
+          return;
+        }
+        var now = (new Date()).getTime() / 1e3;
+        if (!authInfo.expires && authInfo.expires_in) {
+          authInfo.expires = (now) + authInfo.expires_in;
+        }
+        if (!authInfo.expires || now < authInfo.expires) {
+          clbAppHello.utils.store('hbp', authInfo);
+          return authInfo;
+        }
+      }
+
+      function _formatError(err) {
+        return clbError.error({
+          type: err.error.code,
+          message: err.error.message,
+          data: err
+        });
+      }
+
+      function _bindEvents() {
+        clbAppHello.on('auth.login', _handleAuthInfoChange);
+        clbAppHello.on('auth.logout', _handleAuthInfoChange);
+      }
+
+      function _handleAuthInfoChange(data, name) {
+        if (data.network !== 'hbp') {
+          return;
+        }
+        $log.debug('propagate auth event from original event', name);
+        $timeout(function() {
+          $rootScope.$broadcast('clbAuth.changed', getAuthInfo());
+        }, 0);
+      }
+
+      /**
+       * Define a new provider Hello.js provider for HBP
+       */
+      function _addHbpProvider() {
+        clbAppHello.init({
+          hbp: {
+            name: 'Human Brain Project',
+            oauth: {
+              version: '2',
+              auth: clbEnvProvider.get('auth.url') + '/authorize',
+              grant: clbEnvProvider.get('auth.url') + '/token'
+            },
+            // API base URL
+            base: clbEnvProvider.get('auth.url') + '/',
+            scope_delim: ' ', // eslint-disable-line camelcase
+            login: function(p) {
+              // Reauthenticate
+              if (p.options.force) {
+                p.qs.prompt = 'login';
+              }
+              if (!p.qs.scope) {
+                delete p.qs.scope;
+              }
+            },
+            logout: function(callback, p) {
+              $http.post(clbEnv.get('auth.url') + '/slo', {
+                token: p.authResponse.access_token
+              }, {
+                withCredentials: true
+              })
+              .then(function() {
+                callback();
+              })
+              .catch(function(err) {
+                $log.error('Cannot kill the global session');
+                $log.debug(err);
+                callback();
+              });
+            }
+          }
+        });
+      }
+
+      /**
+       * Set the current application data.
+       */
+      function _loadApplicationInfo() {
+        clbAppHello.init({
+          hbp: clbEnvProvider.get('auth.clientId')
+        }, {
+          default_service: 'hbp', // eslint-disable-line camelcase
+          display: 'page',
+          scope: clbEnvProvider.get('auth.scopes', null),
+          force: false
+        });
+      }
+    }]
+  };
+}
+
+angular.module('clb-app')
+.factory('clbAuthHttp', clbAuthHttp);
+
+/**
+ * Proxy $http to add the HBP bearer token.
+ * Also handle 401 Authentication Required errors.
+ * See $http service
+ *
+ * @param  {object} $http   DI
+ * @param  {object} clbAuth DI
+ * @return {function}       the service
+ */
+function clbAuthHttp($http, clbAuth) {
+  var proxyHttp = function(config) {
+    var auth = clbAuth.getAuthInfo();
+    if (!auth) {
+      return $http(config);
+    }
+    var authToken = auth.tokenType + ' ' + auth.accessToken;
+    if (!config.headers) {
+      config.headers = {
+        Authorization: authToken
+      };
+    }
+    config.headers.Authorization = authToken;
+    return $http(config);
+  };
+  proxyHttp.get = _wrapper('GET');
+  proxyHttp.head = _wrapper('HEAD');
+  proxyHttp.delete = _wrapper('DELETE');
+  proxyHttp.post = _wrapperData('POST');
+  proxyHttp.put = _wrapperData('PUT');
+  proxyHttp.patch = _wrapperData('PATCH');
+  return proxyHttp;
+
+  /**
+   * Handle $http helper call for GET, DELETE, HEAD requests.
+   *
+   * @param  {string} verb the HTTP verb
+   * @return {function}    The function to attach
+   */
+  function _wrapper(verb) {
+    return function(url, config) {
+      config = config || {};
+      config.method = verb.toUpperCase();
+      config.url = url;
+      return proxyHttp(config);
+    };
+  }
+
+  /**
+   * Handle $http helper call for PUT, PATCH, POST requests.
+   *
+   * @param  {string} verb the HTTP verb
+   * @return {function}    The function to attach
+   */
+  function _wrapperData(verb) {
+    return function(url, data, config) {
+      config = config || {};
+      config.method = verb.toUpperCase();
+      config.url = url;
+      config.data = data;
+      return proxyHttp(config);
+    };
+  }
+}
+
+/* global deferredBootstrapper, window, document */
+
+/**
+ * @namespace angular
+ */
+
+angular.clbBootstrap = clbBootstrap;
+
+/**
+ * Bootstrap AngularJS application with the HBP environment loaded.
+ *
+ * It is very important to load the HBP environement *before* starting
+ * the application. This method let you do that synchronously or asynchronously.
+ * Whichever method you choose, the values in your environment should look
+ * very similar to the one in _`https://collab.humanbrainproject.eu/config.json`,
+ * customized with your own values.
+ *
+ * At least ``auth.clientId`` should be edited in the config.json file.
+ *
+ * @memberof angular
+ * @param {string} module the name of the Angular application module to load.
+ * @param {object} options pass those options to deferredBootstrap
+ * @param {object} options.env HBP environment JSON (https://collab.humanbrainproject.eu/config.json)
+ * @return {Promise} return once the environment has been bootstrapped
+ * @example <caption>Bootstrap the environment synchronously</caption>
+ * angular.clbBootstrap('myApp', {
+ *   env: { } // content from https://collab.humanbrainproject.eu/config.json
+ * })
+ * @example <caption>Bootstrap the environment asynchronously</caption>
+ * angular.clbBootstrap('myApp', {
+ *   env: 'https://my-project-website/config.json'
+ * })
+ * @example <caption>Using backward compatibility</caption>
+ * window.bbpConfig = { } // content from https://collab.humanbrainproject.eu/config.json
+ * angular.clbBoostrap('myApp')
+ */
+function clbBootstrap(module, options) {
+  if (window.bbpConfig) {
+    options.env = window.bbpConfig;
+  }
+  if (!options.element) {
+    options.element = document.body;
+  }
+  options.module = module;
+  if (!options.moduleResolves) {
+    options.moduleResolves = {};
+  }
+  options.moduleResolves = [{
+    module: 'clb-env',
+    resolve: {
+      // use injection here as it is not resolved automatically on build.
+      CLB_ENVIRONMENT: ['$q', '$http', function($q, $http) {
+        // Remove any previously defined CLB_ENVIRONMENT
+        // As this results in unpredictable results when multiple apps
+        // use this strategy.
+        var invoker = angular.module(['clb-env'])._invokeQueue;
+        for (var i = 0; i < invoker.length; i++) {
+          var inv = invoker[i];
+          if (inv[2][0] === 'CLB_ENVIRONMENT') {
+            invoker.splice(i, 1);
+            i--;
+          }
+        }
+        if (angular.isString(options.env)) {
+          return $http.get(options.env)
+          .then(function(res) {
+            // Set bbpConfig for backward compatibility
+            window.bbpConfig = res.data;
+            return res.data;
+          });
+        }
+        // Set bbpConfig for backward compatibility
+        if (!window.bbpConfig) {
+          window.bbpConfig = options.env;
+        }
+        return $q.when(options.env);
+      }]
+    }
+  }];
+  return deferredBootstrapper.bootstrap(options);
+}
+
 /* eslint camelcase: 0 */
 
 /**
@@ -1855,6 +1855,7 @@ angular.module('clb-collab')
       collabApiUrl + collabId + '/nav/' + navItem.id + '/')
     .then(function() {
       cacheNavItems.remove(key(collabId, navItem.id));
+      cacheNavRoots.remove(collabId);
     }, clbError.rejectHttpError);
   };
 
@@ -2519,6 +2520,85 @@ function clbContext(clbAuthHttp, $q, clbError, clbEnv, ClbContextModel) {
   }
 }
 
+/* global window */
+
+angular.module('clb-env')
+.provider('clbEnv', clbEnv);
+
+/**
+ * Get environement information using dotted notation with the `clbEnv` provider
+ * or service.
+ *
+ * Before being used, clbEnv must be initialized with the context values. You
+ * can do so by setting up a global bbpConfig variable or using
+ * :ref:`angular.clbBootstrap <angular.clbBootstrap>`.
+ *
+ * @function clbEnv
+ * @memberof module:clb-env
+ * @param {object} $injector AngularJS injection
+ * @return {object} provider
+ * @example <caption>Basic usage of clbEnv</caption>
+ * angular.module('myApp', ['clbEnv', 'rest'])
+ * .service('myService', function(clbEnv, clbResultSet) {
+ *   return {
+ *     listCollab: function() {
+ *       // return a paginated list of all collabs
+ *       return clbResultSet.get($http.get(clbEnv.get('api.collab.v0') + '/'));
+ *     }
+ *   };
+ * });
+ * @example <caption>Use clbEnv in your configuration</caption>
+ * angular.module('myApp', ['clbEnv', 'rest'])
+ * .config(function(clbEnvProvider, myAppServiceProvider) {
+ *   // also demonstrate how we accept a custom variable.
+ *   myAppServiceProvider.setMaxFileUpload(clbEnvProvider.get('myapp.maxFileUpload', '1m'))
+ * });
+ */
+function clbEnv($injector) {
+  return {
+    get: get,
+    $get: function() {
+      return {
+        get: get
+      };
+    }
+  };
+
+  /**
+   * ``get(key, [defaultValue])`` provides configuration value loaded at
+   * the application bootstrap.
+   *
+   * Accept a key and an optional default
+   * value. If the key cannot be found in the configurations, it will return
+   * the provided default value. If the defaultValue is undefied, it will
+   * throw an error.
+   *
+   * To ensures that those data are available when angular bootstrap the
+   * application, use angular.clbBootstrap(module, options).
+   *
+   * @memberof module:clb-env.clbEnv
+   * @param {string} key the environment variable to retrieve, using a key.
+   * @param {any} [defaultValue] an optional default value.
+   * @return {any} the value or ``defaultValue`` if the asked for configuration
+   *               is not defined.
+   */
+  function get(key, defaultValue) {
+    var parts = key.split('.');
+    var cursor = (window.bbpConfig ?
+                  window.bbpConfig : $injector.get('CLB_ENVIRONMENT'));
+    for (var i = 0; i < parts.length; i++) {
+      if (!(cursor && cursor.hasOwnProperty(parts[i]))) {
+        if (defaultValue !== undefined) {
+          return defaultValue;
+        }
+        throw new Error('UnkownConfigurationKey: <' + key + '>');
+      }
+      cursor = cursor[parts[i]];
+    }
+    return cursor;
+  }
+}
+
 angular.module('clb-ctx-data')
 .factory('clbCtxData', clbCtxData);
 
@@ -2627,85 +2707,6 @@ function clbCtxData(clbAuthHttp, $q, uuid4, clbEnv, clbError) {
       },
       code: -3
     });
-  }
-}
-
-/* global window */
-
-angular.module('clb-env')
-.provider('clbEnv', clbEnv);
-
-/**
- * Get environement information using dotted notation with the `clbEnv` provider
- * or service.
- *
- * Before being used, clbEnv must be initialized with the context values. You
- * can do so by setting up a global bbpConfig variable or using
- * :ref:`angular.clbBootstrap <angular.clbBootstrap>`.
- *
- * @function clbEnv
- * @memberof module:clb-env
- * @param {object} $injector AngularJS injection
- * @return {object} provider
- * @example <caption>Basic usage of clbEnv</caption>
- * angular.module('myApp', ['clbEnv', 'rest'])
- * .service('myService', function(clbEnv, clbResultSet) {
- *   return {
- *     listCollab: function() {
- *       // return a paginated list of all collabs
- *       return clbResultSet.get($http.get(clbEnv.get('api.collab.v0') + '/'));
- *     }
- *   };
- * });
- * @example <caption>Use clbEnv in your configuration</caption>
- * angular.module('myApp', ['clbEnv', 'rest'])
- * .config(function(clbEnvProvider, myAppServiceProvider) {
- *   // also demonstrate how we accept a custom variable.
- *   myAppServiceProvider.setMaxFileUpload(clbEnvProvider.get('myapp.maxFileUpload', '1m'))
- * });
- */
-function clbEnv($injector) {
-  return {
-    get: get,
-    $get: function() {
-      return {
-        get: get
-      };
-    }
-  };
-
-  /**
-   * ``get(key, [defaultValue])`` provides configuration value loaded at
-   * the application bootstrap.
-   *
-   * Accept a key and an optional default
-   * value. If the key cannot be found in the configurations, it will return
-   * the provided default value. If the defaultValue is undefied, it will
-   * throw an error.
-   *
-   * To ensures that those data are available when angular bootstrap the
-   * application, use angular.clbBootstrap(module, options).
-   *
-   * @memberof module:clb-env.clbEnv
-   * @param {string} key the environment variable to retrieve, using a key.
-   * @param {any} [defaultValue] an optional default value.
-   * @return {any} the value or ``defaultValue`` if the asked for configuration
-   *               is not defined.
-   */
-  function get(key, defaultValue) {
-    var parts = key.split('.');
-    var cursor = (window.bbpConfig ?
-                  window.bbpConfig : $injector.get('CLB_ENVIRONMENT'));
-    for (var i = 0; i < parts.length; i++) {
-      if (!(cursor && cursor.hasOwnProperty(parts[i]))) {
-        if (defaultValue !== undefined) {
-          return defaultValue;
-        }
-        throw new Error('UnkownConfigurationKey: <' + key + '>');
-      }
-      cursor = cursor[parts[i]];
-    }
-    return cursor;
   }
 }
 
@@ -5130,6 +5131,130 @@ function clbStorage(
   }
 }
 
+angular.module('clb-ui-dialog')
+.factory('clbConfirm', clbConfirm);
+
+/**
+ * Service to trigger modal dialog.
+ *
+ * @namespace clbDialog
+ * @memberof module:clb-ui-dialog
+ * @param  {object} $rootScope Angular DI
+ * @param  {object} $uibModal     Angular DI
+ * @return {object}            Service Descriptor
+ */
+function clbConfirm($rootScope, $uibModal) {
+  return {
+    open: open
+  };
+
+  /**
+   * Confirmation dialog
+   * @param  {object} options Parameters
+   * @return {Promise}        Resolve if the confirmation happens, reject otherwise
+   */
+  function open(options) {
+    options = angular.extend({
+      scope: $rootScope,
+      title: 'Confirm',
+      confirmLabel: 'Yes',
+      cancelLabel: 'No',
+      template: 'Are you sure?',
+      closable: true
+    }, options);
+
+    var modalScope = options.scope.$new();
+    modalScope.title = options.title;
+    modalScope.confirmLabel = options.confirmLabel;
+    modalScope.cancelLabel = options.cancelLabel;
+    modalScope.confirmationContent = options.template;
+    modalScope.confirmationContentUrl = options.templateUrl;
+    modalScope.closable = options.closable;
+    modalScope.securityQuestion = options.securityQuestion;
+    modalScope.securityAnswer = options.securityAnswer;
+
+    var instance = $uibModal.open({
+      template:'<div class="modal-header"><button type="button" ng-show="closable" class="close" ng-click="$dismiss(\'cancel\')" aria-hidden="true">&times;</button><h4 class="modal-title">{{title}}</h4></div><div class="modal-body"><alert ng-if="error" type="danger">{{error.reason}}</alert><div class="alert alert-warning" ng-show="securityQuestion">Unexpected bad things will happen if you don’t read this!</div><ng-include ng-if="confirmationContentUrl" src="confirmationContentUrl"></ng-include><p ng-if="!confirmationContentUrl">{{confirmationContent}}</p><fieldset class="form-group" ng-show="securityQuestion"><label for="securityAnswer">{{securityQuestion}}</label> <input type="text" class="form-control" name="securityAnswer" ng-model="answer"></fieldset></div><div class="modal-footer"><button class="btn btn-default" ng-click="$dismiss(\'cancel\')">{{cancelLabel}}</button> <button class="btn btn-danger" ng-disabled="securityAnswer && answer !== securityAnswer" ng-click="$close()">{{confirmLabel}}</button></div>',
+      show: true,
+      backdrop: 'static',
+      scope: modalScope,
+      keyboard: options.keyboard || options.closable
+    });
+    return instance.result;
+  }
+}
+
+angular.module('clb-ui-error')
+.factory('clbErrorDialog', clbErrorDialog);
+
+/**
+ * The factory ``clbUiError`` instantiates modal error dialogs.
+ * Notify the user about the given error.
+ * @name clbError
+ * @memberof module:clb-ui-error
+ * @param  {object} $uibModal Angular DI
+ * @param  {object} clbError  Angular DI
+ * @return {object}           Angular Factory
+ */
+function clbErrorDialog($uibModal, clbError) {
+  return {
+    open: open
+  };
+
+  /**
+   * Open an error modal dialog
+   * @param  {HBPError} error The error do displays
+   * @param  {object} options Any options will be passed to $uibModal.open
+   * @return {Promse}         The result of $uibModal.open
+   */
+  function open(error, options) {
+    options = angular.extend({
+      template:'<div class="error-dialog panel panel-danger"><div class="panel-heading"><h4>{{vm.error.type}}</h4></div><div class="panel-body"><p>{{vm.error.message}}</p></div><div class="panel-footer"><div><button type="button" ng-click="$close(true)" class="btn btn-primary"><span class="glyphicon glyphicon-remove"></span> Close</button> <button type="button" class="btn btn-default pull-right" ng-click="isErrorSourceDisplayed = !isErrorSourceDisplayed">{{isErrorSourceDisplayed ? \'Hide\' : \'Show\'}} scary details <span class="caret"></span></button></div><div uib-collapse="!isErrorSourceDisplayed"><h5>Error Type</h5><pre>{{vm.error.type}}</pre><h6>Error Code</h6><pre>{{vm.error.code}}</pre><h6>Message</h6><pre>{{vm.error.message}}</pre><div ng-if="vm.error.data"><h6>Data</h6><pre>{{vm.error.data}}</pre></div><div><h6>Stack Trace</h6><pre>{{vm.error.stack}}</pre></div></div></div></div>',
+      class: 'error-dialog',
+      controller: function() {
+        var vm = this;
+        vm.error = clbError.error(error);
+      },
+      controllerAs: 'vm',
+      bindToController: true
+    }, options);
+    return $uibModal.open(options).result.catch(function() {
+      // resolve anytime.
+      return true;
+    });
+  }
+}
+
+angular.module('clb-ui-error')
+.directive('clbErrorMessage', clbErrorMessage);
+
+/**
+ * The ``clb-error-message`` directive displays an error.
+ *
+ *
+ * clb-error is a HbpError instance, built by the HbpErrorService
+ *
+ * @namespace clbErrorMessage
+ * @memberof module:clb-ui-error
+ * @example <caption>Retrieve the current context object</caption>
+ * <div ng-controller='SomeController'>
+ *   Validation error:
+ *   <clb-error-message clb-error='error'></clb-error-message>
+ *   Permission denied error:
+ *   <clb-error-message clb-error='errorPermissions'></clb-error-message>
+ * </div>
+ * @return {object} The directive
+ **/
+function clbErrorMessage() {
+  return {
+    restrict: 'E',
+    scope: {
+      error: '=?clbError'
+    },
+    template:'<uib-alert type="danger" ng-if="error"><div ng-switch on="error.type"><div ng-switch-when="Validation">Validation errors<span ng-show="error.data">:</span><ul><li ng-repeat="(attr, errors) in error.data">{{attr}}: {{errors.join(\', \')}}</li></ul></div><div ng-switch-default>{{error.message}}</div></div></uib-alert>'
+  };
+}
+
 angular.module('clb-stream')
 .provider('clbResourceLocator', clbResourceLocatorProvider);
 
@@ -5388,130 +5513,6 @@ function clbStream(clbAuthHttp, clbEnv, clbError, clbResultSet, moment) {
   }
 }
 
-angular.module('clb-ui-dialog')
-.factory('clbConfirm', clbConfirm);
-
-/**
- * Service to trigger modal dialog.
- *
- * @namespace clbDialog
- * @memberof module:clb-ui-dialog
- * @param  {object} $rootScope Angular DI
- * @param  {object} $uibModal     Angular DI
- * @return {object}            Service Descriptor
- */
-function clbConfirm($rootScope, $uibModal) {
-  return {
-    open: open
-  };
-
-  /**
-   * Confirmation dialog
-   * @param  {object} options Parameters
-   * @return {Promise}        Resolve if the confirmation happens, reject otherwise
-   */
-  function open(options) {
-    options = angular.extend({
-      scope: $rootScope,
-      title: 'Confirm',
-      confirmLabel: 'Yes',
-      cancelLabel: 'No',
-      template: 'Are you sure?',
-      closable: true
-    }, options);
-
-    var modalScope = options.scope.$new();
-    modalScope.title = options.title;
-    modalScope.confirmLabel = options.confirmLabel;
-    modalScope.cancelLabel = options.cancelLabel;
-    modalScope.confirmationContent = options.template;
-    modalScope.confirmationContentUrl = options.templateUrl;
-    modalScope.closable = options.closable;
-    modalScope.securityQuestion = options.securityQuestion;
-    modalScope.securityAnswer = options.securityAnswer;
-
-    var instance = $uibModal.open({
-      template:'<div class="modal-header"><button type="button" ng-show="closable" class="close" ng-click="$dismiss(\'cancel\')" aria-hidden="true">&times;</button><h4 class="modal-title">{{title}}</h4></div><div class="modal-body"><alert ng-if="error" type="danger">{{error.reason}}</alert><div class="alert alert-warning" ng-show="securityQuestion">Unexpected bad things will happen if you don’t read this!</div><ng-include ng-if="confirmationContentUrl" src="confirmationContentUrl"></ng-include><p ng-if="!confirmationContentUrl">{{confirmationContent}}</p><fieldset class="form-group" ng-show="securityQuestion"><label for="securityAnswer">{{securityQuestion}}</label> <input type="text" class="form-control" name="securityAnswer" ng-model="answer"></fieldset></div><div class="modal-footer"><button class="btn btn-default" ng-click="$dismiss(\'cancel\')">{{cancelLabel}}</button> <button class="btn btn-danger" ng-disabled="securityAnswer && answer !== securityAnswer" ng-click="$close()">{{confirmLabel}}</button></div>',
-      show: true,
-      backdrop: 'static',
-      scope: modalScope,
-      keyboard: options.keyboard || options.closable
-    });
-    return instance.result;
-  }
-}
-
-angular.module('clb-ui-error')
-.factory('clbErrorDialog', clbErrorDialog);
-
-/**
- * The factory ``clbUiError`` instantiates modal error dialogs.
- * Notify the user about the given error.
- * @name clbError
- * @memberof module:clb-ui-error
- * @param  {object} $uibModal Angular DI
- * @param  {object} clbError  Angular DI
- * @return {object}           Angular Factory
- */
-function clbErrorDialog($uibModal, clbError) {
-  return {
-    open: open
-  };
-
-  /**
-   * Open an error modal dialog
-   * @param  {HBPError} error The error do displays
-   * @param  {object} options Any options will be passed to $uibModal.open
-   * @return {Promse}         The result of $uibModal.open
-   */
-  function open(error, options) {
-    options = angular.extend({
-      template:'<div class="error-dialog panel panel-danger"><div class="panel-heading"><h4>{{vm.error.type}}</h4></div><div class="panel-body"><p>{{vm.error.message}}</p></div><div class="panel-footer"><div><button type="button" ng-click="$close(true)" class="btn btn-primary"><span class="glyphicon glyphicon-remove"></span> Close</button> <button type="button" class="btn btn-default pull-right" ng-click="isErrorSourceDisplayed = !isErrorSourceDisplayed">{{isErrorSourceDisplayed ? \'Hide\' : \'Show\'}} scary details <span class="caret"></span></button></div><div uib-collapse="!isErrorSourceDisplayed"><h5>Error Type</h5><pre>{{vm.error.type}}</pre><h6>Error Code</h6><pre>{{vm.error.code}}</pre><h6>Message</h6><pre>{{vm.error.message}}</pre><div ng-if="vm.error.data"><h6>Data</h6><pre>{{vm.error.data}}</pre></div><div><h6>Stack Trace</h6><pre>{{vm.error.stack}}</pre></div></div></div></div>',
-      class: 'error-dialog',
-      controller: function() {
-        var vm = this;
-        vm.error = clbError.error(error);
-      },
-      controllerAs: 'vm',
-      bindToController: true
-    }, options);
-    return $uibModal.open(options).result.catch(function() {
-      // resolve anytime.
-      return true;
-    });
-  }
-}
-
-angular.module('clb-ui-error')
-.directive('clbErrorMessage', clbErrorMessage);
-
-/**
- * The ``clb-error-message`` directive displays an error.
- *
- *
- * clb-error is a HbpError instance, built by the HbpErrorService
- *
- * @namespace clbErrorMessage
- * @memberof module:clb-ui-error
- * @example <caption>Retrieve the current context object</caption>
- * <div ng-controller='SomeController'>
- *   Validation error:
- *   <clb-error-message clb-error='error'></clb-error-message>
- *   Permission denied error:
- *   <clb-error-message clb-error='errorPermissions'></clb-error-message>
- * </div>
- * @return {object} The directive
- **/
-function clbErrorMessage() {
-  return {
-    restrict: 'E',
-    scope: {
-      error: '=?clbError'
-    },
-    template:'<uib-alert type="danger" ng-if="error"><div ng-switch on="error.type"><div ng-switch-when="Validation">Validation errors<span ng-show="error.data">:</span><ul><li ng-repeat="(attr, errors) in error.data">{{attr}}: {{errors.join(\', \')}}</li></ul></div><div ng-switch-default>{{error.message}}</div></div></uib-alert>'
-  };
-}
-
 /**
  * @namespace clbFormControlFocus
  * @memberof module:clb-ui-form
@@ -5573,98 +5574,6 @@ angular.module('clb-ui-form')
     }
   };
 });
-
-angular.module('clb-ui-loading')
-.directive('clbLoading', clbLoading);
-
-/**
- * The directive clbLoading displays a simple loading message. If a promise
- * is given, the loading indicator will disappear once it is resolved.
- *
- * Attributes
- * ----------
- *
- * =======================  ===================================================
- * Name                     Description
- * =======================  ===================================================
- * {Promise} [clb-promise]  Hide the loading message upon fulfilment.
- * {string} [clb-message]   Displayed loading string (default=``'loading...'``)
- * =======================  ===================================================
- *
- * @memberof module:clb-ui-loading
- * @return {object} Angular directive descriptor
- * @example <caption>Directive Usage Example</caption>
- * <hbp-loading hbp-promise="myAsyncFunc()" hbp-message="'Loading My Async Func'">
- * </hbp-loading>
- */
-function clbLoading() {
-  return {
-    restrict: 'E',
-    scope: {
-      promise: '=?clbPromise',
-      message: '=?clbMessage'
-    },
-    template:'<div class="clb-loading" ng-if="loading"><span class="glyphicon glyphicon-refresh clb-spinning"></span> {{message}}</div>',
-    link: function(scope) {
-      scope.loading = true;
-      scope.message = scope.message || 'Loading...';
-      if (scope.promise) {
-        var complete = function() {
-          scope.loading = false;
-        };
-        scope.promise.then(complete, complete);
-      }
-    }
-  };
-}
-
-angular.module('clb-ui-loading')
-.directive('clbPerformAction', clbPerformAction);
-
-/**
- * @namespace clbPerformAction
- * @memberof module:clb-ui-loading
- *
- * @desc
- * clbPerformAction directive run an action when the given control is clicked.
- * it can be added as an attribute. While the action is running, the control
- * is disabled.
- *
- * @param {function} clbPerformAction  the code to run when the button is clicked.
- *                     this function must return a promise.
- * @param {string}   clbLoadingMessage text replacement for the element content.
- * @return {object}                      Directive Descriptor
- * @example <caption>use perform action to disable a button while code is running</caption>
- * <div ng-controller="myController">
- *  <input class="btn btn-primary" type="submit" clb-perform-action="doSomething()">
- * </div>
- */
-function clbPerformAction() {
-  return {
-    restrict: 'A',
-    scope: {
-      action: '&clbPerformAction'
-    },
-    link: function(scope, element, attrs) {
-      var onComplete = function() {
-        element.html(scope.text);
-        element.attr('disabled', false);
-        element.removeClass('loading');
-      };
-      var run = function() {
-        if (scope.loadingMessage) {
-          element.html(scope.loadingMessage);
-        }
-        element.addClass('loading');
-        element.attr('disabled', true);
-        scope.action().then(onComplete, onComplete);
-      };
-      scope.loadingMessage = attrs.clbLoadingMessage;
-      scope.text = scope.text || element.html();
-      element.on('click', run);
-    }
-  };
-}
 
 angular.module('clb-ui-identity')
 .directive('clbUserAvatar', clbUserAvatar);
@@ -5896,6 +5805,98 @@ function clbUsercardCacheTemplate($templateCache) {
   if (injector.template) {
     $templateCache.put('usercard.directive.html', injector.template);
   }
+}
+
+angular.module('clb-ui-loading')
+.directive('clbLoading', clbLoading);
+
+/**
+ * The directive clbLoading displays a simple loading message. If a promise
+ * is given, the loading indicator will disappear once it is resolved.
+ *
+ * Attributes
+ * ----------
+ *
+ * =======================  ===================================================
+ * Name                     Description
+ * =======================  ===================================================
+ * {Promise} [clb-promise]  Hide the loading message upon fulfilment.
+ * {string} [clb-message]   Displayed loading string (default=``'loading...'``)
+ * =======================  ===================================================
+ *
+ * @memberof module:clb-ui-loading
+ * @return {object} Angular directive descriptor
+ * @example <caption>Directive Usage Example</caption>
+ * <hbp-loading hbp-promise="myAsyncFunc()" hbp-message="'Loading My Async Func'">
+ * </hbp-loading>
+ */
+function clbLoading() {
+  return {
+    restrict: 'E',
+    scope: {
+      promise: '=?clbPromise',
+      message: '=?clbMessage'
+    },
+    template:'<div class="clb-loading" ng-if="loading"><span class="glyphicon glyphicon-refresh clb-spinning"></span> {{message}}</div>',
+    link: function(scope) {
+      scope.loading = true;
+      scope.message = scope.message || 'Loading...';
+      if (scope.promise) {
+        var complete = function() {
+          scope.loading = false;
+        };
+        scope.promise.then(complete, complete);
+      }
+    }
+  };
+}
+
+angular.module('clb-ui-loading')
+.directive('clbPerformAction', clbPerformAction);
+
+/**
+ * @namespace clbPerformAction
+ * @memberof module:clb-ui-loading
+ *
+ * @desc
+ * clbPerformAction directive run an action when the given control is clicked.
+ * it can be added as an attribute. While the action is running, the control
+ * is disabled.
+ *
+ * @param {function} clbPerformAction  the code to run when the button is clicked.
+ *                     this function must return a promise.
+ * @param {string}   clbLoadingMessage text replacement for the element content.
+ * @return {object}                      Directive Descriptor
+ * @example <caption>use perform action to disable a button while code is running</caption>
+ * <div ng-controller="myController">
+ *  <input class="btn btn-primary" type="submit" clb-perform-action="doSomething()">
+ * </div>
+ */
+function clbPerformAction() {
+  return {
+    restrict: 'A',
+    scope: {
+      action: '&clbPerformAction'
+    },
+    link: function(scope, element, attrs) {
+      var onComplete = function() {
+        element.html(scope.text);
+        element.attr('disabled', false);
+        element.removeClass('loading');
+      };
+      var run = function() {
+        if (scope.loadingMessage) {
+          element.html(scope.loadingMessage);
+        }
+        element.addClass('loading');
+        element.attr('disabled', true);
+        scope.action().then(onComplete, onComplete);
+      };
+      scope.loadingMessage = attrs.clbLoadingMessage;
+      scope.text = scope.text || element.html();
+      element.on('click', run);
+    }
+  };
 }
 
 angular.module('clb-ui-storage')
