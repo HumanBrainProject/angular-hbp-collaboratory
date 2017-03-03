@@ -255,6 +255,7 @@ angular.module('clb-collab')
       collabApiUrl + collabId + '/nav/' + navItem.id + '/')
     .then(function() {
       cacheNavItems.remove(key(collabId, navItem.id));
+      cacheNavRoots.remove(collabId);
     }, clbError.rejectHttpError);
   };
 
