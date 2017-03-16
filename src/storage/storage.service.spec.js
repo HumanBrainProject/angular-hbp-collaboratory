@@ -146,7 +146,7 @@ describe('clbStorage', function () {
             });
 
             it('should forward any server exception', function () {
-                backend.expectGET(entityUrl('?collab_id=1'))
+                backend.expectGET(projectUrl('?collab_id=1'))
                     .respond(500);
                 service.getEntity({collab: 1}).then(assign).catch(assign);
                 backend.flush();
