@@ -11,6 +11,7 @@ describe('clbStorage', function () {
     var entityUrl;
     var baseUrl;
     var fileUrl;
+    var projectUrl;
     var entity;
     var addSlashDecorator;
 
@@ -49,6 +50,10 @@ describe('clbStorage', function () {
 
         fileUrl = function (path) {
             return addSlashDecorator(baseUrl('file/' + (path ? path : '')));
+        };
+
+        projectUrl = function (path) {
+            return addSlashDecorator(baseUrl('project/' + (path ? path : '')));
         };
 
         contextId = '30FF9E92-B994-41D2-B6F9-9D03BC8C70AD';
@@ -133,7 +138,7 @@ describe('clbStorage', function () {
         describe('using a collab ID', function () {
             it('accept an ID set as locator.collab', function () {
                 var expectedResult = entity;
-                backend.expectGET(entityUrl('?collab_id=1'))
+                backend.expectGET(projectUrl('?collab_id=1'))
                     .respond(200, expectedResult);
                 service.getEntity({collab: 1}).then(assign).catch(assign);
                 backend.flush();

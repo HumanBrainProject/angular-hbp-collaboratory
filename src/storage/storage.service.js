@@ -107,9 +107,9 @@ function clbStorage(
       if (locator.ctx && uuid4.validate(locator.ctx)) {
         return getEntityByContext(locator.ctx);
       }
-      //if (locator.collab) {
-      //  return getCollabHome(locator.collab);
-      //}
+      if (locator.collab) {
+        return getCollabHome(locator.collab);
+      }
     }
     return $q.reject(clbError.error({
       type: 'InvalidArgument',
@@ -343,7 +343,7 @@ function clbStorage(
    */
   function getCollabHome(collabId) {
     return clbAuthHttp.get(baseUrl + '/project/', {
-      collab_id: collabId
+      params: { collab_id: collabId }
     }).then(function(response) {
       return response.data;
     }).catch(clbError.rejectHttpError);
