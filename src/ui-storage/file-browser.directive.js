@@ -226,7 +226,7 @@ function clbFileBrowser(lodash) {
         return $q.when(entity);
       }
       // Set the currentEntity to the parent and then focus the file
-      return clbStorage.getEntity(entity.results[0]);
+      return clbStorage.getEntity(entity.parent);
     }
 
     /**

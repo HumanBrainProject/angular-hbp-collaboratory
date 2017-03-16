@@ -182,7 +182,7 @@ describe('clbFileBrowser', function() {
       });
     });
 
-    it('should faile if the parent cannot be fetched', function() {
+    it('should fail if the parent cannot be fetched', function() {
       storage.getEntity.and.callFake(function(locator) {
         expect(locator).toBe(-1);
         return $q.reject({message: 'Error'});
