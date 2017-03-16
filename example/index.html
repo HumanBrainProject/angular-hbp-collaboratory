@@ -111,7 +111,7 @@
         <div class="panel-body" ng-controller="UiStorageController as vm">
           <uib-alert type="warning" ng-if="!vm.authInfo">You have to be logged in to access the collab storage</uib-alert>
           <div ng-if="vm.authInfo">
-            <div class="form-group" ng-if="vm.collabStorage">
+            <div class="form-group" ng-if="!vm.collabStorage">
               <label for="targetCollab">Select a collab:</label>
               <select class="form-control" id="targetCollab" name="targetCollab" ng-model="vm.selectedCollabId">
                 <option ng-repeat="c in vm.collabs" value="{{c.id}}">{{c.title}}</option>
@@ -136,7 +136,7 @@
     <script src="../bower_components/angular-moment/angular-moment.js"></script>
     <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="../bower_components/lodash/lodash.js"></script>
-    <script src="../bower_components/hello/dist/hello.all.min.js"></script>
+    <script src="../bower_components/hello/dist/hello.all.js"></script>
     <script src="../angular-hbp-collaboratory.js"></script>
     <!-- endbower -->
 
