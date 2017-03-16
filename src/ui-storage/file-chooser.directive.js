@@ -58,14 +58,14 @@ function clbFileChooser($q, $log) {
         return;
       }
       if (angular.isString(scope.validate)) {
-        $log.debug('string comparison', scope.validate === value._contentType);
-        return scope.validate === value._contentType;
+        $log.debug('string comparison', scope.validate === value.content_type);
+        return scope.validate === value.content_type;
       }
       if (angular.isArray(scope.validate)) {
-        return scope.validate.indexOf(value._contentType) !== -1;
+        return scope.validate.indexOf(value.content_type) !== -1;
       }
       if (scope.validate instanceof RegExp) {
-        return value && value._contentType.match(scope.validate);
+        return value && value.content_type.match(scope.validate);
       }
       if (angular.isFunction(scope.validate)) {
         return scope.validate(value);
@@ -75,7 +75,7 @@ function clbFileChooser($q, $log) {
 
     scope.$on('clbFileBrowser:focusChanged', function(event, value) {
       return $q.when(isValid(value)).then(function(result) {
-        $log.debug('validi entity', result);
+        $log.debug('valid entity', result);
         if (result) {
           scope.currentSelection = value;
         }

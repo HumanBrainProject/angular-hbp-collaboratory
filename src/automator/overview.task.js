@@ -22,7 +22,7 @@ angular.module('clb-automator')
    * @param {object} context the current task context
    * @param {object} [context.collab] the collab in which entities will be copied
    * @param {object} [context.entities] a list of entities to lookup in for
-   *                   descriptor.entiry value
+   *                   descriptor.entity value
    * @return {object} created entities where keys are the same as provided in
    *                  config.storage
    */
@@ -81,7 +81,7 @@ angular.module('clb-automator')
   function fetchSourceContent(descriptor, context) {
     var uuid;
     if (context && context.entities && context.entities[descriptor.entity]) {
-      uuid = context.entities[descriptor.entity]._uuid;
+      uuid = context.entities[descriptor.entity].uuid;
     } else {
       uuid = descriptor.entity;
     }

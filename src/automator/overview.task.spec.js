@@ -27,10 +27,10 @@ describe('overview task handler', function() {
   beforeEach(function() {
     data = {
       fileEntity: {
-        _uuid: '123',
-        _name: 'text.html',
-        _entityType: 'file',
-        _contentType: 'text/html'
+        uuid: '123',
+        name: 'text.html',
+        entity_type: 'file',
+        content_type: 'text/html'
       },
       fileContent: 'Lorem ipsum dolor...',
       collab: {
@@ -75,7 +75,7 @@ describe('overview task handler', function() {
     backend.expectPOST('http://richtext/v0/richtext/').respond(201);
     overview({
       collab: data.collab.id,
-      entity: data.fileEntity._uuid
+      entity: data.fileEntity.uuid
     }).then(function(res) {
       expect(res).toEqual(data.expectedNavItem);
     });

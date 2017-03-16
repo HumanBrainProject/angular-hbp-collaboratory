@@ -34,7 +34,7 @@ angular.module('clb-automator')
             if (angular.isString(value)) {
               $log.debug("Copy entity with UUID", value);
               promises[name] = (
-                clbStorage.copy(value, projectEntity._uuid));
+                clbStorage.copy(value, projectEntity.uuid));
             } else {
               $log.warn('Invalid configuration for storage task', descriptor);
             }

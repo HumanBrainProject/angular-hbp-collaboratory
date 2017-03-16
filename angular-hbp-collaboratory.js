@@ -27,37 +27,35 @@
  * Module to load all the core modules. Try to use the sub-modules instead.
  * @module hbpCollaboratoryCore
  */
-interceptorConfig.$inject = ['$httpProvider'];
-httpRequestInterceptor.$inject = ['$q'];
-clbAutomator.$inject = ['$q', '$log', 'clbError'];
-clbApp.$inject = ['$log', '$q', '$rootScope', '$timeout', '$window', 'clbError'];
-authProvider.$inject = ['clbAppHello', 'clbEnvProvider'];
-clbAuthHttp.$inject = ['$http', 'clbAuth'];
 clbCollabTeamRole.$inject = ['clbAuthHttp', '$log', '$q', 'clbEnv', 'clbError'];
 clbCollabTeam.$inject = ['clbAuthHttp', '$log', '$q', 'lodash', 'clbEnv', 'clbError', 'clbCollabTeamRole', 'clbUser'];
 clbCollab.$inject = ['$log', '$q', '$cacheFactory', 'clbAuthHttp', 'lodash', 'clbContext', 'clbEnv', 'clbError', 'clbResultSet', 'clbUser', 'ClbCollabModel', 'ClbContextModel'];
 clbContext.$inject = ['clbAuthHttp', '$q', 'clbError', 'clbEnv', 'ClbContextModel'];
-clbEnv.$inject = ['$injector'];
 clbCtxData.$inject = ['clbAuthHttp', '$q', 'uuid4', 'clbEnv', 'clbError'];
-clbError.$inject = ['$q'];
+clbEnv.$inject = ['$injector'];
 clbGroup.$inject = ['$rootScope', '$q', 'clbAuthHttp', '$cacheFactory', 'lodash', 'clbEnv', 'clbError', 'clbResultSet', 'clbIdentityUtil'];
 clbUser.$inject = ['$rootScope', '$q', 'clbAuthHttp', '$cacheFactory', '$log', 'lodash', 'clbEnv', 'clbError', 'clbResultSet', 'clbIdentityUtil'];
 clbIdentityUtil.$inject = ['$log', 'lodash'];
+clbError.$inject = ['$q'];
 clbResultSet.$inject = ['clbAuthHttp', '$q', 'clbError'];
 clbStorage.$inject = ['clbAuthHttp', '$q', '$log', 'uuid4', 'clbEnv', 'clbError', 'clbUser', 'clbResultSet'];
-clbConfirm.$inject = ['$rootScope', '$uibModal'];
-clbErrorDialog.$inject = ['$uibModal', 'clbError'];
 clbResourceLocator.$inject = ['$q', '$log', '$injector', 'clbError'];
 clbStream.$inject = ['clbAuthHttp', 'clbEnv', 'clbError', 'clbResultSet', 'moment'];
-clbUsercardPopoverDirective.$inject = ['$log', '$q', 'clbUser', 'clbUsercardPopover'];
-clbUserCardPopoverService.$inject = ['$rootScope'];
-clbUsercard.$inject = ['lodash'];
-clbUsercardCacheTemplate.$inject = ['$templateCache'];
+clbConfirm.$inject = ['$rootScope', '$uibModal'];
+clbErrorDialog.$inject = ['$uibModal', 'clbError'];
+clbApp.$inject = ['$log', '$q', '$rootScope', '$timeout', '$window', 'clbError'];
+authProvider.$inject = ['clbAppHello', 'clbEnvProvider'];
+clbAuthHttp.$inject = ['$http', 'clbAuth'];
 clbFileBrowserPath.$inject = ['clbStorage'];
 clbFileBrowser.$inject = ['lodash'];
 clbFileChooser.$inject = ['$q', '$log'];
 ActivityController.$inject = ['$scope', '$sce', '$log', '$window', '$q', '$compile', 'clbResourceLocator', 'clbErrorDialog'];
 FeedController.$inject = ['$rootScope', 'clbStream', 'clbUser'];
+clbAutomator.$inject = ['$q', '$log', 'clbError'];
+clbUsercardPopoverDirective.$inject = ['$log', '$q', 'clbUser', 'clbUsercardPopover'];
+clbUserCardPopoverService.$inject = ['$rootScope'];
+clbUsercard.$inject = ['lodash'];
+clbUsercardCacheTemplate.$inject = ['$templateCache'];
 angular.module('hbpCollaboratoryCore', [
   'clb-app',
   'clb-automator',
@@ -103,49 +101,6 @@ angular.module('hbpCollaboratory', [
  */
 
 /**
- * @module clb-auth
- * @desc
- * ``clb-auth`` provides a library based on hello.js
- * to authenticate into the Collaboratory.
- */
-angular.module('clb-auth', ['clb-env']);
-
-/**
- * @module clb-automator
- * @desc
- * `clb-automator` module provides an automation library for the Collaboratory
- * using the AngularJS service :ref:`clbAutomator <module-clb-automator.clbAutomator>`.
- * It supports object describing a serie of actions that have to be run
- * either concurrently or sequentially.
- *
- * It is used for example to script the creation of new custom collab in
- * the `Create New Collab` functionality in `collaboratory-extension-core`.
- */
-angular.module('clb-automator', [
-  'clb-app',
-  'clb-env',
-  'clb-error',
-  'clb-collab',
-  'clb-storage'
-]);
-
-/* global hello */
-
-/**
- * @module clb-app
- * @desc
- * ``clb-app`` module provides utilities to retrieve current
- * HBP Collaboratory Context in an app and to communicate with the current
- * Collaboratory instance.
- *
- * This module must be bootstraped using ``angular.clbBootstrap`` function as
- * it needs to load the global environment loaded in CLB_ENBIRONMENT angular
- * constant.
- */
-angular.module('clb-app', ['clb-env', 'clb-error'])
-.constant('clbAppHello', hello);
-
-/**
  * @module clb-collab
  * @desc
  * Contain services to interact with collabs (e.g.: retriving collab informations or
@@ -162,14 +117,6 @@ angular.module('clb-collab', [
 ]);
 
 /**
- * @module clb-env
- * @desc
- * ``clb-env`` module provides a way to information from the global environment.
- */
-
-angular.module('clb-env', []);
-
-/**
  * Provides a key value store where keys are context UUID
  * and values are string.
  *
@@ -177,7 +124,13 @@ angular.module('clb-env', []);
  */
 angular.module('clb-ctx-data', ['uuid4', 'clb-app', 'clb-env', 'clb-error']);
 
-angular.module('clb-error', []);
+/**
+ * @module clb-env
+ * @desc
+ * ``clb-env`` module provides a way to information from the global environment.
+ */
+
+angular.module('clb-env', []);
 
 angular.module('clb-identity', [
   'lodash',
@@ -186,6 +139,29 @@ angular.module('clb-identity', [
   'clb-error',
   'clb-rest'
 ]);
+
+angular.module('clb-error', []);
+
+/* global _ */
+/**
+ * Fix some compatibility issues with previous angular-hbp-common.
+ * @module lodash
+ * @private
+ */
+angular.module('lodash', [])
+.constant('lodash', _)
+.run(['$log', 'lodash', function($log, lodash) {
+  // keep lodash compatibility with older versions
+  if (!lodash.indexBy) {
+    $log.debug('define some lodash 3 functions from lodash 3');
+    lodash.indexBy = lodash.keyBy;
+    lodash.pluck = lodash.map;
+  }
+  if (!lodash.keyBy) {
+    $log.debug('define some lodash 4 functions from lodash 3');
+    lodash.keyBy = lodash.indexBy;
+  }
+}]);
 
 /**
  * @module clb-rest
@@ -210,19 +186,6 @@ angular.module('clb-storage', [
 ]);
 
 /**
- * @module clb-ui-dialog
- */
-angular.module('clb-ui-dialog', ['ui.bootstrap.modal']);
-
-/**
- * @module clb-ui-error
- */
-angular.module('clb-ui-error', [
-  'clb-error',
-  'ui.bootstrap'
-]);
-
-/**
  * @module clb-stream
  * @desc
  * The `clb-stream` module contains a service and a few directives to retrieve
@@ -240,44 +203,39 @@ angular.module('clb-stream', [
 ]);
 
 /**
- * @module clb-ui-form
- * @desc
- * clb-ui-form provides directive to ease creation of forms.
+ * @module clb-ui-dialog
  */
-angular.module('clb-ui-form', []);
+angular.module('clb-ui-dialog', ['ui.bootstrap.modal']);
 
 /**
- * Provides UI widgets around user and groups.
- * @module clb-ui-identity
+ * @module clb-ui-error
  */
-angular.module('clb-ui-identity', ['lodash', 'clb-identity']);
+angular.module('clb-ui-error', [
+  'clb-error',
+  'ui.bootstrap'
+]);
+
+/* global hello */
+
+/**
+ * @module clb-app
+ * @desc
+ * ``clb-app`` module provides utilities to retrieve current
+ * HBP Collaboratory Context in an app and to communicate with the current
+ * Collaboratory instance.
+ *
+ * This module must be bootstraped using ``angular.clbBootstrap`` function as
+ * it needs to load the global environment loaded in CLB_ENBIRONMENT angular
+ * constant.
+ */
+angular.module('clb-app', ['clb-env', 'clb-error'])
+.constant('clbAppHello', hello);
 
 /**
  * Provides a simple loading directive.
  * @module clb-ui-loading
  */
 angular.module('clb-ui-loading', []);
-
-/* global _ */
-/**
- * Fix some compatibility issues with previous angular-hbp-common.
- * @module lodash
- * @private
- */
-angular.module('lodash', [])
-.constant('lodash', _)
-.run(['$log', 'lodash', function($log, lodash) {
-  // keep lodash compatibility with older versions
-  if (!lodash.indexBy) {
-    $log.debug('define some lodash 3 functions from lodash 3');
-    lodash.indexBy = lodash.keyBy;
-    lodash.pluck = lodash.map;
-  }
-  if (!lodash.keyBy) {
-    $log.debug('define some lodash 4 functions from lodash 3');
-    lodash.keyBy = lodash.indexBy;
-  }
-}]);
 
 /**
  * The ``clb-ui-storage`` module provides Angular directive to work
@@ -307,1142 +265,37 @@ angular.module('clb-ui-stream', [
   'clb-ui-error'
 ]);
 
-/* global hello, document */
-angular.module('clb-auth')
-.config(interceptorConfig)
-.factory('httpRequestInterceptor', httpRequestInterceptor)
-.provider('clbAuth', clbAuth);
-
-function interceptorConfig($httpProvider) {
-  $httpProvider.interceptors.push('httpRequestInterceptor');
-}
-
-function httpRequestInterceptor($q) {
-  return {
-    request: function(requestConfig) {
-      // TODO: get token from somewhere
-      var token = 'TOKEN';
-      requestConfig.headers.Authorization = 'Bearer ' + token;
-      return requestConfig;
-    },
-    responseError: function(rejection) {
-      // TODO: check bbpOidcClient...
-      return $q.reject(rejection);
-    }
-  };
-}
-
-function clbAuth() {
-  /* eslint camelcase:[2, {properties: "never"}] */
-  hello.init({
-    hbp: {
-      oauth: {
-        version: 2,
-        auth: 'https://services.humanbrainproject.eu/oidc/authorize',
-        grant: 'https://services.humanbrainproject.eu/oidc/token'
-      },
-      scope: {
-        basic: 'openid profiles'
-      },
-      scope_delim: ' ',
-      get: {
-        me: 'userinfo'
-      },
-      base: 'https://services.humanbrainproject.eu/oidc/'
-    }
-  }, {client_id: 'portal-client', redirect_uri: document.URL});
-  return {
-    $get: function() {
-      return hello('hbp');
-    }
-  };
-}
-
-angular.module('clb-automator')
-.factory('clbAutomator', clbAutomator);
-
 /**
- * @namespace Tasks
- * @memberof module:clb-automator
+ * @module clb-automator
  * @desc
- * Document a list of available tasks.
+ * `clb-automator` module provides an automation library for the Collaboratory
+ * using the AngularJS service :ref:`clbAutomator <module-clb-automator.clbAutomator>`.
+ * It supports object describing a serie of actions that have to be run
+ * either concurrently or sequentially.
+ *
+ * It is used for example to script the creation of new custom collab in
+ * the `Create New Collab` functionality in `collaboratory-extension-core`.
  */
+angular.module('clb-automator', [
+  'clb-app',
+  'clb-env',
+  'clb-error',
+  'clb-collab',
+  'clb-storage'
+]);
 
 /**
- * @namespace clbAutomator
- * @memberof module:clb-automator
+ * Provides UI widgets around user and groups.
+ * @module clb-ui-identity
+ */
+angular.module('clb-ui-identity', ['lodash', 'clb-identity']);
+
+/**
+ * @module clb-ui-form
  * @desc
- * clbAutomator is an AngularJS factory that
- * provide task automation to accomplish a sequence of
- * common operation in Collaboratory.
- *
- * How to add new tasks
- * --------------------
- *
- * New tasks can be added by calling ``clbAutomator.registerHandler``.
- *
- * You can see a few example of tasks in the `tasks` folder.
- *
- * Evaluate the automator
- * ----------------------
- *
- * From the root of this project, you can start a server that will let
- * you write a descriptor and run it.
- *
- * .. code-block:: bash
- *
- *    gulp example
- *
- * @example <caption>Create a Collab with a few navigation items</caption>
- * // Create a Collab with a few navigation items.
- * angular.module('MyModule', ['clb-automator'])
- * .run(function(clbAutomator, $log) {
- *   var config = {
- *     title: 'My Custom Collab',
- *     content: 'My Collab Content',
- *     private: false
- *   };
- *   clbAutomator.task(config).run().then(function(collab) {
- *   	 $log.info('Created Collab', collab);
- *   });
- * })
- * @example <caption>Create a Collab with entities and navigation items</caption>
- * clbAutomator.run({
- *   "collab": {
- *     "title": "Test Collab Creation",
- *     "content": "My Collab Description",
- *     "private": true,
- *     "after": [
- *       {
- *         "storage": {
- *           "entities": {
- *             // Use one of your file UUID here.
- *             "sample.ipynb": "155c1bcc-ee9c-43e2-8190-50c66befa1fa"
- *           },
- *           "after": [{
- *             "nav": {
- *               "name": "Example Code",
- *               "app": "Jupyter Notebook",
- *               "entity": "sample.ipynb"
- *             }
- *           }]
- *         }
- *       },
- *       {
- *         "nav": {
- *           "name": "Empty Notebook",
- *           "app": "Jupyter Notebook"
- *         }
- *       },
- *       {
- *         "nav": {
- *           "name": "Introduction",
- *           "app": "Rich Text Editor"
- *         }
- *       }
- *     ]
- *   }
- * }).then(function(collab) {
- *   $log.info('Created Collab', collab);
- * });
- *
- * @example <caption>Create a Collab with a pre-filled overview</caption>
- * clbAutomator.run({
- *   "collab": {
- *     "title": "Test Collab With Pre Filled Overview",
- *     "content": "Test collab creation with  a pre filled overview",
- *     "private": true,
- *     "after": [{
- *       "overview": {
- *         // Use one of your HTML file UUID here.
- *         "entity": "155c1bcc-ee9c-43e2-8190-50c66befa1fa"
- *       }
- *     }]
- *   }
- * }).then(function(collab) {
- *   $log.info('Created Collab', collab);
- * });
- * @param {object} $q injected service
- * @param {object} $log injected service
- * @param {object} clbError injected service
- * @return {object} the clbAutomator Angular service singleton
+ * clb-ui-form provides directive to ease creation of forms.
  */
-function clbAutomator(
-  $q,
-  $log,
-  clbError
-) {
-  var handlers = {};
-
-  /**
-   * Register a handler function for the given task name.
-   * @memberof module:clb-automator.clb-automator
-   * @param  {string}   name handle actions with the specified name
-   * @param  {Function} fn a function that accept the current context in
-   *                       parameter.
-   */
-  function registerHandler(name, fn) {
-    handlers[name] = fn;
-  }
-
-  /**
-   * Instantiate a new Task intance that will run the code describe for
-   * a handlers with the give ``name``.
-   *
-   * The descriptor is passed to the task and parametrize it.
-   * The task context is computed at the time the task is ran. A default context
-   * can be given at load time and it will be fed with the result of each parent
-   * (but not sibling) tasks as well.
-   *
-   * @memberof module:clb-automator.clbAutomator
-   * @param {string} name the name of the task to instantiate
-   * @param {object} [descriptor] a configuration object that will determine
-   *                            which task to run and in which order
-   * @param {object} [descriptor.after] an array of task to run after this one
-   * @param {object} [context] a default context to run the task with
-   *
-   * @return {Task} - the new task instance
-   */
-  function task(name, descriptor, context) {
-    try {
-      return new Task(name, descriptor, context);
-    } catch (ex) {
-      $log.error('EXCEPTION', ex);
-      throw clbError.error({
-        type: 'InvalidTask',
-        message: 'Invalid task ' + name + ': ' + ex,
-        data: {
-          cause: ex,
-          name: name,
-          descriptor: descriptor,
-          context: context
-        }
-      });
-    }
-  }
-
-  /**
-   * Directly generate tasks from given description and run them.
-   *
-   * @memberof module:clb-automator.clbAutomator
-   * @param  {object} descriptor description of the tasks to run
-   * @param  {object} [context]  the initial context
-   * @return {Promise} promise of the top level task result
-   */
-  function run(descriptor, context) {
-    for (var name in descriptor) {
-      if (descriptor.hasOwnProperty(name)) {
-        return task(name, descriptor[name], context).run();
-      }
-    }
-    return $q.reject(clbError.error({
-      type: 'NoTaskFound',
-      message: 'No task found in descriptor',
-      data: descriptor
-    }));
-  }
-
-  /**
-   * Create an array of tasks given an array containing object where
-   * the key is the task name to run and the value is the descriptor
-   * parameter.
-   *
-   * @memberof module:clb-automator.clbAutomator
-   * @param  {object} after the content of ``descriptor.after``
-   * @return {Array/Task} array of subtasks
-   * @private
-   */
-  function createSubtasks(after) {
-    var subtasks = [];
-    if (!after || !after.length) {
-      return subtasks;
-    }
-    for (var i = 0; i < after.length; i++) {
-      var taskDef = after[i];
-      for (var name in taskDef) {
-        if (taskDef.hasOwnProperty(name)) {
-          subtasks.push(task(name, taskDef[name]));
-        }
-      }
-    }
-    return subtasks;
-  }
-
-  /**
-   * @class Task
-   * @memberof module:clb-automator.clbAutomator
-   * @desc
-   * Instantiate a task given the given `config`.
-   * The task can then be run using the `run()` instance method.
-   * @param {string} name the name of the task to instantiate
-   * @param {object} [descriptor] a configuration object that will determine
-   *                            which task to run and in which order
-   * @param {object} [descriptor.after] an array of task to run after this one
-   * @param {object} [context] a default context to run the task with
-   * @see module:clb-automator.task
-   *
-   */
-  function Task(name, descriptor, context) {
-    if (!handlers[name]) {
-      throw new Error('TaskNotFound');
-    }
-    descriptor = descriptor || {};
-    context = context || {};
-    this.state = 'idle';
-    this.name = name;
-    this.descriptor = descriptor;
-    this.defaultContext = context;
-    this.state = 'idle';
-    this.promise = null;
-    this.error = null;
-    this.subtasks = createSubtasks(descriptor.after);
-  }
-
-  Task.prototype = {
-    /**
-     * Launch the task.
-     *
-     * @memberof module:clb-automator.clbAutomator.Task
-     * @param {object} context current context will be merged into the default
-     *                         one.
-     * @return {Promise} promise to return the result of the task
-     */
-    run: function(context) {
-      var self = this;
-      // run an intance of task only once.
-      if (self.state !== 'idle') {
-        return self.promise;
-      }
-      context = angular.extend({}, this.defaultContext, context);
-      var onSuccess = function(result) {
-        var subContext = angular.copy(context);
-        subContext[self.name] = result;
-        return self.runSubtasks(subContext)
-        .then(function() {
-          self.state = 'success';
-          return result;
-        });
-      };
-      var onError = function(err) {
-        self.state = 'error';
-        // noop operation if is already one
-        return $q.reject(clbError.error(err));
-      };
-      self.state = 'progress';
-      self.promise = $q.when(handlers[self.name](self.descriptor, context))
-        .then(onSuccess)
-        .catch(onError);
-      return self.promise;
-    },
-
-    /**
-     * Run all subtasks of the this tasks.
-     *
-     * @memberof module:clb-automator.clbAutomator.Task
-     * @param  {object} context the current context
-     * @return {Array}          all the results in an array
-     */
-    runSubtasks: function(context) {
-      var promises = [];
-      angular.forEach(this.subtasks, function(task) {
-        promises.push(task.run(context));
-      });
-      return $q.all(promises);
-    }
-  };
-
-  /**
-   * Return a HbpError when a parameter is missing.
-   * @memberof module:clb-automator.clbAutomator
-   * @param  {string} key    name of the key
-   * @param  {object} config the invalid configuration object
-   * @return {HbpError}      a HbpError instance
-   * @private
-   */
-  function missingDataError(key, config) {
-    return clbError({
-      type: 'KeyError',
-      message: 'Missing `' + key + '` key in config',
-      data: {
-        config: config
-      }
-    });
-  }
-
-  /**
-   * Ensure that all parameters listed after config are presents.
-   * @memberof module:clb-automator.clbAutomator
-   * @param  {object} config task descriptor
-   * @return {object} created entities
-   */
-  function ensureParameters(config) {
-    var parameters = Array.prototype.splice(1);
-    for (var p in parameters) {
-      if (angular.isUndefined(parameters[p])) {
-        return $q.reject(missingDataError(p, config));
-      }
-    }
-    return $q.when(config);
-  }
-
-  /**
-   * Return an object that only contains attributes
-   * from the `attrs` list.
-   *
-   * @memberof module:clb-automator.clbAutomator
-   * @param  {object} config key-value store
-   * @param  {Array} attrs   a list of keys to extract from `config`
-   * @return {object}        key-value store containing only keys from attrs
-   *                         found in `config`
-   */
-  function extractAttributes(config, attrs) {
-    var r = {};
-    angular.forEach(attrs, function(a) {
-      if (angular.isDefined(config[a])) {
-        r[a] = config[a];
-      }
-    });
-    return r;
-  }
-
-  return {
-    run: run,
-    task: task,
-    handlers: handlers,
-    registerHandler: registerHandler,
-    extractAttributes: extractAttributes,
-    ensureParameters: ensureParameters
-  };
-}
-
-angular.module('clb-automator')
-.run(['$log', '$q', 'clbCollab', 'clbAutomator', function createCollab(
-  $log,
-  $q,
-  clbCollab,
-  clbAutomator
-) {
-  clbAutomator.registerHandler('collab', createCollab);
-
-  /**
-   * @function createCollab
-   * @memberof module:clb-automator.Tasks
-   * @desc
-   *  Create a collab defined by the given options.
-   * @param {object} descriptor - Parameters to create the collab
-   * @param {string} descriptor.name - Name of the collab
-   * @param {string} descriptor.description - Description in less than 140 characters
-   *                                       of the collab
-   * @param {string} [descriptor.privacy] - 'private' or 'public'. Notes that only
-   *                                   HBP Members can create private collab
-   * @param {Array} [after] - descriptor of subtasks
-   * @return {Promise} - promise of a collab
-   */
-  function createCollab(descriptor) {
-    var attr = clbAutomator.extractAttributes(
-      descriptor,
-      ['title', 'content', 'private']
-    );
-    $log.debug('Create collab', descriptor);
-    return clbCollab.create(attr);
-  }
-}]);
-
-angular.module('clb-automator')
-.run(['$log', 'clbCollabApp', 'clbCollabNav', 'clbAutomator', 'clbStorage', function createNavItem(
-  $log,
-  clbCollabApp,
-  clbCollabNav,
-  clbAutomator,
-  clbStorage
-) {
-  clbAutomator.registerHandler('nav', createNavItem);
-
-  /**
-   * Create a new nav item.
-   * @memberof module:clb-automator.Tasks
-   * @param {object} descriptor a descriptor description
-   * @param {string} descriptor.name name of the nav item
-   * @param {Collab} descriptor.collabId collab in which to add the item in.
-   * @param {string} descriptor.app app name linked to the nav item
-   * @param {object} [context] the current run context
-   * @param {object} [context.collab] a collab instance created previously
-   * @return {Promise} promise of a NavItem instance
-   */
-  function createNavItem(descriptor, context) {
-    var collabId = function() {
-      return (descriptor && descriptor.collab) ||
-        (context && context.collab.id);
-    };
-    var findApp = function(app) {
-      return clbCollabApp.findOne({title: app});
-    };
-    var createNav = function(app) {
-      return clbCollabNav.getRoot(collabId())
-      .then(function(parentItem) {
-        return clbCollabNav.addNode(collabId(),
-          new clbCollabNav.NavItem({
-            collab: collabId(),
-            name: descriptor.name,
-            appId: app.id,
-            parentId: parentItem.id
-          })
-        );
-      });
-    };
-    var linkToStorage = function(nav) {
-      if (!descriptor.entity) {
-        return nav;
-      }
-      var setLink = function(entity) {
-        return clbStorage.setContextMetadata(entity, nav.context)
-        .then(function() {
-          return nav;
-        });
-      };
-      // It might be the name used in a previous storage task.
-      if (context && context.storage && context.storage[descriptor.entity]) {
-        return setLink(context.storage[descriptor.entity]);
-      }
-      return clbStorage.getEntity(descriptor.entity).then(setLink);
-    };
-
-    $log.debug('Create nav item', descriptor, context);
-
-    return clbAutomator.ensureParameters(descriptor, 'app', 'name')
-    .then(function() {
-      return findApp(descriptor.app)
-      .then(createNav)
-      .then(linkToStorage);
-    });
-  }
-}]);
-
-angular.module('clb-automator')
-.run(['$log', '$q', 'clbAuthHttp', 'clbEnv', 'clbStorage', 'clbError', 'clbAutomator', 'clbCollabNav', 'clbCollabApp', function createOverview(
-  $log, $q, clbAuthHttp, clbEnv, clbStorage, clbError,
-  clbAutomator, clbCollabNav, clbCollabApp
-) {
-  clbAutomator.registerHandler('overview', overview);
-
-  /**
-   * Set the content of the overview page.
-   * If an 'entity' is specified, it will use the content of that storage file
-   * If an 'app' name is specified, it will use that app for the overview page
-   *
-   * The collab is indicated either by an id in `descriptor.collab` or a
-   * collab object in `context.collab`.
-   *
-   * @memberof module:clb-automator.Tasks
-   * @param {object} descriptor the task configuration
-   * @param {object} [descriptor.collab] id of the collab
-   * @param {string} [descriptor.entity] either a label that can be found in
-   *                 ``context.entities`` or a FileEntity UUID
-   * @param {string} [descriptor.app] the name of an application
-   * @param {object} context the current task context
-   * @param {object} [context.collab] the collab in which entities will be copied
-   * @param {object} [context.entities] a list of entities to lookup in for
-   *                   descriptor.entiry value
-   * @return {object} created entities where keys are the same as provided in
-   *                  config.storage
-   */
-  function overview(descriptor, context) {
-    $log.debug('Set the content of the overview page');
-    var collabId = descriptor.collab || context.collab.id;
-    var createContentFile = function(overview, descriptor, context) {
-      $log.debug('Fill overview page with content from entity');
-
-      return fetchSourceContent(descriptor, context)
-        .then(function(source) {
-          return clbAuthHttp.post(
-            clbEnv.get('api.richtext.v0') + '/richtext/', {
-              ctx: overview.context,
-              raw: source
-            });
-        });
-    };
-
-    var updateAppId = function(overview, descriptor) {
-      $log.debug('Replace the overview page application id');
-
-      return clbCollabApp.findOne({title: descriptor.app})
-        .then(function(app) {
-          overview.update({appId: app.id});
-          return clbCollabNav.saveNode(collabId, overview);
-        });
-    };
-
-    return clbCollabNav
-      .getRoot(collabId)
-      .then(function(rootNav) {
-        var overview = rootNav.children[0];
-
-        var updateOverview = descriptor.app ?
-          updateAppId(overview, descriptor) :
-          createContentFile(overview, descriptor, context);
-
-        return updateOverview.then(function() {
-          return overview;
-        });
-      });
-  }
-
-  /**
-   * Download file entity content.
-   *
-   * @param {object} descriptor the task configuration
-   * @param {string} descriptor.entity either the label to find in
-   *                 ``context.entities`` or a the entity UUID.
-   * @param {object} context the current task context
-   * @param {object} context.entities optional entities in which to lookup for one
-   * @return {Promise} the promise of the entity content string
-   * @private
-   */
-  function fetchSourceContent(descriptor, context) {
-    var uuid;
-    if (context && context.entities && context.entities[descriptor.entity]) {
-      uuid = context.entities[descriptor.entity]._uuid;
-    } else {
-      uuid = descriptor.entity;
-    }
-    return clbStorage.getContent(uuid);
-  }
-}]);
-
-angular.module('clb-automator')
-.run(['$log', '$q', 'clbError', 'clbAutomator', 'clbStorage', function createStorage(
-  $log,
-  $q,
-  clbError,
-  clbAutomator,
-  clbStorage
-) {
-  clbAutomator.registerHandler('storage', storage);
-
-  /**
-   * Copy files and folders to the destination collab storage.
-   *
-   * @memberof module:clb-automator.Tasks
-   * @param {object} descriptor the task configuration
-   * @param {object} descriptor.storage a object where keys are the file path in the
-   *                                new collab and value are the UUID of the
-   *                                entity to copy at this path.
-   * @param {object} [descriptor.collab] id of the collab
-   * @param {object} context the current task context
-   * @param {object} [context.collab] the collab in which entities will be copied
-   * @return {object} created entities where keys are the same as provided in
-   *                  config.storage
-   */
-  function storage(descriptor, context) {
-    return clbAutomator.ensureParameters(
-      descriptor, 'entities'
-    ).then(function() {
-      return clbStorage
-        .getEntity({collab: descriptor.collab || context.collab.id})
-        .then(function(projectEntity) {
-          var promises = {};
-          angular.forEach(descriptor.entities, function(value, name) {
-            if (angular.isString(value)) {
-              $log.debug("Copy entity with UUID", value);
-              promises[name] = (
-                clbStorage.copy(value, projectEntity._uuid));
-            } else {
-              $log.warn('Invalid configuration for storage task', descriptor);
-            }
-          });
-          return $q.all(promises);
-        });
-    });
-  }
-}]);
-
-angular.module('clb-app')
-.factory('clbApp', clbApp);
-
-/**
- * @namespace clbApp
- * @memberof module:clb-app
- * @desc
- * An AngularJS service to interface a web application with the HBP Collaboratory.
- * This library provides a few helper to work within the Collaboratory environment.
- *
- * Usage
- * -----
- *
- * - :ref:`module-clb-app.clbApp.context` is used to set and retrieve
- *   the current context.
- * - :ref:`module-clb-app.clbApp.emit` is used to send a command
- *   to the HBP Collaboratory and wait for its answer.
- *
- * @example <caption>Retrieve the current context object</caption>
- * clbApp.context()
- * .then(function(context) {
- *   console.log(context.ctx, context.state, context.collab);
- * })
- * .catch(function(err) {
- *   // Cannot set the state
- * });
- *
- * @example <caption>Set the current state in order for a user to be able to copy-paste its current URL and reopen the same collab with your app loaded at the same place.</caption>
- * clbApp.context({state: 'lorem ipsum'})
- * .then(function(context) {
- *   console.log(context.ctx, context.state, context.collab);
- * })
- * .catch(function(err) {
- *   // Cannot set the state
- * });
- *
- * @param  {object} $log AngularJS service injection
- * @param  {object} $q AngularJS service injection
- * @param  {object} $rootScope AngularJS service injection
- * @param  {object} $timeout AngularJS service injection
- * @param  {object} $window AngularJS service injection
- * @param  {object} clbError AngularJS service injection
- * @return {object}         the service singleton
- */
-function clbApp(
-  $log,
-  $q,
-  $rootScope,
-  $timeout,
-  $window,
-  clbError
-) {
-  var eventId = 0;
-  var sentMessages = {};
-
-  /**
-   * Singleton class
-   */
-  function AppToolkit() { }
-  AppToolkit.prototype = {
-    emit: emit,
-    context: context,
-    open: open
-  };
-
-  $window.addEventListener('message', function(event) {
-    $rootScope.$emit('message', event.data);
-  });
-
-  $rootScope.$on('message', function(event, message) {
-    if (!message || !message.origin || !sentMessages[message.origin]) {
-      return;
-    }
-    if (message.eventName === 'resolved') {
-      sentMessages[message.origin].resolve(message.data);
-    } else if (message.eventName === 'error') {
-      sentMessages[message.origin].reject(clbError.error(message.data));
-    }
-    sentMessages[message.origin] = null;
-  });
-
-  /**
-   * Send a message to the HBP Collaboratory.
-   * @memberof module:clb-app.clbApp
-   * @param  {string} name name of the event to be propagated
-   * @param  {object} data corresponding data to be sent alongside the event
-   * @return  {Promise} resolve with the message response
-   */
-  function emit(name, data) {
-    eventId++;
-    sentMessages[eventId] = $q.defer();
-    var promise = sentMessages[eventId].promise;
-    $window.parent.postMessage({
-      apiVersion: 1,
-      eventName: name,
-      data: data,
-      ticket: eventId
-    }, '*');
-    return promise;
-  }
-
-  var currentContext;
-
-  /**
-   * @typedef HbpCollaboratoryContext
-   * @memberof module:clb-app.clbApp
-   * @type {object}
-   * @property {string} mode - the current mode, either 'run' or 'edit'
-   * @property {string} ctx - the UUID of the current context
-   * @property {string} state - an application defined state string
-   */
-
-   /**
-    * @memberof module:clb-app.clbApp
-    * @desc
-    * Asynchronously retrieve the current HBP Collaboratory Context, including
-    * the mode, the ctx UUID and the application state if any.
-    * @function context
-    * @param {object} data new values to send to HBP Collaboratory frontend
-    * @return {Promise} resolve to the context
-    * @static
-    */
-  function context(data) {
-    var d = $q.defer();
-    var kill = $timeout(function() {
-      d.reject(clbError.error({
-        type: 'TimeoutException',
-        message: 'No context can be retrieved'
-      }));
-    }, 250);
-
-    if (data) {
-      // discard context if new data should be set.
-      currentContext = null;
-    }
-
-    if (currentContext) {
-      // directly return context when cached.
-      return d.resolve(currentContext);
-    }
-    emit('workspace.context', data)
-    .then(function(context) {
-      $timeout.cancel(kill);
-      currentContext = context;
-      d.resolve(context);
-    })
-    .catch(function(err) {
-      d.reject(clbError.error(err));
-    });
-    return d.promise;
-  }
-  return new AppToolkit();
-
-  /**
-   * @desc
-   * Open a resource described by the given ObjectReference.
-   *
-   * The promise will fulfill only if the navigation is possible. Otherwise,
-   * an error will be returned.
-   * @function open
-   * @memberof module:clb-app.clbApp
-   * @param {ObjectReference} ref  The object reference to navigate to
-   * @return {Promise}  The promise retrieved by the call to emit
-   */
-  function open(ref) {
-    $log.debug('Ask the frontend to navigate to:', ref);
-    return emit('resourceLocator.open', {ref: ref});
-  }
-}
-
-/* eslint require-jsdoc:0 valid-jsdoc:0 */
-angular.module('clb-app')
-.provider('clbAuth', authProvider);
-
-function authProvider(clbAppHello, clbEnvProvider) {
-  return {
-    $get: ['$http', '$log', '$q', '$rootScope', '$timeout', 'clbEnv', 'clbError', function($http, $log, $q, $rootScope, $timeout, clbEnv, clbError) {
-      _addHbpProvider();
-      _loadApplicationInfo();
-      _bindEvents();
-      var _readEnvOnce = false;
-
-      return {
-        login: login,
-        logout: logout,
-        getAuthInfo: getAuthInfo
-      };
-
-      function login(options) {
-        var d = $q.defer();
-        if (!_readEnvOnce) {
-          _readEnvOnce = true;
-          var envToken = _readTokenFromEnv();
-          if (envToken) {
-            // The token delivered by the backend is considered valid.
-            var authInfo = getAuthInfo(envToken);
-            d.resolve(authInfo);
-            $rootScope.$broadcast('clbAuth.changed', authInfo);
-            return d.promise;
-          }
-        }
-        clbAppHello.login('hbp', options)
-        .then(function(res) {
-          d.resolve(getAuthInfo(res.authResponse));
-        }, function(err) {
-          d.reject(_formatError(err));
-        });
-        return d.promise;
-      }
-
-      function logout(options) {
-        var info = getAuthInfo();
-        if (!info) {
-          return $q.when(true);
-        }
-        var d = $q.defer();
-        clbAppHello.logout('hbp', options)
-        .then(function() {
-          return d.resolve(true);
-        }, function(err) {
-          d.reject(_formatError(err));
-        });
-        return d.promise;
-      }
-
-      function getAuthInfo(authResponse) {
-        authResponse = authResponse || clbAppHello.getAuthResponse('hbp');
-        if (!authResponse) {
-          return null;
-        }
-        return {
-          accessToken: authResponse.access_token,
-          tokenType: authResponse.token_type,
-          // When no scopes are specified, the server will generate a token
-          // with the app default scopes. In this case hello.js don't know what
-          // they are so we set the value to undefined by convention.
-          scope: authResponse.scope || undefined,
-          expires: authResponse.expires
-        };
-      }
-
-      function _readTokenFromEnv() {
-        var authInfo = clbEnv.get('auth.token', false);
-        if (!authInfo) {
-          return;
-        }
-        var now = (new Date()).getTime() / 1e3;
-        if (!authInfo.expires && authInfo.expires_in) {
-          authInfo.expires = (now) + authInfo.expires_in;
-        }
-        if (!authInfo.expires || now < authInfo.expires) {
-          clbAppHello.utils.store('hbp', authInfo);
-          return authInfo;
-        }
-      }
-
-      function _formatError(err) {
-        return clbError.error({
-          type: err.error.code,
-          message: err.error.message,
-          data: err
-        });
-      }
-
-      function _bindEvents() {
-        clbAppHello.on('auth.login', _handleAuthInfoChange);
-        clbAppHello.on('auth.logout', _handleAuthInfoChange);
-      }
-
-      function _handleAuthInfoChange(data, name) {
-        if (data.network !== 'hbp') {
-          return;
-        }
-        $log.debug('propagate auth event from original event', name);
-        $timeout(function() {
-          $rootScope.$broadcast('clbAuth.changed', getAuthInfo());
-        }, 0);
-      }
-
-      /**
-       * Define a new provider Hello.js provider for HBP
-       */
-      function _addHbpProvider() {
-        clbAppHello.init({
-          hbp: {
-            name: 'Human Brain Project',
-            oauth: {
-              version: '2',
-              auth: clbEnvProvider.get('auth.url') + '/authorize',
-              grant: clbEnvProvider.get('auth.url') + '/token'
-            },
-            // API base URL
-            base: clbEnvProvider.get('auth.url') + '/',
-            scope_delim: ' ', // eslint-disable-line camelcase
-            login: function(p) {
-              // Reauthenticate
-              if (p.options.force) {
-                p.qs.prompt = 'login';
-              }
-              if (!p.qs.scope) {
-                delete p.qs.scope;
-              }
-            },
-            logout: function(callback, p) {
-              $http.post(clbEnv.get('auth.url') + '/slo', {
-                token: p.authResponse.access_token
-              }, {
-                withCredentials: true
-              })
-              .then(function() {
-                callback();
-              })
-              .catch(function(err) {
-                $log.error('Cannot kill the global session');
-                $log.debug(err);
-                callback();
-              });
-            }
-          }
-        });
-      }
-
-      /**
-       * Set the current application data.
-       */
-      function _loadApplicationInfo() {
-        clbAppHello.init({
-          hbp: clbEnvProvider.get('auth.clientId')
-        }, {
-          default_service: 'hbp', // eslint-disable-line camelcase
-          display: 'page',
-          scope: clbEnvProvider.get('auth.scopes', null),
-          force: false
-        });
-      }
-    }]
-  };
-}
-
-angular.module('clb-app')
-.factory('clbAuthHttp', clbAuthHttp);
-
-/**
- * Proxy $http to add the HBP bearer token.
- * Also handle 401 Authentication Required errors.
- * See $http service
- *
- * @param  {object} $http   DI
- * @param  {object} clbAuth DI
- * @return {function}       the service
- */
-function clbAuthHttp($http, clbAuth) {
-  var proxyHttp = function(config) {
-    var auth = clbAuth.getAuthInfo();
-    if (!auth) {
-      return $http(config);
-    }
-    var authToken = auth.tokenType + ' ' + auth.accessToken;
-    if (!config.headers) {
-      config.headers = {
-        Authorization: authToken
-      };
-    }
-    config.headers.Authorization = authToken;
-    return $http(config);
-  };
-  proxyHttp.get = _wrapper('GET');
-  proxyHttp.head = _wrapper('HEAD');
-  proxyHttp.delete = _wrapper('DELETE');
-  proxyHttp.post = _wrapperData('POST');
-  proxyHttp.put = _wrapperData('PUT');
-  proxyHttp.patch = _wrapperData('PATCH');
-  return proxyHttp;
-
-  /**
-   * Handle $http helper call for GET, DELETE, HEAD requests.
-   *
-   * @param  {string} verb the HTTP verb
-   * @return {function}    The function to attach
-   */
-  function _wrapper(verb) {
-    return function(url, config) {
-      config = config || {};
-      config.method = verb.toUpperCase();
-      config.url = url;
-      return proxyHttp(config);
-    };
-  }
-
-  /**
-   * Handle $http helper call for PUT, PATCH, POST requests.
-   *
-   * @param  {string} verb the HTTP verb
-   * @return {function}    The function to attach
-   */
-  function _wrapperData(verb) {
-    return function(url, data, config) {
-      config = config || {};
-      config.method = verb.toUpperCase();
-      config.url = url;
-      config.data = data;
-      return proxyHttp(config);
-    };
-  }
-}
-
-/* global deferredBootstrapper, window, document */
-
-/**
- * @namespace angular
- */
-
-angular.clbBootstrap = clbBootstrap;
-
-/**
- * Bootstrap AngularJS application with the HBP environment loaded.
- *
- * It is very important to load the HBP environement *before* starting
- * the application. This method let you do that synchronously or asynchronously.
- * Whichever method you choose, the values in your environment should look
- * very similar to the one in _`https://collab.humanbrainproject.eu/config.json`,
- * customized with your own values.
- *
- * At least ``auth.clientId`` should be edited in the config.json file.
- *
- * @memberof angular
- * @param {string} module the name of the Angular application module to load.
- * @param {object} options pass those options to deferredBootstrap
- * @param {object} options.env HBP environment JSON (https://collab.humanbrainproject.eu/config.json)
- * @return {Promise} return once the environment has been bootstrapped
- * @example <caption>Bootstrap the environment synchronously</caption>
- * angular.clbBootstrap('myApp', {
- *   env: { } // content from https://collab.humanbrainproject.eu/config.json
- * })
- * @example <caption>Bootstrap the environment asynchronously</caption>
- * angular.clbBootstrap('myApp', {
- *   env: 'https://my-project-website/config.json'
- * })
- * @example <caption>Using backward compatibility</caption>
- * window.bbpConfig = { } // content from https://collab.humanbrainproject.eu/config.json
- * angular.clbBoostrap('myApp')
- */
-function clbBootstrap(module, options) {
-  if (window.bbpConfig) {
-    options.env = window.bbpConfig;
-  }
-  if (!options.element) {
-    options.element = document.body;
-  }
-  options.module = module;
-  if (!options.moduleResolves) {
-    options.moduleResolves = {};
-  }
-  options.moduleResolves = [{
-    module: 'clb-env',
-    resolve: {
-      // use injection here as it is not resolved automatically on build.
-      CLB_ENVIRONMENT: ['$q', '$http', function($q, $http) {
-        // Remove any previously defined CLB_ENVIRONMENT
-        // As this results in unpredictable results when multiple apps
-        // use this strategy.
-        var invoker = angular.module(['clb-env'])._invokeQueue;
-        for (var i = 0; i < invoker.length; i++) {
-          var inv = invoker[i];
-          if (inv[2][0] === 'CLB_ENVIRONMENT') {
-            invoker.splice(i, 1);
-            i--;
-          }
-        }
-        if (angular.isString(options.env)) {
-          return $http.get(options.env)
-          .then(function(res) {
-            // Set bbpConfig for backward compatibility
-            window.bbpConfig = res.data;
-            return res.data;
-          });
-        }
-        // Set bbpConfig for backward compatibility
-        if (!window.bbpConfig) {
-          window.bbpConfig = options.env;
-        }
-        return $q.when(options.env);
-      }]
-    }
-  }];
-  return deferredBootstrapper.bootstrap(options);
-}
+angular.module('clb-ui-form', []);
 
 /* eslint camelcase: 0 */
 
@@ -2520,85 +1373,6 @@ function clbContext(clbAuthHttp, $q, clbError, clbEnv, ClbContextModel) {
   }
 }
 
-/* global window */
-
-angular.module('clb-env')
-.provider('clbEnv', clbEnv);
-
-/**
- * Get environement information using dotted notation with the `clbEnv` provider
- * or service.
- *
- * Before being used, clbEnv must be initialized with the context values. You
- * can do so by setting up a global bbpConfig variable or using
- * :ref:`angular.clbBootstrap <angular.clbBootstrap>`.
- *
- * @function clbEnv
- * @memberof module:clb-env
- * @param {object} $injector AngularJS injection
- * @return {object} provider
- * @example <caption>Basic usage of clbEnv</caption>
- * angular.module('myApp', ['clbEnv', 'rest'])
- * .service('myService', function(clbEnv, clbResultSet) {
- *   return {
- *     listCollab: function() {
- *       // return a paginated list of all collabs
- *       return clbResultSet.get($http.get(clbEnv.get('api.collab.v0') + '/'));
- *     }
- *   };
- * });
- * @example <caption>Use clbEnv in your configuration</caption>
- * angular.module('myApp', ['clbEnv', 'rest'])
- * .config(function(clbEnvProvider, myAppServiceProvider) {
- *   // also demonstrate how we accept a custom variable.
- *   myAppServiceProvider.setMaxFileUpload(clbEnvProvider.get('myapp.maxFileUpload', '1m'))
- * });
- */
-function clbEnv($injector) {
-  return {
-    get: get,
-    $get: function() {
-      return {
-        get: get
-      };
-    }
-  };
-
-  /**
-   * ``get(key, [defaultValue])`` provides configuration value loaded at
-   * the application bootstrap.
-   *
-   * Accept a key and an optional default
-   * value. If the key cannot be found in the configurations, it will return
-   * the provided default value. If the defaultValue is undefied, it will
-   * throw an error.
-   *
-   * To ensures that those data are available when angular bootstrap the
-   * application, use angular.clbBootstrap(module, options).
-   *
-   * @memberof module:clb-env.clbEnv
-   * @param {string} key the environment variable to retrieve, using a key.
-   * @param {any} [defaultValue] an optional default value.
-   * @return {any} the value or ``defaultValue`` if the asked for configuration
-   *               is not defined.
-   */
-  function get(key, defaultValue) {
-    var parts = key.split('.');
-    var cursor = (window.bbpConfig ?
-                  window.bbpConfig : $injector.get('CLB_ENVIRONMENT'));
-    for (var i = 0; i < parts.length; i++) {
-      if (!(cursor && cursor.hasOwnProperty(parts[i]))) {
-        if (defaultValue !== undefined) {
-          return defaultValue;
-        }
-        throw new Error('UnkownConfigurationKey: <' + key + '>');
-      }
-      cursor = cursor[parts[i]];
-    }
-    return cursor;
-  }
-}
-
 angular.module('clb-ctx-data')
 .factory('clbCtxData', clbCtxData);
 
@@ -2710,175 +1484,82 @@ function clbCtxData(clbAuthHttp, $q, uuid4, clbEnv, clbError) {
   }
 }
 
-/* global document */
+/* global window */
 
-angular.module('clb-error')
-.factory('clbError', clbError);
-
-/**
- * @class ClbError
- * @memberof module:clb-error
- * @desc
- * ``ClbError`` describes a standard error object used
- * to display error message or intropect the situation.
- *
- * A ``ClbError`` instance provides the following properties:
- *
- * * ``type`` a camel case name of the error type.
- * * `message` a human readable message of the error that should
- * be displayed to the end user.
- * * ``data`` any important data that might help the software to
- * inspect the issue and take a recovering action.
- * * ``code`` an error numerical code.
- *
- * The ClbError extends the native Javascript Error instance so it also provides:
- * * ``name`` which is equal to the type
- * * ``stack`` the stack trace of the error (when available)
- *
- * Only ``type``, ``message``, and ``code`` should be considered to be present.
- * They receive default values when not specified by the situation.
- *
- * @param {object} [options] the parameters to use to build the error
- * @param {string} [options.type] the error type (default to ``'UnknownError'``)
- * @param {string} [options.message] the error message (default to ``'An unknown error occurred'``)
- * @param {int} [options.code] the error code (default to ``-1``)
- * @param {object} [options.data] any data that can be useful to deal with the error
- */
-function ClbError(options) {
-  options = angular.extend({
-    type: 'UnknownError',
-    message: 'An unknown error occurred.',
-    code: -1
-  }, options);
-  this.type = options.type || options.name;
-  this.name = this.type; // Conform to Error class
-  this.message = options.message;
-  this.data = options.data;
-  this.code = options.code;
-  this.stack = (new Error()).stack;
-  if (options instanceof Error) {
-    // in case this is a javascript exception, keep the raw cause in data.cause
-    this.data = angular.extend({cause: options}, this.data);
-  }
-}
-// Extend the Error prototype
-ClbError.prototype = Object.create(Error.prototype);
-ClbError.prototype.toString = function() {
-  return String(this.type) + ':' + this.message;
-};
+angular.module('clb-env')
+.provider('clbEnv', clbEnv);
 
 /**
- * @namespace clbError
- * @memberof module:clb-error
- * @desc
- * ``clbError`` provides helper functions that all return an
- * ``ClbError`` instance given a context object.
- * @param {object} $q AngularJS injection
- * @return {object} the service singleton
+ * Get environement information using dotted notation with the `clbEnv` provider
+ * or service.
+ *
+ * Before being used, clbEnv must be initialized with the context values. You
+ * can do so by setting up a global bbpConfig variable or using
+ * :ref:`angular.clbBootstrap <angular.clbBootstrap>`.
+ *
+ * @function clbEnv
+ * @memberof module:clb-env
+ * @param {object} $injector AngularJS injection
+ * @return {object} provider
+ * @example <caption>Basic usage of clbEnv</caption>
+ * angular.module('myApp', ['clbEnv', 'rest'])
+ * .service('myService', function(clbEnv, clbResultSet) {
+ *   return {
+ *     listCollab: function() {
+ *       // return a paginated list of all collabs
+ *       return clbResultSet.get($http.get(clbEnv.get('api.collab.v0') + '/'));
+ *     }
+ *   };
+ * });
+ * @example <caption>Use clbEnv in your configuration</caption>
+ * angular.module('myApp', ['clbEnv', 'rest'])
+ * .config(function(clbEnvProvider, myAppServiceProvider) {
+ *   // also demonstrate how we accept a custom variable.
+ *   myAppServiceProvider.setMaxFileUpload(clbEnvProvider.get('myapp.maxFileUpload', '1m'))
+ * });
  */
-function clbError($q) {
+function clbEnv($injector) {
   return {
-    rejectHttpError: function(err) {
-      return $q.reject(httpError(err));
-    },
-    httpError: httpError,
-
-    /**
-     * Build a ``ClbError`` instance from the provided options.
-     *
-     * - param  {Object} options argument passed to ``ClbError`` constructor
-     * - return {ClbError} the resulting error
-     * @memberof module:clb-error.clbError
-     * @param  {object} options [description]
-     * @return {object}         [description]
-     */
-    error: function(options) {
-      if (options && options instanceof ClbError) {
-        return options;
-      }
-      return new ClbError(options);
+    get: get,
+    $get: function() {
+      return {
+        get: get
+      };
     }
   };
 
   /**
-   * @desc
-   * return a `ClbError` instance built from a HTTP response.
+   * ``get(key, [defaultValue])`` provides configuration value loaded at
+   * the application bootstrap.
    *
-   * In an ideal case, the response contains json data with an error object.
-   * It also fallback to a reason field and fill default error message for
-   * standard HTTP status error.
-   * @memberof module:clb-error.clbError
-   * @param  {HttpResponse} response Angular $http Response object
-   * @return {ClbError} a valid ClbError
+   * Accept a key and an optional default
+   * value. If the key cannot be found in the configurations, it will return
+   * the provided default value. If the defaultValue is undefied, it will
+   * throw an error.
+   *
+   * To ensures that those data are available when angular bootstrap the
+   * application, use angular.clbBootstrap(module, options).
+   *
+   * @memberof module:clb-env.clbEnv
+   * @param {string} key the environment variable to retrieve, using a key.
+   * @param {any} [defaultValue] an optional default value.
+   * @return {any} the value or ``defaultValue`` if the asked for configuration
+   *               is not defined.
    */
-  function httpError(response) {
-    // return argument if it is already an
-    // instance of ClbError
-    if (response && response instanceof ClbError) {
-      return response;
-    }
-
-    if (response.status === undefined) {
-      return new ClbError({
-        message: 'Cannot parse error, invalid format.'
-      });
-    }
-    var error = new ClbError({code: response.status});
-
-    if (error.code === 0) {
-      error.type = 'ClientError';
-      error.message = 'The client cannot run the request.';
-      return error;
-    }
-    if (error.code === 404) {
-      error.type = 'NotFound';
-      error.message = 'Resource not found';
-      return error;
-    }
-    if (error.code === 403) {
-      error.type = 'Forbidden';
-      error.message = 'Permission denied: you are not allowed to display ' +
-                      'the page or perform the operation';
-      return error;
-    }
-    if (error.code === 502) {
-      error.type = 'BadGateway';
-      error.message = '502 Bad Gateway Error';
-      if (response.headers('content-type') === 'text/html') {
-        var doc = document.createElement('div');
-        doc.innerHTML = response.data;
-        var titleNode = doc.getElementsByTagName('title')[0];
-        if (titleNode) {
-          error.message = titleNode.innerHTML;
+  function get(key, defaultValue) {
+    var parts = key.split('.');
+    var cursor = (window.bbpConfig ?
+                  window.bbpConfig : $injector.get('CLB_ENVIRONMENT'));
+    for (var i = 0; i < parts.length; i++) {
+      if (!(cursor && cursor.hasOwnProperty(parts[i]))) {
+        if (defaultValue !== undefined) {
+          return defaultValue;
         }
+        throw new Error('UnkownConfigurationKey: <' + key + '>');
       }
-      return error;
+      cursor = cursor[parts[i]];
     }
-    if (response.data) {
-      var errorSource = response.data;
-      if (errorSource.error) {
-        errorSource = errorSource.error;
-      }
-      if (errorSource.type) {
-        error.type = errorSource.type;
-      }
-      if (errorSource.data) {
-        error.data = errorSource.data;
-      }
-      if (errorSource.message) {
-        error.message = errorSource.message;
-      } else if (errorSource.reason) {
-        error.type = 'Error';
-        error.message = errorSource.reason;
-      }
-
-      if (!errorSource.type && !errorSource.data &&
-        !errorSource.message && !errorSource.reason) {
-        // unkown format, return raw data
-        error.data = errorSource;
-      }
-    }
-    return error;
+    return cursor;
   }
 }
 
@@ -3956,6 +2637,178 @@ function clbIdentityUtil($log, lodash) {
   }
 }
 
+/* global document */
+
+angular.module('clb-error')
+.factory('clbError', clbError);
+
+/**
+ * @class ClbError
+ * @memberof module:clb-error
+ * @desc
+ * ``ClbError`` describes a standard error object used
+ * to display error message or intropect the situation.
+ *
+ * A ``ClbError`` instance provides the following properties:
+ *
+ * * ``type`` a camel case name of the error type.
+ * * `message` a human readable message of the error that should
+ * be displayed to the end user.
+ * * ``data`` any important data that might help the software to
+ * inspect the issue and take a recovering action.
+ * * ``code`` an error numerical code.
+ *
+ * The ClbError extends the native Javascript Error instance so it also provides:
+ * * ``name`` which is equal to the type
+ * * ``stack`` the stack trace of the error (when available)
+ *
+ * Only ``type``, ``message``, and ``code`` should be considered to be present.
+ * They receive default values when not specified by the situation.
+ *
+ * @param {object} [options] the parameters to use to build the error
+ * @param {string} [options.type] the error type (default to ``'UnknownError'``)
+ * @param {string} [options.message] the error message (default to ``'An unknown error occurred'``)
+ * @param {int} [options.code] the error code (default to ``-1``)
+ * @param {object} [options.data] any data that can be useful to deal with the error
+ */
+function ClbError(options) {
+  options = angular.extend({
+    type: 'UnknownError',
+    message: 'An unknown error occurred.',
+    code: -1
+  }, options);
+  this.type = options.type || options.name;
+  this.name = this.type; // Conform to Error class
+  this.message = options.message;
+  this.data = options.data;
+  this.code = options.code;
+  this.stack = (new Error()).stack;
+  if (options instanceof Error) {
+    // in case this is a javascript exception, keep the raw cause in data.cause
+    this.data = angular.extend({cause: options}, this.data);
+  }
+}
+// Extend the Error prototype
+ClbError.prototype = Object.create(Error.prototype);
+ClbError.prototype.toString = function() {
+  return String(this.type) + ':' + this.message;
+};
+
+/**
+ * @namespace clbError
+ * @memberof module:clb-error
+ * @desc
+ * ``clbError`` provides helper functions that all return an
+ * ``ClbError`` instance given a context object.
+ * @param {object} $q AngularJS injection
+ * @return {object} the service singleton
+ */
+function clbError($q) {
+  return {
+    rejectHttpError: function(err) {
+      return $q.reject(httpError(err));
+    },
+    httpError: httpError,
+
+    /**
+     * Build a ``ClbError`` instance from the provided options.
+     *
+     * - param  {Object} options argument passed to ``ClbError`` constructor
+     * - return {ClbError} the resulting error
+     * @memberof module:clb-error.clbError
+     * @param  {object} options [description]
+     * @return {object}         [description]
+     */
+    error: function(options) {
+      if (options && options instanceof ClbError) {
+        return options;
+      }
+      return new ClbError(options);
+    }
+  };
+
+  /**
+   * @desc
+   * return a `ClbError` instance built from a HTTP response.
+   *
+   * In an ideal case, the response contains json data with an error object.
+   * It also fallback to a reason field and fill default error message for
+   * standard HTTP status error.
+   * @memberof module:clb-error.clbError
+   * @param  {HttpResponse} response Angular $http Response object
+   * @return {ClbError} a valid ClbError
+   */
+  function httpError(response) {
+    // return argument if it is already an
+    // instance of ClbError
+    if (response && response instanceof ClbError) {
+      return response;
+    }
+
+    if (response.status === undefined) {
+      return new ClbError({
+        message: 'Cannot parse error, invalid format.'
+      });
+    }
+    var error = new ClbError({code: response.status});
+
+    if (error.code === 0) {
+      error.type = 'ClientError';
+      error.message = 'The client cannot run the request.';
+      return error;
+    }
+    if (error.code === 404) {
+      error.type = 'NotFound';
+      error.message = 'Resource not found';
+      return error;
+    }
+    if (error.code === 403) {
+      error.type = 'Forbidden';
+      error.message = 'Permission denied: you are not allowed to display ' +
+                      'the page or perform the operation';
+      return error;
+    }
+    if (error.code === 502) {
+      error.type = 'BadGateway';
+      error.message = '502 Bad Gateway Error';
+      if (response.headers('content-type') === 'text/html') {
+        var doc = document.createElement('div');
+        doc.innerHTML = response.data;
+        var titleNode = doc.getElementsByTagName('title')[0];
+        if (titleNode) {
+          error.message = titleNode.innerHTML;
+        }
+      }
+      return error;
+    }
+    if (response.data) {
+      var errorSource = response.data;
+      if (errorSource.error) {
+        errorSource = errorSource.error;
+      }
+      if (errorSource.type) {
+        error.type = errorSource.type;
+      }
+      if (errorSource.data) {
+        error.data = errorSource.data;
+      }
+      if (errorSource.message) {
+        error.message = errorSource.message;
+      } else if (errorSource.reason) {
+        error.type = 'Error';
+        error.message = errorSource.reason;
+      }
+
+      if (!errorSource.type && !errorSource.data &&
+        !errorSource.message && !errorSource.reason) {
+        // unkown format, return raw data
+        error.data = errorSource;
+      }
+    }
+    return error;
+  }
+}
+
 angular.module('clb-rest')
 .factory('clbResultSet', clbResultSet);
 
@@ -4335,8 +3188,8 @@ angular.module('clb-storage')
 /**
  * @typedef {object} EntityDescriptor
  * @memberof module:clb-storage
- * @property {UUID} _uuid         The entity UUID
- * @property {string} _entityType The entity type (e.g.: ``file``, ``folder``, ``project``)
+ * @property {UUID} uuid         The entity UUID
+ * @property {string} entity_type The entity type (e.g.: ``file``, ``folder``, ``project``)
  * @desc
  * Describe an arbitrary entity in the storage stytem. The principal types are
  *
@@ -4371,7 +3224,9 @@ function clbStorage(
   clbUser,
   clbResultSet
 ) {
-  var baseUrl = clbEnv.get('api.document.v0');
+
+  var collabUrl = clbEnv.get('api.collab.v0');
+  var baseUrl = clbEnv.get('api.document.v1');
   var maxFileSize = clbEnv.get('hbpFileStore.maxFileUploadSize', 41943040);
   var entityUrl = baseUrl + '/entity';
   var fileUrl = baseUrl + '/file';
@@ -4381,6 +3236,7 @@ function clbStorage(
     getAbsolutePath: getAbsolutePath,
     upload: upload,
     query: query,
+    getCollabHome: getCollabHome,
     getContent: getContent,
     downloadUrl: downloadUrl,
     getChildren: getChildren,
@@ -4404,7 +3260,7 @@ function clbStorage(
    * only accepted locator at this time is the entity UUID.
    *
    * - the entity UUID
-   * - an entity representation with ``{_uuid: ENTITY_UUID}``
+   * - an entity representation with ``{uuid: ENTITY_UUID}``
    * - the entity related context ``{ctx: CONTEXT_UUID}``
    * - the entity collab ID ``{collab: COLLAB_ID}``
    * - the entity absolute path
@@ -4427,15 +3283,15 @@ function clbStorage(
       return getEntityByUUID(locator);
     }
     if (angular.isObject(locator)) {
-      if (uuid4.validate(locator._uuid)) {
-        return getEntityByUUID(locator._uuid);
+      if (uuid4.validate(locator.uuid)) {
+        return getEntityByUUID(locator.uuid);
       }
       if (locator.ctx && uuid4.validate(locator.ctx)) {
         return getEntityByContext(locator.ctx);
       }
-      if (locator.collab) {
-        return getCollabHome(locator.collab);
-      }
+      //if (locator.collab) {
+      //  return getCollabHome(locator.collab);
+      //}
     }
     return $q.reject(clbError.error({
       type: 'InvalidArgument',
@@ -4459,10 +3315,10 @@ function clbStorage(
     if (!entity) {
       return $q.when(null);
     }
-    var uuid = entity._uuid || entity;
-    return clbAuthHttp.get(baseUrl + '/entity_path/' + uuid)
+    var uuid = entity.uuid || entity;
+    return clbAuthHttp.get(baseUrl + '/entity/' + uuid + '/path/')
     .then(function(res) {
-      return res.data._path;
+      return res.data.path;
     })
     .catch(clbError.rejectHttpError);
   }
@@ -4493,7 +3349,7 @@ function clbStorage(
    * @private
    */
   function getEntityByUUID(uuid) {
-    var url = entityUrl + '/' + uuid;
+    var url = entityUrl + '/' + uuid + '/';
     var k = 'GET ' + url;
     return runOnce(k, function() {
       return clbAuthHttp.get(url).then(function(data) {
@@ -4519,6 +3375,7 @@ function clbStorage(
     }).catch(clbError.rejectHttpError);
   }
 
+
   /**
    * Retrieve the key to lookup for on entities given the ctx
    * @memberof module:clb-storage.clbStorage
@@ -4538,8 +3395,8 @@ function clbStorage(
    * by setting a specific metadata on the entity.
    *
    * Entity object in input must contain the following properties:
-   * - _entityType
-   * - _uuid
+   * - entity_type
+   * - uuid
    *
    * In case of error, the promise is rejected with a `HbpError` instance.
    *
@@ -4577,8 +3434,8 @@ function clbStorage(
    * by deleting the context metadata.
    *
    * Entity object in input must contain the following properties:
-   * - _entityType
-   * - _uuid
+   * - entity_type
+   * - uuid
    *
    * In case of error, the promise is rejected with a `HbpError` instance.
    *
@@ -4600,8 +3457,8 @@ function clbStorage(
    * it as `newEntity` metadata.
    *
    * Entity objects in input must contain the following properties:
-   * - _entityType
-   * - _uuid
+   * - entity_type
+   * - uuid
    *
    * In case of error, the promise is rejected with a `HbpError` instance.
    *
@@ -4627,8 +3484,8 @@ function clbStorage(
    * @return {Promise}        Resolves after the operation is completed
    */
   function addMetadata(entity, metadata) {
-    return clbAuthHttp.post(baseUrl + '/' + entity._entityType + '/' +
-    entity._uuid + '/metadata', metadata)
+    return clbAuthHttp.post(baseUrl + '/' + entity.entity_type + '/' +
+    entity.uuid + '/metadata/', metadata)
     .then(function(response) {
       return response.data;
     })
@@ -4646,8 +3503,8 @@ function clbStorage(
    * @return {Promise}           Resolve to the metadata
    */
   function deleteMetadata(entity, metadataKeys) {
-    return clbAuthHttp.delete(baseUrl + '/' + entity._entityType + '/' +
-      entity._uuid + '/metadata', {data: {keys: metadataKeys}})
+    return clbAuthHttp.delete(baseUrl + '/' + entity.entity_type + '/' +
+      entity.uuid + '/metadata/', {data: {keys: metadataKeys}})
     .then(function(response) {
       return response.data;
     })
@@ -4667,10 +3524,11 @@ function clbStorage(
    *                           this collab or reject a :doc:`module-clb-error.ClbError`.
    */
   function getCollabHome(collabId) {
-    var queryParams = {
-      managed_by_collab: collabId
-    };
-    return query(queryParams);
+    return clbAuthHttp.get(baseUrl + '/project/', {
+      collab_id: collabId
+    }).then(function(response) {
+      return response.data;
+    }).catch(clbError.rejectHttpError);
   }
 
   /**
@@ -4684,10 +3542,10 @@ function clbStorage(
    */
   function create(type, parent, name, options) {
     return clbAuthHttp.post(
-      baseUrl + '/' + type.split(':')[0],
+      baseUrl + '/' + type.split(':')[0] + '/',
       angular.extend({
-        _name: name,
-        _parent: (parent && parent._uuid) || parent
+        name: name,
+        parent: (parent && parent.uuid) || parent
       }, options)
     )
     .then(function(res) {
@@ -4722,14 +3580,14 @@ function clbStorage(
    */
   function copy(srcId, destFolderId) {
     return getEntity(srcId).then(function(src) {
-      return create(src._entityType, destFolderId, src._name, {
-        _description: src._description,
-        _contentType: src._contentType
+      return create(src.entity_type, destFolderId, src.name, {
+        description: src.description,
+        content_type: src.content_type
       })
       .then(function(dest) {
-        var url = [baseUrl, dest._entityType, dest._uuid, 'content'].join('/');
+        var url = [baseUrl, dest.entity_type, dest.uuid, 'content/'].join('/');
         return clbAuthHttp.put(url, {}, {
-          headers: {'X-Copy-From': src._uuid}
+          headers: {'X-Copy-From': src.uuid}
         }).then(function() {
           return dest;
         }).catch(function(err) {
@@ -4751,7 +3609,7 @@ function clbStorage(
   function getContent(id, customConfig) {
     var config = {
       method: 'GET',
-      url: fileUrl + '/' + id + '/content',
+      url: fileUrl + '/' + id + '/',
       transformResponse: function(data) {
         return data;
       }
@@ -4781,35 +3639,24 @@ function clbStorage(
    * @param {module:clb-storage.EntityDescriptor} entity The entity to retrieve user access for
    * @return {object} Contains ``{boolean} canRead``, ``{boolean} canWrite``, ``{boolean} canManage``
    */
+
+  /** entity/uuid/collab return dictionary collab_id (int) **/
   function getUserAccess(entity) {
     return $q.all({
-      acl: clbAuthHttp.get(baseUrl + '/' + entity._entityType + '/' +
-        entity._uuid + '/acl'),
-      user: clbUser.getCurrentUser()
+      // to check user access get collab id and check permission as done in collaboratory-frontend
+      collab: clbAuthHttp.get(baseUrl + '/entity/' + entity.uuid + '/collab/'),
     })
     .then(function(aggregatedData) {
-      var acls = aggregatedData.acl.data; // expected resp: { 111: 'write', 222: 'manage', groupX: 'manage'}
-      var user = aggregatedData.user;
+      var collab = aggregatedData.collab;
+      return clbAuthHttp.get(collabUrl + '/' + collab.data.collab_id + '/permissions/').then(function(permissions) {
+        var access = {
+          canRead: permissions.VIEW,
+          canWrite: permissions.UPDATE,
+          canManage: permissions.DELETE
+        };
+        return access;
+      });
 
-      var access = {
-        canRead: false,
-        canWrite: false,
-        canManage: false
-      };
-
-      for (var id in acls) {
-        if (Object.prototype.hasOwnProperty.call(acls, id)) {
-          var acl = acls[id];
-          if (id === user.id || user.groups.indexOf(id) >= 0) {
-            access.canRead = access.canRead ||
-              acl === 'read' || acl === 'write' || acl === 'manage';
-            access.canWrite = access.canWrite ||
-              acl === 'write' || acl === 'manage';
-            access.canManage = access.canManage || acl === 'manage';
-          }
-        }
-      }
-      return access;
     }).catch(clbError.rejectHttpError);
   }
 
@@ -4825,8 +3672,8 @@ function clbStorage(
    * @memberof module:clb-storage.clbStorage
    * @param {module:clb-storage.EntityDescriptor} parent The parent entity
    * @param {object} [options] Options to make the query
-   * @param {array/string} [options.accept] Array of accepted _entityType
-   * @param {boolean|array/string} [options.acceptLink] ``true`` or an array of accepted linked _entityType
+   * @param {array/string} [options.accept] Array of accepted entity_type
+   * @param {boolean|array/string} [options.acceptLink] ``true`` or an array of accepted linked entity_type
    * @param {string} [options.sort] Property to sort on
    * @param {string} [options.filter] The result based on Acls. Values: ``read`` (default), ``write``
    * @param {UUID} [options.until] Fetch results until the given id (exclusive with from)
@@ -4838,19 +3685,20 @@ function clbStorage(
     options = angular.extend({}, options);
     var url;
     if (parent) {
-      url = baseUrl + '/' + parent._entityType + '/' +
-      (parent._uuid) + '/children';
+      url = baseUrl + '/' + parent.entity_type + '/' +
+      (parent.uuid) + '/children/';
     } else { // root projects
-      url = baseUrl + '/project';
+      url = baseUrl + '/project/';
     }
     var params = {
       filter: buildEntityTypeFilter(options.accept, options.acceptLink),
-      sort: options.sort ? options.sort : '_name',
+      sort: options.sort ? options.sort : 'name',
       from: options.from,
       until: options.until,
       access: options.access,
       limit: options.pageSize > 0 ? options.pageSize : null
     };
+
     return clbResultSet.get(clbAuthHttp.get(url, {params: params}), {
       resultKey: 'result',
       hasNextHandler: function(res) {
@@ -4872,11 +3720,11 @@ function clbStorage(
       resultsFactory: function(results, rs) {
         if (rs.hasMore) {
           var lastItem = rs.result.pop();
-          rs.nextId = lastItem._uuid;
+          rs.nextId = lastItem.uuid;
         }
         if (rs.hasPrevious) {
           var firstItem = rs.result.shift();
-          rs.previousId = firstItem._uuid;
+          rs.previousId = firstItem.uuid;
         }
       }
     });
@@ -4885,6 +3733,7 @@ function clbStorage(
   /**
    * @private
    * @param  {array/string} accept Fill this array with accepted types
+   *
    * @param  {boolean} acceptLink Should the link be accepted as well
    * @return {string}             a query string to append to the URL
    */
@@ -4893,12 +3742,14 @@ function clbStorage(
       if (acceptLink === true) {
         acceptLink = [].concat(accept);
       }
-      for (var i = 0; i < acceptLink.length; i++) {
+      var acceptLinkLength = acceptLink.length;
+      for (var i = 0; i < acceptLinkLength; i++) {
         acceptLink.push('link:' + acceptLink[i]);
       }
     }
     if (accept && accept.length > 0) {
-      return '_entityType=' + accept.join('+');
+      return 'entity_type=' + accept.join('+');
+
     }
   }
 
@@ -4911,7 +3762,7 @@ function clbStorage(
    */
   function uploadFile(file, entity, config) {
     var d = $q.defer();
-    clbAuthHttp.post(fileUrl + '/' + entity._uuid + '/content/upload', file,
+    clbAuthHttp.post(fileUrl + '/' + entity.uuid + '/content/upload/', file,
       angular.extend({
         headers: {
           'Content-Type': 'application/octet-stream'
@@ -4924,6 +3775,7 @@ function clbStorage(
         total: file.size,
         loaded: file.size
       });
+
       d.resolve(entity);
     }).error(function(err, status) {
       var uploadError = function() {
@@ -4990,11 +3842,11 @@ function clbStorage(
     }
 
     var entityOpts = {
-      _contentType: fixMimeType(file)
+      content_type: fixMimeType(file)
     };
     create(
       'file',
-      options.parent && options.parent._uuid,
+      options.parent && options.parent.uuid,
       file.name,
       entityOpts
     ).then(function(entity) {
@@ -5059,7 +3911,7 @@ function clbStorage(
    * @return {Promise}        Return once fulfilled
    */
   function deleteEntity(entity) {
-    return clbAuthHttp.delete(entityUrl + '/' + entity._uuid)
+    return clbAuthHttp.delete(entityUrl + '/' + entity.uuid + '/')
     .catch(clbError.rejectHttpError);
   }
 
@@ -5069,8 +3921,8 @@ function clbStorage(
    * @return {Boolean}                 Return true if it is a container
    */
   function isContainer(entity) {
-    return Boolean(entity._entityType &&
-      entity._entityType.match(/project|folder/));
+    return Boolean(entity.entity_type &&
+      entity.entity_type.match(/project|folder/));
   }
 
   /**
@@ -5083,14 +3935,14 @@ function clbStorage(
    */
   function getAncestors(entity, root) {
     // End recursion condition
-    if (!entity || !entity._parent || (root && entity._parent === root._uuid)) {
+    if (!entity || !entity.parent || (root && entity.parent === root.uuid)) {
       return $q.when([]);
     }
 
     var onError = function(err) {
       $q.reject(clbError.error({
         type: 'EntityAncestorRetrievalError',
-        message: 'Cannot retrieve some ancestors from entity ' + entity._name,
+        message: 'Cannot retrieve some ancestors from entity ' + entity.name,
         data: {
           entity: entity,
           root: root,
@@ -5107,7 +3959,7 @@ function clbStorage(
       });
     };
 
-    return getEntity(entity._parent)
+    return getEntity(entity.parent)
       .then(recurse, onError);
   }
 
@@ -5123,136 +3975,12 @@ function clbStorage(
    *                          is fulfilled.
    */
   function downloadUrl(entity) {
-    var id = entity._uuid || entity;
-    return clbAuthHttp.get(baseUrl + '/file/' + id + '/content/secure_link')
+    var id = entity.uuid || entity;
+    return clbAuthHttp.get(baseUrl + '/file/' + id + '/content/secure_link/')
     .then(function(response) {
       return baseUrl + response.data.signed_url;
     }).catch(clbError.rejectHttpError);
   }
-}
-
-angular.module('clb-ui-dialog')
-.factory('clbConfirm', clbConfirm);
-
-/**
- * Service to trigger modal dialog.
- *
- * @namespace clbDialog
- * @memberof module:clb-ui-dialog
- * @param  {object} $rootScope Angular DI
- * @param  {object} $uibModal     Angular DI
- * @return {object}            Service Descriptor
- */
-function clbConfirm($rootScope, $uibModal) {
-  return {
-    open: open
-  };
-
-  /**
-   * Confirmation dialog
-   * @param  {object} options Parameters
-   * @return {Promise}        Resolve if the confirmation happens, reject otherwise
-   */
-  function open(options) {
-    options = angular.extend({
-      scope: $rootScope,
-      title: 'Confirm',
-      confirmLabel: 'Yes',
-      cancelLabel: 'No',
-      template: 'Are you sure?',
-      closable: true
-    }, options);
-
-    var modalScope = options.scope.$new();
-    modalScope.title = options.title;
-    modalScope.confirmLabel = options.confirmLabel;
-    modalScope.cancelLabel = options.cancelLabel;
-    modalScope.confirmationContent = options.template;
-    modalScope.confirmationContentUrl = options.templateUrl;
-    modalScope.closable = options.closable;
-    modalScope.securityQuestion = options.securityQuestion;
-    modalScope.securityAnswer = options.securityAnswer;
-
-    var instance = $uibModal.open({
-      template:'<div class="modal-header"><button type="button" ng-show="closable" class="close" ng-click="$dismiss(\'cancel\')" aria-hidden="true">&times;</button><h4 class="modal-title">{{title}}</h4></div><div class="modal-body"><alert ng-if="error" type="danger">{{error.reason}}</alert><div class="alert alert-warning" ng-show="securityQuestion">Unexpected bad things will happen if you don’t read this!</div><ng-include ng-if="confirmationContentUrl" src="confirmationContentUrl"></ng-include><p ng-if="!confirmationContentUrl">{{confirmationContent}}</p><fieldset class="form-group" ng-show="securityQuestion"><label for="securityAnswer">{{securityQuestion}}</label> <input type="text" class="form-control" name="securityAnswer" ng-model="answer"></fieldset></div><div class="modal-footer"><button class="btn btn-default" ng-click="$dismiss(\'cancel\')">{{cancelLabel}}</button> <button class="btn btn-danger" ng-disabled="securityAnswer && answer !== securityAnswer" ng-click="$close()">{{confirmLabel}}</button></div>',
-      show: true,
-      backdrop: 'static',
-      scope: modalScope,
-      keyboard: options.keyboard || options.closable
-    });
-    return instance.result;
-  }
-}
-
-angular.module('clb-ui-error')
-.factory('clbErrorDialog', clbErrorDialog);
-
-/**
- * The factory ``clbUiError`` instantiates modal error dialogs.
- * Notify the user about the given error.
- * @name clbError
- * @memberof module:clb-ui-error
- * @param  {object} $uibModal Angular DI
- * @param  {object} clbError  Angular DI
- * @return {object}           Angular Factory
- */
-function clbErrorDialog($uibModal, clbError) {
-  return {
-    open: open
-  };
-
-  /**
-   * Open an error modal dialog
-   * @param  {HBPError} error The error do displays
-   * @param  {object} options Any options will be passed to $uibModal.open
-   * @return {Promse}         The result of $uibModal.open
-   */
-  function open(error, options) {
-    options = angular.extend({
-      template:'<div class="error-dialog panel panel-danger"><div class="panel-heading"><h4>{{vm.error.type}}</h4></div><div class="panel-body"><p>{{vm.error.message}}</p></div><div class="panel-footer"><div><button type="button" ng-click="$close(true)" class="btn btn-primary"><span class="glyphicon glyphicon-remove"></span> Close</button> <button type="button" class="btn btn-default pull-right" ng-click="isErrorSourceDisplayed = !isErrorSourceDisplayed">{{isErrorSourceDisplayed ? \'Hide\' : \'Show\'}} scary details <span class="caret"></span></button></div><div uib-collapse="!isErrorSourceDisplayed"><h5>Error Type</h5><pre>{{vm.error.type}}</pre><h6>Error Code</h6><pre>{{vm.error.code}}</pre><h6>Message</h6><pre>{{vm.error.message}}</pre><div ng-if="vm.error.data"><h6>Data</h6><pre>{{vm.error.data}}</pre></div><div><h6>Stack Trace</h6><pre>{{vm.error.stack}}</pre></div></div></div></div>',
-      class: 'error-dialog',
-      controller: function() {
-        var vm = this;
-        vm.error = clbError.error(error);
-      },
-      controllerAs: 'vm',
-      bindToController: true
-    }, options);
-    return $uibModal.open(options).result.catch(function() {
-      // resolve anytime.
-      return true;
-    });
-  }
-}
-
-angular.module('clb-ui-error')
-.directive('clbErrorMessage', clbErrorMessage);
-
-/**
- * The ``clb-error-message`` directive displays an error.
- *
- *
- * clb-error is a HbpError instance, built by the HbpErrorService
- *
- * @namespace clbErrorMessage
- * @memberof module:clb-ui-error
- * @example <caption>Retrieve the current context object</caption>
- * <div ng-controller='SomeController'>
- *   Validation error:
- *   <clb-error-message clb-error='error'></clb-error-message>
- *   Permission denied error:
- *   <clb-error-message clb-error='errorPermissions'></clb-error-message>
- * </div>
- * @return {object} The directive
- **/
-function clbErrorMessage() {
-  return {
-    restrict: 'E',
-    scope: {
-      error: '=?clbError'
-    },
-    template:'<uib-alert type="danger" ng-if="error"><div ng-switch on="error.type"><div ng-switch-when="Validation">Validation errors<span ng-show="error.data">:</span><ul><li ng-repeat="(attr, errors) in error.data">{{attr}}: {{errors.join(\', \')}}</li></ul></div><div ng-switch-default>{{error.message}}</div></div></uib-alert>'
-  };
 }
 
 angular.module('clb-stream')
@@ -5513,298 +4241,616 @@ function clbStream(clbAuthHttp, clbEnv, clbError, clbResultSet, moment) {
   }
 }
 
+angular.module('clb-ui-dialog')
+.factory('clbConfirm', clbConfirm);
+
 /**
- * @namespace clbFormControlFocus
- * @memberof module:clb-ui-form
- * @desc
- * The ``clbFormControlFocus`` Directive mark a form element as the one that
- * should receive the focus first.
- * @example <caption>Give the focus to the search field</caption>
- * angular.module('exampleApp', ['clb-ui-form']);
+ * Service to trigger modal dialog.
  *
- * // HTML snippet:
- * // <form ng-app="exampleApp"><input type="search" clb-ui-form-control-focus></form>
+ * @namespace clbDialog
+ * @memberof module:clb-ui-dialog
+ * @param  {object} $rootScope Angular DI
+ * @param  {object} $uibModal     Angular DI
+ * @return {object}            Service Descriptor
  */
-angular.module('clb-ui-form')
-.directive('clbFormControlFocus', ['$timeout', function clbFormControlFocus($timeout) {
+function clbConfirm($rootScope, $uibModal) {
   return {
-    type: 'A',
-    link: function formControlFocusLink(scope, elt) {
-      $timeout(function() {
-        elt[0].focus();
-      }, 0, false);
-    }
+    open: open
   };
-}]);
+
+  /**
+   * Confirmation dialog
+   * @param  {object} options Parameters
+   * @return {Promise}        Resolve if the confirmation happens, reject otherwise
+   */
+  function open(options) {
+    options = angular.extend({
+      scope: $rootScope,
+      title: 'Confirm',
+      confirmLabel: 'Yes',
+      cancelLabel: 'No',
+      template: 'Are you sure?',
+      closable: true
+    }, options);
+
+    var modalScope = options.scope.$new();
+    modalScope.title = options.title;
+    modalScope.confirmLabel = options.confirmLabel;
+    modalScope.cancelLabel = options.cancelLabel;
+    modalScope.confirmationContent = options.template;
+    modalScope.confirmationContentUrl = options.templateUrl;
+    modalScope.closable = options.closable;
+    modalScope.securityQuestion = options.securityQuestion;
+    modalScope.securityAnswer = options.securityAnswer;
+
+    var instance = $uibModal.open({
+      template:'<div class=modal-header><button type=button ng-show=closable class=close ng-click="$dismiss(\'cancel\')" aria-hidden=true>&times;</button><h4 class=modal-title>{{title}}</h4></div><div class=modal-body><alert ng-if=error type=danger>{{error.reason}}</alert><div class="alert alert-warning" ng-show=securityQuestion>Unexpected bad things will happen if you don’t read this!</div><ng-include ng-if=confirmationContentUrl src=confirmationContentUrl></ng-include><p ng-if=!confirmationContentUrl>{{confirmationContent}}</p><fieldset class=form-group ng-show=securityQuestion><label for=securityAnswer>{{securityQuestion}}</label> <input type=text class=form-control name=securityAnswer ng-model=answer></fieldset></div><div class=modal-footer><button class="btn btn-default" ng-click="$dismiss(\'cancel\')">{{cancelLabel}}</button> <button class="btn btn-danger" ng-disabled="securityAnswer && answer !== securityAnswer" ng-click=$close()>{{confirmLabel}}</button></div>',
+      show: true,
+      backdrop: 'static',
+      scope: modalScope,
+      keyboard: options.keyboard || options.closable
+    });
+    return instance.result;
+  }
+}
+
+angular.module('clb-ui-error')
+.factory('clbErrorDialog', clbErrorDialog);
 
 /**
- * @namespace clbFormGroupState
- * @memberof module:clb-ui-form
- * @desc
- * ``clbFormGroupState`` directive flag the current form group with
- * the class has-error or has-success depending on its form field
- * current state.
- *
- * @example
- * <caption>Track a field validity at the ``.form-group`` level</caption>
- * angular.module('exampleApp', ['hbpCollaboratory']);
+ * The factory ``clbUiError`` instantiates modal error dialogs.
+ * Notify the user about the given error.
+ * @name clbError
+ * @memberof module:clb-ui-error
+ * @param  {object} $uibModal Angular DI
+ * @param  {object} clbError  Angular DI
+ * @return {object}           Angular Factory
  */
-angular.module('clb-ui-form')
-.directive('clbFormGroupState', function formGroupState() {
+function clbErrorDialog($uibModal, clbError) {
   return {
-    type: 'A',
-    scope: {
-      model: '=clbFormGroupState'
-    },
-    link: function formGroupStateLink(scope, elt) {
-      scope.$watchGroup(['model.$touched', 'model.$valid'], function() {
-        if (!scope.model) {
-          return;
-        }
-        elt.removeClass('has-error', 'has-success');
-        if (!scope.model.$touched) {
-          return;
-        }
-        if (scope.model.$valid) {
-          elt.addClass('has-success');
-        } else {
-          elt.addClass('has-error');
-        }
-      }, true);
-    }
+    open: open
   };
-});
 
-angular.module('clb-ui-identity')
-.directive('clbUserAvatar', clbUserAvatar);
+  /**
+   * Open an error modal dialog
+   * @param  {HBPError} error The error do displays
+   * @param  {object} options Any options will be passed to $uibModal.open
+   * @return {Promse}         The result of $uibModal.open
+   */
+  function open(error, options) {
+    options = angular.extend({
+      template:'<div class="error-dialog panel panel-danger"><div class=panel-heading><h4>{{vm.error.type}}</h4></div><div class=panel-body><p>{{vm.error.message}}</p></div><div class=panel-footer><div><button type=button ng-click=$close(true) class="btn btn-primary"><span class="glyphicon glyphicon-remove"></span> Close</button> <button type=button class="btn btn-default pull-right" ng-click="isErrorSourceDisplayed = !isErrorSourceDisplayed">{{isErrorSourceDisplayed ? \'Hide\' : \'Show\'}} scary details <span class=caret></span></button></div><div uib-collapse=!isErrorSourceDisplayed><h5>Error Type</h5><pre>{{vm.error.type}}</pre><h6>Error Code</h6><pre>{{vm.error.code}}</pre><h6>Message</h6><pre>{{vm.error.message}}</pre><div ng-if=vm.error.data><h6>Data</h6><pre>{{vm.error.data}}</pre></div><div><h6>Stack Trace</h6><pre>{{vm.error.stack}}</pre></div></div></div></div>',
+      class: 'error-dialog',
+      controller: function() {
+        var vm = this;
+        vm.error = clbError.error(error);
+      },
+      controllerAs: 'vm',
+      bindToController: true
+    }, options);
+    return $uibModal.open(options).result.catch(function() {
+      // resolve anytime.
+      return true;
+    });
+  }
+}
+
+angular.module('clb-ui-error')
+.directive('clbErrorMessage', clbErrorMessage);
 
 /**
- * Display an square icon for a user.
+ * The ``clb-error-message`` directive displays an error.
  *
- * Attributes
- * ----------
  *
- * ==================  ====================================
- * Name                Description
- * ==================  ====================================
- * clb-user            The ClbUser instance to display
- * ==================  ====================================
+ * clb-error is a HbpError instance, built by the HbpErrorService
  *
- * @namespace clbUserAvatar
- * @memberof module:clb-ui-identity
- * @return {Object} Directive Descriptor
- * @example <caption>Display user avatar</caption>
- * <clb-user-avatar clb-user="vm.currentUser"></clb-user-avatar>
- */
-function clbUserAvatar() {
-  'use strict';
+ * @namespace clbErrorMessage
+ * @memberof module:clb-ui-error
+ * @example <caption>Retrieve the current context object</caption>
+ * <div ng-controller='SomeController'>
+ *   Validation error:
+ *   <clb-error-message clb-error='error'></clb-error-message>
+ *   Permission denied error:
+ *   <clb-error-message clb-error='errorPermissions'></clb-error-message>
+ * </div>
+ * @return {object} The directive
+ **/
+function clbErrorMessage() {
   return {
-    restrict: 'EA',
+    restrict: 'E',
     scope: {
-      user: '=clbUser'
+      error: '=?clbError'
     },
-    template:'<img class="clb-user-avatar-img" ng-if="user.picture" ng-src="{{user.picture}}"><svg class="clb-user-avatar-icon" viewBox="0 0 40 40" preserveAspectRatio="xMidYMid meet" ng-cloak ng-if="!user.picture" ng-class="\'clb-user-avatar-icon-hue-\' + hueNumber"><rect x="0" y="0" width="40" height="40" class="clb-user-avatar-icon-fill"></rect><text x="50%" y="58%" font-size="26px" class="clb-user-avatar-icon-text" dominant-baseline="middle" text-anchor="middle">{{char}}</text></svg>',
-    link: function(scope, elt) {
-      elt.addClass('clb-user-avatar');
-      scope.$watch('user', function() {
-        if (!scope.user || !scope.user.displayName) {
-          return;
-        }
-
-        if (scope.user.displayName) {
-          scope.char = scope.user.displayName[0].toUpperCase();
-        }
-        // Define a hue index to generate a custom class
-        var words = scope.user.displayName.split(/\s+/, 2);
-        var initials = (String(words[0][0]) +
-          (words[1] ? words[1][0] : words[0][1]))
-          .toUpperCase();
-        scope.hueNumber = (13 * initials.charCodeAt(0) * 23 *
-          initials.charCodeAt(1)) % 7 + 1;
-      });
-    }
+    template:'<uib-alert type=danger ng-if=error><div ng-switch on=error.type><div ng-switch-when=Validation>Validation errors<span ng-show=error.data>:</span><ul><li ng-repeat="(attr, errors) in error.data">{{attr}}: {{errors.join(\', \')}}</li></ul></div><div ng-switch-default>{{error.message}}</div></div></uib-alert>'
   };
 }
 
-angular.module('clb-ui-identity')
-.directive('clbUsercardPopover', clbUsercardPopoverDirective);
+angular.module('clb-app')
+.factory('clbApp', clbApp);
 
 /**
- * Display the user summary in a popover element.
+ * @namespace clbApp
+ * @memberof module:clb-app
+ * @desc
+ * An AngularJS service to interface a web application with the HBP Collaboratory.
+ * This library provides a few helper to work within the Collaboratory environment.
  *
- * Only one of those can be open at any time.
+ * Usage
+ * -----
  *
- * =======================================  =========================================
- * Name                  Description
- * =======================================  =========================================
- * {string|HBPUser} clb-usercard-popover    The ClbUser instance to display or its ID
- * =======================================  =========================================
+ * - :ref:`module-clb-app.clbApp.context` is used to set and retrieve
+ *   the current context.
+ * - :ref:`module-clb-app.clbApp.emit` is used to send a command
+ *   to the HBP Collaboratory and wait for its answer.
  *
- * @namespace clbUsercardPopoverDirective
- * @memberof module:clb-ui-identity
- * @param  {object} $log               DI
- * @param  {object} $q                 DI
- * @param  {object} clbUser            DI
- * @param  {object} clbUsercardPopover DI
- * @return {object}                    Directive Descriptor
+ * @example <caption>Retrieve the current context object</caption>
+ * clbApp.context()
+ * .then(function(context) {
+ *   console.log(context.ctx, context.state, context.collab);
+ * })
+ * .catch(function(err) {
+ *   // Cannot set the state
+ * });
+ *
+ * @example <caption>Set the current state in order for a user to be able to copy-paste its current URL and reopen the same collab with your app loaded at the same place.</caption>
+ * clbApp.context({state: 'lorem ipsum'})
+ * .then(function(context) {
+ *   console.log(context.ctx, context.state, context.collab);
+ * })
+ * .catch(function(err) {
+ *   // Cannot set the state
+ * });
+ *
+ * @param  {object} $log AngularJS service injection
+ * @param  {object} $q AngularJS service injection
+ * @param  {object} $rootScope AngularJS service injection
+ * @param  {object} $timeout AngularJS service injection
+ * @param  {object} $window AngularJS service injection
+ * @param  {object} clbError AngularJS service injection
+ * @return {object}         the service singleton
  */
-function clbUsercardPopoverDirective(
+function clbApp(
   $log,
   $q,
-  clbUser,
-  clbUsercardPopover
+  $rootScope,
+  $timeout,
+  $window,
+  clbError
 ) {
+  var eventId = 0;
+  var sentMessages = {};
+
+  /**
+   * Singleton class
+   */
+  function AppToolkit() { }
+  AppToolkit.prototype = {
+    emit: emit,
+    context: context,
+    open: open
+  };
+
+  $window.addEventListener('message', function(event) {
+    $rootScope.$emit('message', event.data);
+  });
+
+  $rootScope.$on('message', function(event, message) {
+    if (!message || !message.origin || !sentMessages[message.origin]) {
+      return;
+    }
+    if (message.eventName === 'resolved') {
+      sentMessages[message.origin].resolve(message.data);
+    } else if (message.eventName === 'error') {
+      sentMessages[message.origin].reject(clbError.error(message.data));
+    }
+    sentMessages[message.origin] = null;
+  });
+
+  /**
+   * Send a message to the HBP Collaboratory.
+   * @memberof module:clb-app.clbApp
+   * @param  {string} name name of the event to be propagated
+   * @param  {object} data corresponding data to be sent alongside the event
+   * @return  {Promise} resolve with the message response
+   */
+  function emit(name, data) {
+    eventId++;
+    sentMessages[eventId] = $q.defer();
+    var promise = sentMessages[eventId].promise;
+    $window.parent.postMessage({
+      apiVersion: 1,
+      eventName: name,
+      data: data,
+      ticket: eventId
+    }, '*');
+    return promise;
+  }
+
+  var currentContext;
+
+  /**
+   * @typedef HbpCollaboratoryContext
+   * @memberof module:clb-app.clbApp
+   * @type {object}
+   * @property {string} mode - the current mode, either 'run' or 'edit'
+   * @property {string} ctx - the UUID of the current context
+   * @property {string} state - an application defined state string
+   */
+
+   /**
+    * @memberof module:clb-app.clbApp
+    * @desc
+    * Asynchronously retrieve the current HBP Collaboratory Context, including
+    * the mode, the ctx UUID and the application state if any.
+    * @function context
+    * @param {object} data new values to send to HBP Collaboratory frontend
+    * @return {Promise} resolve to the context
+    * @static
+    */
+  function context(data) {
+    var d = $q.defer();
+    var kill = $timeout(function() {
+      d.reject(clbError.error({
+        type: 'TimeoutException',
+        message: 'No context can be retrieved'
+      }));
+    }, 250);
+
+    if (data) {
+      // discard context if new data should be set.
+      currentContext = null;
+    }
+
+    if (currentContext) {
+      // directly return context when cached.
+      return d.resolve(currentContext);
+    }
+    emit('workspace.context', data)
+    .then(function(context) {
+      $timeout.cancel(kill);
+      currentContext = context;
+      d.resolve(context);
+    })
+    .catch(function(err) {
+      d.reject(clbError.error(err));
+    });
+    return d.promise;
+  }
+  return new AppToolkit();
+
+  /**
+   * @desc
+   * Open a resource described by the given ObjectReference.
+   *
+   * The promise will fulfill only if the navigation is possible. Otherwise,
+   * an error will be returned.
+   * @function open
+   * @memberof module:clb-app.clbApp
+   * @param {ObjectReference} ref  The object reference to navigate to
+   * @return {Promise}  The promise retrieved by the call to emit
+   */
+  function open(ref) {
+    $log.debug('Ask the frontend to navigate to:', ref);
+    return emit('resourceLocator.open', {ref: ref});
+  }
+}
+
+/* eslint require-jsdoc:0 valid-jsdoc:0 */
+angular.module('clb-app')
+.provider('clbAuth', authProvider);
+
+function authProvider(clbAppHello, clbEnvProvider) {
   return {
-    restrict: 'A',
-    scope: {
-      user: '=clbUsercardPopover'
-    },
-    transclude: true,
-    template:'<span class="clb-usercard-popover" popover-append-to-body="vm.popover.appendToBody" popover-is-open="vm.popover.isOpen" popover-trigger="outsideClick" ng-click="togglePopover($event)" uib-popover-template="\'usercard-popover.tpl.html\'" ng-transclude></span>',
-    controller: function() {
-      var vm = this;
-      vm.popover = {
-        isOpen: false,
-        user: null,
-        appendToBody: true
+    $get: ['$http', '$log', '$q', '$rootScope', '$timeout', 'clbEnv', 'clbError', function($http, $log, $q, $rootScope, $timeout, clbEnv, clbError) {
+      _addHbpProvider();
+      _loadApplicationInfo();
+      _bindEvents();
+      var _readEnvOnce = false;
+
+      return {
+        login: login,
+        logout: logout,
+        getAuthInfo: getAuthInfo
       };
 
-      if (vm.user && vm.user.displayName) {
-        vm.popover.user = vm.user;
-      } else {
-        clbUser.get(vm.user).then(function(user) {
-          vm.popover.user = user;
-        }).catch(function(err) {
-          $log.error('Unable to get user with id', vm.user, err);
+      function login(options) {
+        var d = $q.defer();
+        if (!_readEnvOnce) {
+          _readEnvOnce = true;
+          var envToken = _readTokenFromEnv();
+          if (envToken) {
+            // The token delivered by the backend is considered valid.
+            var authInfo = getAuthInfo(envToken);
+            d.resolve(authInfo);
+            $rootScope.$broadcast('clbAuth.changed', authInfo);
+            return d.promise;
+          }
+        }
+        clbAppHello.login('hbp', options)
+        .then(function(res) {
+          d.resolve(getAuthInfo(res.authResponse));
+        }, function(err) {
+          d.reject(_formatError(err));
         });
+        return d.promise;
       }
-    },
-    controllerAs: 'vm',
-    bindToController: true,
-    link: function(scope, elt, attrs, vm) {
-      var unbind = scope.$on('clbUsercardPopover.open',
-        function(event, element) {
-          vm.popover.isOpen = (element === elt);
+
+      function logout(options) {
+        var info = getAuthInfo();
+        if (!info) {
+          return $q.when(true);
+        }
+        var d = $q.defer();
+        clbAppHello.logout('hbp', options)
+        .then(function() {
+          return d.resolve(true);
+        }, function(err) {
+          d.reject(_formatError(err));
         });
+        return d.promise;
+      }
 
-      scope.$on('$destroy', unbind);
+      function getAuthInfo(authResponse) {
+        authResponse = authResponse || clbAppHello.getAuthResponse('hbp');
+        if (!authResponse) {
+          return null;
+        }
+        return {
+          accessToken: authResponse.access_token,
+          tokenType: authResponse.token_type,
+          // When no scopes are specified, the server will generate a token
+          // with the app default scopes. In this case hello.js don't know what
+          // they are so we set the value to undefined by convention.
+          scope: authResponse.scope || undefined,
+          expires: authResponse.expires
+        };
+      }
 
-      scope.togglePopover = function($event, action) {
-        if ($event.isDefaultPrevented()) {
+      function _readTokenFromEnv() {
+        var authInfo = clbEnv.get('auth.token', false);
+        if (!authInfo) {
           return;
         }
-        $event.preventDefault();
-        if (action === 'close') {
-          return clbUsercardPopover.open(null);
+        var now = (new Date()).getTime() / 1e3;
+        if (!authInfo.expires && authInfo.expires_in) {
+          authInfo.expires = (now) + authInfo.expires_in;
         }
-        clbUsercardPopover.open(vm.popover.isOpen ? null : elt);
-      };
-    }
-  };
-}
+        if (!authInfo.expires || now < authInfo.expires) {
+          clbAppHello.utils.store('hbp', authInfo);
+          return authInfo;
+        }
+      }
 
-angular.module('clb-ui-identity')
-.factory('clbUsercardPopover', clbUserCardPopoverService);
-
-/**
- * A singleton to manage clb-usercard-popover instances
- * @namespace clbUserCardPopoverService
- * @memberof module:clb-ui-identity
- * @private
- * @param {object} $rootScope DI
- * @return {object} factory descriptor
- */
-function clbUserCardPopoverService($rootScope) {
-  return {
-    open: function(element) {
-      $rootScope.$broadcast('clbUsercardPopover.open', element);
-    }
-  };
-}
-
-angular.module('clb-ui-identity')
-.run(['$templateCache', function($templateCache) {
-  // During the build, templateUrl will be replaced by the inline template.
-  // We need to inject it in template cache as it is used for displaying
-  // the tooltip. Does it smell like a hack? sure, it is a hack!
-  var injector = {
-    template:'<clb-usercard clb-user="vm.popover.user" ng-click="togglePopover($event, \'close\')"></clb-usercard>'
-  };
-  // If defined, it means that the template has been inlined during build.
-  if (injector.template) {
-    $templateCache.put('usercard-popover.tpl.html', injector.template);
-  }
-}]);
-
-angular.module('clb-ui-identity')
-.directive('clbUsercard', clbUsercard)
-.run(clbUsercardCacheTemplate);
-
-/**
- * Display general user informations.
- *
- * Attributes
- * ----------
- *
- * ==================  ====================================
- * Name                Description
- * ==================  ====================================
- * clb-user            The ClbUser instance to display
- * clb-template        URL of a custom template to use
- * ==================  ====================================
- *
- *
- * @param  {object} lodash Angular DI
- * @memberof module:clb-ui-identity
- * @return {object}        Directive Descriptor
- * @example <caption>Display user informations</caption>
- * <clb-usercard clb-user="vm.currentUser"></clb-usercard>
- * @example <caption>Using a different templates</caption>
- * <clb-usercard clb-user="vm.currentUser" clb-template="custom/simple-user.html">
- * </clb-usercard>
- */
-function clbUsercard(lodash) {
-  'use strict';
-  return {
-    restrict: 'EA',
-    scope: {
-      user: '=clbUser'
-    },
-    templateUrl: function(tElement, tAttrs) {
-      return tAttrs.clbTemplate || 'usercard.directive.html';
-    },
-    link: {
-      pre: function(scope) {
-        scope.$watch('user', function(newValue) {
-          scope.institution = newValue &&
-            lodash.find(newValue.institutions, 'primary');
-          scope.email = newValue &&
-            lodash(newValue.emails).filter('primary').map('value').first();
-          scope.phone = newValue &&
-            lodash(newValue.phones).filter('primary').map('value').first();
-          scope.ims = newValue && newValue.ims;
+      function _formatError(err) {
+        return clbError.error({
+          type: err.error.code,
+          message: err.error.message,
+          data: err
         });
       }
-    }
+
+      function _bindEvents() {
+        clbAppHello.on('auth.login', _handleAuthInfoChange);
+        clbAppHello.on('auth.logout', _handleAuthInfoChange);
+      }
+
+      function _handleAuthInfoChange(data, name) {
+        if (data.network !== 'hbp') {
+          return;
+        }
+        $log.debug('propagate auth event from original event', name);
+        $timeout(function() {
+          $rootScope.$broadcast('clbAuth.changed', getAuthInfo());
+        }, 0);
+      }
+
+      /**
+       * Define a new provider Hello.js provider for HBP
+       */
+      function _addHbpProvider() {
+        clbAppHello.init({
+          hbp: {
+            name: 'Human Brain Project',
+            oauth: {
+              version: '2',
+              auth: clbEnvProvider.get('auth.url') + '/authorize',
+              grant: clbEnvProvider.get('auth.url') + '/token'
+            },
+            // API base URL
+            base: clbEnvProvider.get('auth.url') + '/',
+            scope_delim: ' ', // eslint-disable-line camelcase
+            login: function(p) {
+              // Reauthenticate
+              if (p.options.force) {
+                p.qs.prompt = 'login';
+              }
+              if (!p.qs.scope) {
+                delete p.qs.scope;
+              }
+            },
+            logout: function(callback, p) {
+              $http.post(clbEnv.get('auth.url') + '/slo', {
+                token: p.authResponse.access_token
+              }, {
+                withCredentials: true
+              })
+              .then(function() {
+                callback();
+              })
+              .catch(function(err) {
+                $log.error('Cannot kill the global session');
+                $log.debug(err);
+                callback();
+              });
+            }
+          }
+        });
+      }
+
+      /**
+       * Set the current application data.
+       */
+      function _loadApplicationInfo() {
+        clbAppHello.init({
+          hbp: clbEnvProvider.get('auth.clientId')
+        }, {
+          default_service: 'hbp', // eslint-disable-line camelcase
+          display: 'page',
+          scope: clbEnvProvider.get('auth.scopes', null),
+          force: false
+        });
+      }
+    }]
   };
 }
 
+angular.module('clb-app')
+.factory('clbAuthHttp', clbAuthHttp);
+
 /**
- * During the build, templateUrl will be replaced by the inline template.
- * We need to inject it in template cache as it is used for displaying
- * the tooltip. Does it smell like a hack? sure, it is a hack!
- * @param  {object} $templateCache Angular DI
- * @private
+ * Proxy $http to add the HBP bearer token.
+ * Also handle 401 Authentication Required errors.
+ * See $http service
+ *
+ * @param  {object} $http   DI
+ * @param  {object} clbAuth DI
+ * @return {function}       the service
  */
-function clbUsercardCacheTemplate($templateCache) {
-  //
-  var injector = {
-    template:'<div ng-if="user" class="clb-usercard clb-card clb-card-default"><h3 class="clb-usercard-header"><span class="clb-usercard-name">{{user.displayName}}</span> <span class="text-muted clb-usercard-username" uib-popover="{{user.id}}" popover-trigger="mouseenter" popover-popup-close-delay="2000" popover-placement="right">@{{user.username}}</span></h3><div class="clb-usercard-pix"><clb-user-avatar clb-user="user"></clb-user-avatar></div><div class="clb-usercard-institution" ng-if="institution"><span class="clb-usercard-institution-title">{{institution.title}}</span> <span ng-if="institution.title && (institution.name || institution.department)">,</span> <span class="clb-usercard-institution-name">{{institution.name}}</span> <span ng-if="institution.name && institution.department">,</span> <span class="clb-usercard-institution-dept">{{institution.department}}</span></div><div class="clb-usercard-contact"><a class="clb-usercard-contact-item clb-usercard-email" target="_top" href="mailto:{{email}}" ng-if="email"><span class="glyphicon glyphicon-envelope"></span> {{email}}</a> <span class="clb-usercard-contact-item clb-usercard-phone" ng-if="phone"><span class="glyphicon glyphicon-phone"></span> {{phone}}</span> <span class="clb-usercard-contact-item clb-usercard-im-list" ng-if="ims.length"><span class="glyphicon glyphicon-bullhorn"></span> <span ng-repeat-start="im in ims"></span> <span class="clb-usercard-im">{{im.value}}({{im.type}})</span> <span ng-repeat-end></span></span></div></div>'
+function clbAuthHttp($http, clbAuth) {
+  var proxyHttp = function(config) {
+    var auth = clbAuth.getAuthInfo();
+    if (!auth) {
+      return $http(config);
+    }
+    var authToken = auth.tokenType + ' ' + auth.accessToken;
+    if (!config.headers) {
+      config.headers = {
+        Authorization: authToken
+      };
+    }
+    config.headers.Authorization = authToken;
+    return $http(config);
   };
-  // If defined, it means that the template has been inlined during build.
-  if (injector.template) {
-    $templateCache.put('usercard.directive.html', injector.template);
+  proxyHttp.get = _wrapper('GET');
+  proxyHttp.head = _wrapper('HEAD');
+  proxyHttp.delete = _wrapper('DELETE');
+  proxyHttp.post = _wrapperData('POST');
+  proxyHttp.put = _wrapperData('PUT');
+  proxyHttp.patch = _wrapperData('PATCH');
+  return proxyHttp;
+
+  /**
+   * Handle $http helper call for GET, DELETE, HEAD requests.
+   *
+   * @param  {string} verb the HTTP verb
+   * @return {function}    The function to attach
+   */
+  function _wrapper(verb) {
+    return function(url, config) {
+      config = config || {};
+      config.method = verb.toUpperCase();
+      config.url = url;
+      return proxyHttp(config);
+    };
   }
+
+  /**
+   * Handle $http helper call for PUT, PATCH, POST requests.
+   *
+   * @param  {string} verb the HTTP verb
+   * @return {function}    The function to attach
+   */
+  function _wrapperData(verb) {
+    return function(url, data, config) {
+      config = config || {};
+      config.method = verb.toUpperCase();
+      config.url = url;
+      config.data = data;
+      return proxyHttp(config);
+    };
+  }
+}
+
+/* global deferredBootstrapper, window, document */
+
+/**
+ * @namespace angular
+ */
+
+angular.clbBootstrap = clbBootstrap;
+
+/**
+ * Bootstrap AngularJS application with the HBP environment loaded.
+ *
+ * It is very important to load the HBP environement *before* starting
+ * the application. This method let you do that synchronously or asynchronously.
+ * Whichever method you choose, the values in your environment should look
+ * very similar to the one in _`https://collab.humanbrainproject.eu/config.json`,
+ * customized with your own values.
+ *
+ * At least ``auth.clientId`` should be edited in the config.json file.
+ *
+ * @memberof angular
+ * @param {string} module the name of the Angular application module to load.
+ * @param {object} options pass those options to deferredBootstrap
+ * @param {object} options.env HBP environment JSON (https://collab.humanbrainproject.eu/config.json)
+ * @return {Promise} return once the environment has been bootstrapped
+ * @example <caption>Bootstrap the environment synchronously</caption>
+ * angular.clbBootstrap('myApp', {
+ *   env: { } // content from https://collab.humanbrainproject.eu/config.json
+ * })
+ * @example <caption>Bootstrap the environment asynchronously</caption>
+ * angular.clbBootstrap('myApp', {
+ *   env: 'https://my-project-website/config.json'
+ * })
+ * @example <caption>Using backward compatibility</caption>
+ * window.bbpConfig = { } // content from https://collab.humanbrainproject.eu/config.json
+ * angular.clbBoostrap('myApp')
+ */
+function clbBootstrap(module, options) {
+  if (window.bbpConfig) {
+    options.env = window.bbpConfig;
+  }
+  if (!options.element) {
+    options.element = document.body;
+  }
+  options.module = module;
+  if (!options.moduleResolves) {
+    options.moduleResolves = {};
+  }
+  options.moduleResolves = [{
+    module: 'clb-env',
+    resolve: {
+      // use injection here as it is not resolved automatically on build.
+      CLB_ENVIRONMENT: ['$q', '$http', function($q, $http) {
+        // Remove any previously defined CLB_ENVIRONMENT
+        // As this results in unpredictable results when multiple apps
+        // use this strategy.
+        var invoker = angular.module(['clb-env'])._invokeQueue;
+        for (var i = 0; i < invoker.length; i++) {
+          var inv = invoker[i];
+          if (inv[2][0] === 'CLB_ENVIRONMENT') {
+            invoker.splice(i, 1);
+            i--;
+          }
+        }
+        if (angular.isString(options.env)) {
+          return $http.get(options.env)
+          .then(function(res) {
+            // Set bbpConfig for backward compatibility
+            window.bbpConfig = res.data;
+            return res.data;
+          });
+        }
+        // Set bbpConfig for backward compatibility
+        if (!window.bbpConfig) {
+          window.bbpConfig = options.env;
+        }
+        return $q.when(options.env);
+      }]
+    }
+  }];
+  return deferredBootstrapper.bootstrap(options);
 }
 
 angular.module('clb-ui-loading')
@@ -5837,7 +4883,7 @@ function clbLoading() {
       promise: '=?clbPromise',
       message: '=?clbMessage'
     },
-    template:'<div class="clb-loading" ng-if="loading"><span class="glyphicon glyphicon-refresh clb-spinning"></span> {{message}}</div>',
+    template:'<div class=clb-loading ng-if=loading><span class="glyphicon glyphicon-refresh clb-spinning"></span> {{message}}</div>',
     link: function(scope) {
       scope.loading = true;
       scope.message = scope.message || 'Loading...';
@@ -5929,7 +4975,7 @@ function clbFileBrowserFolder() {
   return {
     restrict: 'A',
     require: '^clbFileBrowser',
-    template:'<div class="clb-file-browser-item clb-file-browser-folder" ng-dblclick="browserView.handleNavigation(folder)" ng-click="browserView.handleFocus(folder)" hbp-on-touch="browserView.handleNavigation(folder)" ng-class="{\'clb-file-browser-item-selected\': browserView.selectedEntity === folder}"><div class="clb-file-browser-label"><i class="fa" ng-class="folderIcon ? folderIcon : \'fa-folder\'"></i><span>{{folderLabel || folder._name}}</span></div></div>',
+    template:'<div class="clb-file-browser-item clb-file-browser-folder" ng-dblclick=browserView.handleNavigation(folder) ng-click=browserView.handleFocus(folder) hbp-on-touch=browserView.handleNavigation(folder) ng-class="{\'clb-file-browser-item-selected\': browserView.selectedEntity === folder}"><div class=clb-file-browser-label><i class=fa ng-class="folderIcon ? folderIcon : \'fa-folder\'"></i><span>{{folderLabel || folder._name}}</span></div></div>',
     scope: {
       folder: '=clbFileBrowserFolder',
       folderIcon: '@clbFileBrowserFolderIcon',
@@ -5962,7 +5008,7 @@ function clbFileBrowserPath(clbStorage) {
   return {
     restrict: 'E',
     require: '^clbFileBrowser',
-    template:'<ul class="breadcrumb clb-file-browser-path"><li class="root" ng-if="!browserView.isRoot"><a ng-click="browserView.handleNavigation(browserView.rootEntity)">{{browserView.rootEntity._name || \'[top]\'}}</a></li><li ng-repeat="entity in ancestors"><a ng-click="browserView.handleNavigation(entity)">{{entity._name}}</a></li><li><span class="active">{{browserView.currentEntity._name || \'[top]\'}}</span></li></ul>',
+    template:'<ul class="breadcrumb clb-file-browser-path"><li class=root ng-if=!browserView.isRoot><a ng-click=browserView.handleNavigation(browserView.rootEntity)>{{browserView.rootEntity._name || \'[top]\'}}</a></li><li ng-repeat="entity in ancestors"><a ng-click=browserView.handleNavigation(entity)>{{entity._name}}</a></li><li><span class=active>{{browserView.currentEntity._name || \'[top]\'}}</span></li></ul>',
     link: function(scope, element, attrs, ctrl) {
       var handleAncestors = function(ancestors) {
         scope.ancestors = ancestors;
@@ -5992,7 +5038,7 @@ angular.module('clb-ui-storage')
   // We need to inject it in template cache as it is used for displaying
   // the tooltip. Does it smell like a hack? sure, it is a hack!
   var injector = {
-    template:'<div ng-init="browserView.defineThumbnailUrl(file)"><div class="file-browser-thumbnail thumbnail" ng-if="browserView.thumbnailUrl" aria-hidden="true"><img ng-src="{{browserView.thumbnailUrl}}"></div>{{file._name}}</div>'
+    template:'<div ng-init=browserView.defineThumbnailUrl(file)><div class="file-browser-thumbnail thumbnail" ng-if=browserView.thumbnailUrl aria-hidden=true><img ng-src={{browserView.thumbnailUrl}}></div>{{file._name}}</div>'
   };
   // If defined, it means that the template has been inlined during build.
   if (injector.template) {
@@ -6051,7 +5097,7 @@ function clbFileBrowser(lodash) {
       entity: '=?clbEntity',
       root: '=clbRoot'
     },
-    template:'<div class="clb-file-browser" in-view-container ng-click="selectItem()"><clb-error-message clb-error="browserView.error"></clb-error-message><div class="navbar navbar-default"><div class="container-fluid"><div class="nav navbar-nav navbar-text"><clb-file-browser-path></clb-file-browser-path></div><div class="dropdown nav navbar-nav pull-right" uib-dropdown ng-if="browserView.canEdit"><button type="button" href class="btn btn-default navbar-btn dropdown-toggle" uib-dropdown-toggle><span class="glyphicon glyphicon-plus"></span> <span class="caret"></span></button><ul class="dropdown-menu" role="menu" uib-dropdown-menu><li ng-if="browserView.canEdit"><a ng-click="browserView.startCreateFolder()"><span class="fa fa-folder"></span> Create Folder</a></li><li ng-if="browserView.canEdit"><a ng-click="browserView.showFileUpload = true"><span class="fa fa-file"></span> Upload File</a></li></ul></div></div></div><div class="clb-file-browser-content"><div ng-if="browserView.isLoading" class="alert alert-info" role="alert">Loading...</div><div class="file-browser-upload" ng-if="browserView.showFileUpload"><button type="button" class="btn close pull-right" ng-click="browserView.showFileUpload = false"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><clb-file-upload on-drop="browserView.onFileChanged(files)" on-error="browserView.setError(error)"></clb-file-upload></div><div ng-if="browserView.isRoot && browserView.isEmpty()" class="alert alert-info" role="alert">The collab storage is still empty, use the \'+\' button to upload some content.</div><ul><li ng-if="!browserView.isRoot" clb-file-browser-folder="browserView.parent" clb-file-browser-folder-label=".." clb-file-browser-folder-icon="fa-level-up"></li><li ng-repeat="folder in browserView.folders" clb-file-browser-folder="folder"></li><li ng-if="browserView.showCreateFolder" class="clb-file-browser-item"><div class="clb-file-browser-folder"><form class="form form-inline" action="index.html" method="post" ng-submit="browserView.doCreateFolder($event)"><div class="input-group"><input type="text" class="form-control new-folder-name" name="newFolderName" ng-model="browserView.newFolderName"> <span class="input-group-btn"><input class="btn btn-primary" type="submit" name="name" value="Ok"> <button class="btn btn-default" type="button" ng-click="browserView.cancelCreateFolder()"><span aria-hidden="true">&times;</span><span class="sr-only">Cancel</span></button></span></div></form></div></li><li class="clb-file-browser-item" ng-if="browserView.hasMoreFolders"><a class="clb-file-browser-label btn" clb-perform-action="browserView.loadMoreFolders()"><span class="fa fa-refresh"></span> Load More Folders</a></li><li ng-repeat="file in browserView.files" ng-dblclick="browseToEntity(file)" ng-click="browserView.handleFocus(file)" uib-tooltip-template="\'file-browser-tooltip.tpl.html\'" tooltip-placement="bottom" tooltip-popup-delay="600" class="clb-file-browser-item" ng-class="{ \'clb-file-browser-item-selected\': browserView.selectedEntity === file }"><div class="clb-file-browser-label"><hbp-content-icon content="file._contentType"></hbp-content-icon><span>{{file._name || file._uuid}}</span></div></li><li ng-repeat="uploadInfo in browserView.uploads" ng-click="browserView.handleFocus(null)" uib-tooltip="{{uploadInfo.content.name}}" tooltip-placement="bottom" tooltip-popup-delay="600" class="clb-file-browser-item" ng-class="\'clb-file-browser-state-\' + uploadInfo.state"><div class="clb-file-browser-label"><hbp-content-icon content="file._contentType"></hbp-content-icon><span>{{uploadInfo.content.name}}</span></div><div class="clb-file-browser-item-upload progress"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploadInfo.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploadInfo.progress.percentage}}%"><span class="sr-only">{{uploadInfo.progress.percentage}}% Complete</span></div></div></li><li class="clb-file-browser-item" ng-if="browserView.hasMoreFiles"><a class="clb-file-browser-label btn" clb-perform-action="browserView.loadMoreFiles()"><span class="fa fa-refresh"></span> Load more files</a></li></ul></div></div>',
+    template:'<div class=clb-file-browser in-view-container ng-click=selectItem()><clb-error-message clb-error=browserView.error></clb-error-message><div class="navbar navbar-default"><div class=container-fluid><div class="nav navbar-nav navbar-text"><clb-file-browser-path></clb-file-browser-path></div><div class="dropdown nav navbar-nav pull-right" uib-dropdown ng-if=browserView.canEdit><button type=button href class="btn btn-default navbar-btn dropdown-toggle" uib-dropdown-toggle><span class="glyphicon glyphicon-plus"></span> <span class=caret></span></button><ul class=dropdown-menu role=menu uib-dropdown-menu><li ng-if=browserView.canEdit><a ng-click=browserView.startCreateFolder()><span class="fa fa-folder"></span> Create Folder</a></li><li ng-if=browserView.canEdit><a ng-click="browserView.showFileUpload = true"><span class="fa fa-file"></span> Upload File</a></li></ul></div></div></div><div class=clb-file-browser-content><div ng-if=browserView.isLoading class="alert alert-info" role=alert>Loading...</div><div class=file-browser-upload ng-if=browserView.showFileUpload><button type=button class="btn close pull-right" ng-click="browserView.showFileUpload = false"><span aria-hidden=true>&times;</span><span class=sr-only>Close</span></button><clb-file-upload on-drop=browserView.onFileChanged(files) on-error=browserView.setError(error)></clb-file-upload></div><div ng-if="browserView.isRoot && browserView.isEmpty()" class="alert alert-info" role=alert>The collab storage is still empty, use the \'+\' button to upload some content.</div><ul><li ng-if=!browserView.isRoot clb-file-browser-folder=browserView.parent clb-file-browser-folder-label=.. clb-file-browser-folder-icon=fa-level-up></li><li ng-repeat="folder in browserView.folders" clb-file-browser-folder=folder></li><li ng-if=browserView.showCreateFolder class=clb-file-browser-item><div class=clb-file-browser-folder><form class="form form-inline" action=index.html method=post ng-submit=browserView.doCreateFolder($event)><div class=input-group><input type=text class="form-control new-folder-name" name=newFolderName ng-model=browserView.newFolderName> <span class=input-group-btn><input class="btn btn-primary" type=submit name=name value=Ok> <button class="btn btn-default" type=button ng-click=browserView.cancelCreateFolder()><span aria-hidden=true>&times;</span><span class=sr-only>Cancel</span></button></span></div></form></div></li><li class=clb-file-browser-item ng-if=browserView.hasMoreFolders><a class="clb-file-browser-label btn" clb-perform-action=browserView.loadMoreFolders()><span class="fa fa-refresh"></span> Load More Folders</a></li><li ng-repeat="file in browserView.files" ng-dblclick=browseToEntity(file) ng-click=browserView.handleFocus(file) uib-tooltip-template="\'file-browser-tooltip.tpl.html\'" tooltip-placement=bottom tooltip-popup-delay=600 class=clb-file-browser-item ng-class="{ \'clb-file-browser-item-selected\': browserView.selectedEntity === file }"><div class=clb-file-browser-label><hbp-content-icon content=file._contentType></hbp-content-icon><span>{{file.name || file.uuid}}</span></div></li><li ng-repeat="uploadInfo in browserView.uploads" ng-click=browserView.handleFocus(null) uib-tooltip={{uploadInfo.content.name}} tooltip-placement=bottom tooltip-popup-delay=600 class=clb-file-browser-item ng-class="\'clb-file-browser-state-\' + uploadInfo.state"><div class=clb-file-browser-label><hbp-content-icon content=file._contentType></hbp-content-icon><span>{{uploadInfo.content.name}}</span></div><div class="clb-file-browser-item-upload progress"><div class=progress-bar role=progressbar aria-valuenow={{uploadInfo.progress}} aria-valuemin=0 aria-valuemax=100 style="width: {{uploadInfo.progress.percentage}}%"><span class=sr-only>{{uploadInfo.progress.percentage}}% Complete</span></div></div></li><li class=clb-file-browser-item ng-if=browserView.hasMoreFiles><a class="clb-file-browser-label btn" clb-perform-action=browserView.loadMoreFiles()><span class="fa fa-refresh"></span> Load more files</a></li></ul></div></div>',
     link: clbFileBrowserLink,
     controllerAs: 'browserView',
     controller: FileBrowserViewModel
@@ -6229,7 +5275,7 @@ function clbFileBrowser(lodash) {
         return $q.when(entity);
       }
       // Set the currentEntity to the parent and then focus the file
-      return clbStorage.getEntity(entity._parent);
+      return clbStorage.getEntity(entity.results[0]);
     }
 
     /**
@@ -6239,6 +5285,7 @@ function clbFileBrowser(lodash) {
      */
     function update(entity) {
       return nearestContainer(entity).then(function(container) {
+
         vm.isLoading = true;
         vm.currentEntity = container;
         vm.selectedEntity = entity;
@@ -6268,9 +5315,9 @@ function clbFileBrowser(lodash) {
         var promises = [];
 
         // define the new parent entity
-        if (!vm.isRoot && container._parent) {
+        if (!vm.isRoot && container.parent) {
           promises.push(
-            clbStorage.getEntity(container._parent).then(assignParentEntity)
+            clbStorage.getEntity(container.parent).then(assignParentEntity)
           );
         }
 
@@ -6348,7 +5395,7 @@ function clbFileBrowser(lodash) {
       if (!entity) {
         vm.isRoot = true;
       } else if (vm.rootEntity) {
-        vm.isRoot = (entity._uuid === vm.rootEntity._uuid);
+        vm.isRoot = (entity.uuid === vm.rootEntity.uuid);
       } else {
         vm.isRoot = false;
       }
@@ -6421,7 +5468,7 @@ function clbFileBrowser(lodash) {
      */
     function defineThumbnailUrl(file) {
       vm.thumbnailUrl = null;
-      if (file._contentType && file._contentType.match(/^image\//)) {
+      if (file.content_type && file.content_type.match(/^image\//)) {
         clbStorage.downloadUrl(file).then(function(res) {
           vm.thumbnailUrl = res;
         });
@@ -6527,7 +5574,7 @@ function clbFileChooser($q, $log) {
       ngModel: '=',
       validate: '=?clbValidate'
     },
-    template:'<div class="clb-file-chooser"><clb-file-browser clb-entity="initialValue" clb-root="root"></clb-file-browser><div class="navbar navbar-form"><button type="button" ng-click="doChooseEntity()" class="btn btn-primary" ng-disabled="!canChooseCurrentEntity">Choose</button> <button type="button" ng-click="doCancel()" class="btn btn-default">Cancel</button></div></div>',
+    template:'<div class=clb-file-chooser><clb-file-browser clb-entity=initialValue clb-root=root></clb-file-browser><div class="navbar navbar-form"><button type=button ng-click=doChooseEntity() class="btn btn-primary" ng-disabled=!canChooseCurrentEntity>Choose</button> <button type=button ng-click=doCancel() class="btn btn-default">Cancel</button></div></div>',
     link: clbFileChooserLink
   };
 
@@ -6549,14 +5596,14 @@ function clbFileChooser($q, $log) {
         return;
       }
       if (angular.isString(scope.validate)) {
-        $log.debug('string comparison', scope.validate === value._contentType);
-        return scope.validate === value._contentType;
+        $log.debug('string comparison', scope.validate === value.content_type);
+        return scope.validate === value.content_type;
       }
       if (angular.isArray(scope.validate)) {
-        return scope.validate.indexOf(value._contentType) !== -1;
+        return scope.validate.indexOf(value.content_type) !== -1;
       }
       if (scope.validate instanceof RegExp) {
-        return value && value._contentType.match(scope.validate);
+        return value && value.content_type.match(scope.validate);
       }
       if (angular.isFunction(scope.validate)) {
         return scope.validate(value);
@@ -6566,7 +5613,7 @@ function clbFileChooser($q, $log) {
 
     scope.$on('clbFileBrowser:focusChanged', function(event, value) {
       return $q.when(isValid(value)).then(function(result) {
-        $log.debug('validi entity', result);
+        $log.debug('valid entity', result);
         if (result) {
           scope.currentSelection = value;
         }
@@ -6619,7 +5666,7 @@ angular.module('clb-ui-storage')
 .directive('clbFileUpload', function() {
   'use strict';
   return {
-    template:'<div class="clb-file-upload" ng-class="{\'clb-file-upload-drag-enter\': dragEntered, \'clb-file-upload-drag-leave\': !dragEntered}" ng-cloak><h4>Drop Files Here to Upload</h4><span>or</span><div class="btn btn-default clb-file-upload-btn-file">Select Files <input type="file" multiple onchange="angular.element(this).scope().onFileChanged(this.files)"></div></div>',
+    template:'<div class=clb-file-upload ng-class="{\'clb-file-upload-drag-enter\': dragEntered, \'clb-file-upload-drag-leave\': !dragEntered}" ng-cloak><h4>Drop Files Here to Upload</h4><span>or</span><div class="btn btn-default clb-file-upload-btn-file">Select Files <input type=file multiple onchange=angular.element(this).scope().onFileChanged(this.files)></div></div>',
     restrict: 'E',
     scope: {
       onDrop: '&',
@@ -6746,7 +5793,7 @@ function clbActivity() {
     controller: ActivityController,
     controllerAs: 'vm',
     bindToController: true,
-    template:'<div class="clb-activity-metadata"><div class="clb-activity-time" am-time-ago="vm.activity.time"></div><a clb-usercard-popover="vm.activity.actor.data" ng-click="vm.navigate($event, false)"><clb-user-avatar class="clb-activity-avatar" clb-user="vm.activity.actor.data" ng-if="vm.activity.actor.data"></clb-user-avatar></a></div><div class="clb-activity-summary"><span class="clb-activity-link" ng-repeat="p in vm.parts" ng-class="\'clb-activity-link-\' + p.tag"><a ng-if="p.tag && p.ref.type === \'HBPUser\'" clb-usercard-popover="p.ref.id" ng-click="vm.navigate($event, false)">{{p.text}}</a> <a ng-if="p.tag && p.ref.type !== \'HBPUser\'" ng-init="vm.resolveUrl(p)" ng-href="{{p.url}}">{{p.text}}</a> <span ng-if="!p.tag">{{p.text}}</span></span></div>',
+    template:'<div class=clb-activity-metadata><div class=clb-activity-time am-time-ago=vm.activity.time></div><a clb-usercard-popover=vm.activity.actor.data ng-click="vm.navigate($event, false)"><clb-user-avatar class=clb-activity-avatar clb-user=vm.activity.actor.data ng-if=vm.activity.actor.data></clb-user-avatar></a></div><div class=clb-activity-summary><span class=clb-activity-link ng-repeat="p in vm.parts" ng-class="\'clb-activity-link-\' + p.tag"><a ng-if="p.tag && p.ref.type === \'HBPUser\'" clb-usercard-popover=p.ref.id ng-click="vm.navigate($event, false)">{{p.text}}</a> <a ng-if="p.tag && p.ref.type !== \'HBPUser\'" ng-init=vm.resolveUrl(p) ng-href={{p.url}}>{{p.text}}</a> <span ng-if=!p.tag>{{p.text}}</span></span></div>',
     link: {
       post: function(scope, elt, attr, ctrl) {
         elt.addClass('clb-activity').addClass(ctrl.verbClass);
@@ -6992,7 +6039,7 @@ function clbFeed() {
     controller: FeedController,
     controllerAs: 'vm',
     bindToController: true,
-    template:'<div ng-if="vm.loadingFeed" class="alert alert-info"><div ng-switch on="vm.feedDate"><div ng-switch-when="null">Loading all activities...</div><div class="animate-switch" ng-switch-default>Loading Feed for {{vm.feedDate}}...</div></div></div><p ng-if="vm.feedDate != null">Selected date: {{vm.feedDate}}</p><ul class="feed list-group" ng-if="!vm.loadingFeed" ng-class="{\'feed-empty\': vm.activities.results.length === 0}"><li ng-if="vm.error" class="list-group-item"><div class="alert alert-error"><strong>Load Error:</strong> {{vm.error}}</div></li><li class="list-group-item" ng-if="!vm.activities && !vm.error"><hbp-loading></hbp-loading></li><li class="list-group-item" ng-if="vm.activities.results.length === 0 && vm.feedDate"><div class="alert alert-info">No activities on {{vm.feedDate}}</div></li><li class="list-group-item" ng-if="vm.activities.results.length === 0 && !vm.feedDate"><div class="alert alert-info">No activities to show</div></li><li class="list-group-item" ng-repeat="a in vm.activities.results track by $index" clb-activity="a"></li><li class="list-group-item" ng-if="vm.activities.hasNext"><a clb-perform-action="vm.activities.next()" class="btn btn-default">Show More</a></li></ul>',
+    template:'<div ng-if=vm.loadingFeed class="alert alert-info"><div ng-switch on=vm.feedDate><div ng-switch-when=null>Loading all activities...</div><div class=animate-switch ng-switch-default>Loading Feed for {{vm.feedDate}}...</div></div></div><p ng-if="vm.feedDate != null">Selected date: {{vm.feedDate}}</p><ul class="feed list-group" ng-if=!vm.loadingFeed ng-class="{\'feed-empty\': vm.activities.results.length === 0}"><li ng-if=vm.error class=list-group-item><div class="alert alert-error"><strong>Load Error:</strong> {{vm.error}}</div></li><li class=list-group-item ng-if="!vm.activities && !vm.error"><hbp-loading></hbp-loading></li><li class=list-group-item ng-if="vm.activities.results.length === 0 && vm.feedDate"><div class="alert alert-info">No activities on {{vm.feedDate}}</div></li><li class=list-group-item ng-if="vm.activities.results.length === 0 && !vm.feedDate"><div class="alert alert-info">No activities to show</div></li><li class=list-group-item ng-repeat="a in vm.activities.results track by $index" clb-activity=a></li><li class=list-group-item ng-if=vm.activities.hasNext><a clb-perform-action=vm.activities.next() class="btn btn-default">Show More</a></li></ul>',
     link: function(scope, elt) {
       elt.addClass('clb-feed');
       var unbind = scope.$on(
@@ -7072,6 +6119,898 @@ function FeedController($rootScope, clbStream, clbUser) {
     });
   }
 }
+
+angular.module('clb-automator')
+.factory('clbAutomator', clbAutomator);
+
+/**
+ * @namespace Tasks
+ * @memberof module:clb-automator
+ * @desc
+ * Document a list of available tasks.
+ */
+
+/**
+ * @namespace clbAutomator
+ * @memberof module:clb-automator
+ * @desc
+ * clbAutomator is an AngularJS factory that
+ * provide task automation to accomplish a sequence of
+ * common operation in Collaboratory.
+ *
+ * How to add new tasks
+ * --------------------
+ *
+ * New tasks can be added by calling ``clbAutomator.registerHandler``.
+ *
+ * You can see a few example of tasks in the `tasks` folder.
+ *
+ * Evaluate the automator
+ * ----------------------
+ *
+ * From the root of this project, you can start a server that will let
+ * you write a descriptor and run it.
+ *
+ * .. code-block:: bash
+ *
+ *    gulp example
+ *
+ * @example <caption>Create a Collab with a few navigation items</caption>
+ * // Create a Collab with a few navigation items.
+ * angular.module('MyModule', ['clb-automator'])
+ * .run(function(clbAutomator, $log) {
+ *   var config = {
+ *     title: 'My Custom Collab',
+ *     content: 'My Collab Content',
+ *     private: false
+ *   };
+ *   clbAutomator.task(config).run().then(function(collab) {
+ *   	 $log.info('Created Collab', collab);
+ *   });
+ * })
+ * @example <caption>Create a Collab with entities and navigation items</caption>
+ * clbAutomator.run({
+ *   "collab": {
+ *     "title": "Test Collab Creation",
+ *     "content": "My Collab Description",
+ *     "private": true,
+ *     "after": [
+ *       {
+ *         "storage": {
+ *           "entities": {
+ *             // Use one of your file UUID here.
+ *             "sample.ipynb": "155c1bcc-ee9c-43e2-8190-50c66befa1fa"
+ *           },
+ *           "after": [{
+ *             "nav": {
+ *               "name": "Example Code",
+ *               "app": "Jupyter Notebook",
+ *               "entity": "sample.ipynb"
+ *             }
+ *           }]
+ *         }
+ *       },
+ *       {
+ *         "nav": {
+ *           "name": "Empty Notebook",
+ *           "app": "Jupyter Notebook"
+ *         }
+ *       },
+ *       {
+ *         "nav": {
+ *           "name": "Introduction",
+ *           "app": "Rich Text Editor"
+ *         }
+ *       }
+ *     ]
+ *   }
+ * }).then(function(collab) {
+ *   $log.info('Created Collab', collab);
+ * });
+ *
+ * @example <caption>Create a Collab with a pre-filled overview</caption>
+ * clbAutomator.run({
+ *   "collab": {
+ *     "title": "Test Collab With Pre Filled Overview",
+ *     "content": "Test collab creation with  a pre filled overview",
+ *     "private": true,
+ *     "after": [{
+ *       "overview": {
+ *         // Use one of your HTML file UUID here.
+ *         "entity": "155c1bcc-ee9c-43e2-8190-50c66befa1fa"
+ *       }
+ *     }]
+ *   }
+ * }).then(function(collab) {
+ *   $log.info('Created Collab', collab);
+ * });
+ * @param {object} $q injected service
+ * @param {object} $log injected service
+ * @param {object} clbError injected service
+ * @return {object} the clbAutomator Angular service singleton
+ */
+function clbAutomator(
+  $q,
+  $log,
+  clbError
+) {
+  var handlers = {};
+
+  /**
+   * Register a handler function for the given task name.
+   * @memberof module:clb-automator.clb-automator
+   * @param  {string}   name handle actions with the specified name
+   * @param  {Function} fn a function that accept the current context in
+   *                       parameter.
+   */
+  function registerHandler(name, fn) {
+    handlers[name] = fn;
+  }
+
+  /**
+   * Instantiate a new Task intance that will run the code describe for
+   * a handlers with the give ``name``.
+   *
+   * The descriptor is passed to the task and parametrize it.
+   * The task context is computed at the time the task is ran. A default context
+   * can be given at load time and it will be fed with the result of each parent
+   * (but not sibling) tasks as well.
+   *
+   * @memberof module:clb-automator.clbAutomator
+   * @param {string} name the name of the task to instantiate
+   * @param {object} [descriptor] a configuration object that will determine
+   *                            which task to run and in which order
+   * @param {object} [descriptor.after] an array of task to run after this one
+   * @param {object} [context] a default context to run the task with
+   *
+   * @return {Task} - the new task instance
+   */
+  function task(name, descriptor, context) {
+    try {
+      return new Task(name, descriptor, context);
+    } catch (ex) {
+      $log.error('EXCEPTION', ex);
+      throw clbError.error({
+        type: 'InvalidTask',
+        message: 'Invalid task ' + name + ': ' + ex,
+        data: {
+          cause: ex,
+          name: name,
+          descriptor: descriptor,
+          context: context
+        }
+      });
+    }
+  }
+
+  /**
+   * Directly generate tasks from given description and run them.
+   *
+   * @memberof module:clb-automator.clbAutomator
+   * @param  {object} descriptor description of the tasks to run
+   * @param  {object} [context]  the initial context
+   * @return {Promise} promise of the top level task result
+   */
+  function run(descriptor, context) {
+    for (var name in descriptor) {
+      if (descriptor.hasOwnProperty(name)) {
+        return task(name, descriptor[name], context).run();
+      }
+    }
+    return $q.reject(clbError.error({
+      type: 'NoTaskFound',
+      message: 'No task found in descriptor',
+      data: descriptor
+    }));
+  }
+
+  /**
+   * Create an array of tasks given an array containing object where
+   * the key is the task name to run and the value is the descriptor
+   * parameter.
+   *
+   * @memberof module:clb-automator.clbAutomator
+   * @param  {object} after the content of ``descriptor.after``
+   * @return {Array/Task} array of subtasks
+   * @private
+   */
+  function createSubtasks(after) {
+    var subtasks = [];
+    if (!after || !after.length) {
+      return subtasks;
+    }
+    for (var i = 0; i < after.length; i++) {
+      var taskDef = after[i];
+      for (var name in taskDef) {
+        if (taskDef.hasOwnProperty(name)) {
+          subtasks.push(task(name, taskDef[name]));
+        }
+      }
+    }
+    return subtasks;
+  }
+
+  /**
+   * @class Task
+   * @memberof module:clb-automator.clbAutomator
+   * @desc
+   * Instantiate a task given the given `config`.
+   * The task can then be run using the `run()` instance method.
+   * @param {string} name the name of the task to instantiate
+   * @param {object} [descriptor] a configuration object that will determine
+   *                            which task to run and in which order
+   * @param {object} [descriptor.after] an array of task to run after this one
+   * @param {object} [context] a default context to run the task with
+   * @see module:clb-automator.task
+   *
+   */
+  function Task(name, descriptor, context) {
+    if (!handlers[name]) {
+      throw new Error('TaskNotFound');
+    }
+    descriptor = descriptor || {};
+    context = context || {};
+    this.state = 'idle';
+    this.name = name;
+    this.descriptor = descriptor;
+    this.defaultContext = context;
+    this.state = 'idle';
+    this.promise = null;
+    this.error = null;
+    this.subtasks = createSubtasks(descriptor.after);
+  }
+
+  Task.prototype = {
+    /**
+     * Launch the task.
+     *
+     * @memberof module:clb-automator.clbAutomator.Task
+     * @param {object} context current context will be merged into the default
+     *                         one.
+     * @return {Promise} promise to return the result of the task
+     */
+    run: function(context) {
+      var self = this;
+      // run an intance of task only once.
+      if (self.state !== 'idle') {
+        return self.promise;
+      }
+      context = angular.extend({}, this.defaultContext, context);
+      var onSuccess = function(result) {
+        var subContext = angular.copy(context);
+        subContext[self.name] = result;
+        return self.runSubtasks(subContext)
+        .then(function() {
+          self.state = 'success';
+          return result;
+        });
+      };
+      var onError = function(err) {
+        self.state = 'error';
+        // noop operation if is already one
+        return $q.reject(clbError.error(err));
+      };
+      self.state = 'progress';
+      self.promise = $q.when(handlers[self.name](self.descriptor, context))
+        .then(onSuccess)
+        .catch(onError);
+      return self.promise;
+    },
+
+    /**
+     * Run all subtasks of the this tasks.
+     *
+     * @memberof module:clb-automator.clbAutomator.Task
+     * @param  {object} context the current context
+     * @return {Array}          all the results in an array
+     */
+    runSubtasks: function(context) {
+      var promises = [];
+      angular.forEach(this.subtasks, function(task) {
+        promises.push(task.run(context));
+      });
+      return $q.all(promises);
+    }
+  };
+
+  /**
+   * Return a HbpError when a parameter is missing.
+   * @memberof module:clb-automator.clbAutomator
+   * @param  {string} key    name of the key
+   * @param  {object} config the invalid configuration object
+   * @return {HbpError}      a HbpError instance
+   * @private
+   */
+  function missingDataError(key, config) {
+    return clbError({
+      type: 'KeyError',
+      message: 'Missing `' + key + '` key in config',
+      data: {
+        config: config
+      }
+    });
+  }
+
+  /**
+   * Ensure that all parameters listed after config are presents.
+   * @memberof module:clb-automator.clbAutomator
+   * @param  {object} config task descriptor
+   * @return {object} created entities
+   */
+  function ensureParameters(config) {
+    var parameters = Array.prototype.splice(1);
+    for (var p in parameters) {
+      if (angular.isUndefined(parameters[p])) {
+        return $q.reject(missingDataError(p, config));
+      }
+    }
+    return $q.when(config);
+  }
+
+  /**
+   * Return an object that only contains attributes
+   * from the `attrs` list.
+   *
+   * @memberof module:clb-automator.clbAutomator
+   * @param  {object} config key-value store
+   * @param  {Array} attrs   a list of keys to extract from `config`
+   * @return {object}        key-value store containing only keys from attrs
+   *                         found in `config`
+   */
+  function extractAttributes(config, attrs) {
+    var r = {};
+    angular.forEach(attrs, function(a) {
+      if (angular.isDefined(config[a])) {
+        r[a] = config[a];
+      }
+    });
+    return r;
+  }
+
+  return {
+    run: run,
+    task: task,
+    handlers: handlers,
+    registerHandler: registerHandler,
+    extractAttributes: extractAttributes,
+    ensureParameters: ensureParameters
+  };
+}
+
+angular.module('clb-automator')
+.run(['$log', '$q', 'clbCollab', 'clbAutomator', function createCollab(
+  $log,
+  $q,
+  clbCollab,
+  clbAutomator
+) {
+  clbAutomator.registerHandler('collab', createCollab);
+
+  /**
+   * @function createCollab
+   * @memberof module:clb-automator.Tasks
+   * @desc
+   *  Create a collab defined by the given options.
+   * @param {object} descriptor - Parameters to create the collab
+   * @param {string} descriptor.name - Name of the collab
+   * @param {string} descriptor.description - Description in less than 140 characters
+   *                                       of the collab
+   * @param {string} [descriptor.privacy] - 'private' or 'public'. Notes that only
+   *                                   HBP Members can create private collab
+   * @param {Array} [after] - descriptor of subtasks
+   * @return {Promise} - promise of a collab
+   */
+  function createCollab(descriptor) {
+    var attr = clbAutomator.extractAttributes(
+      descriptor,
+      ['title', 'content', 'private']
+    );
+    $log.debug('Create collab', descriptor);
+    return clbCollab.create(attr);
+  }
+}]);
+
+angular.module('clb-automator')
+.run(['$log', 'clbCollabApp', 'clbCollabNav', 'clbAutomator', 'clbStorage', function createNavItem(
+  $log,
+  clbCollabApp,
+  clbCollabNav,
+  clbAutomator,
+  clbStorage
+) {
+  clbAutomator.registerHandler('nav', createNavItem);
+
+  /**
+   * Create a new nav item.
+   * @memberof module:clb-automator.Tasks
+   * @param {object} descriptor a descriptor description
+   * @param {string} descriptor.name name of the nav item
+   * @param {Collab} descriptor.collabId collab in which to add the item in.
+   * @param {string} descriptor.app app name linked to the nav item
+   * @param {object} [context] the current run context
+   * @param {object} [context.collab] a collab instance created previously
+   * @return {Promise} promise of a NavItem instance
+   */
+  function createNavItem(descriptor, context) {
+    var collabId = function() {
+      return (descriptor && descriptor.collab) ||
+        (context && context.collab.id);
+    };
+    var findApp = function(app) {
+      return clbCollabApp.findOne({title: app});
+    };
+    var createNav = function(app) {
+      return clbCollabNav.getRoot(collabId())
+      .then(function(parentItem) {
+        return clbCollabNav.addNode(collabId(),
+          new clbCollabNav.NavItem({
+            collab: collabId(),
+            name: descriptor.name,
+            appId: app.id,
+            parentId: parentItem.id
+          })
+        );
+      });
+    };
+    var linkToStorage = function(nav) {
+      if (!descriptor.entity) {
+        return nav;
+      }
+      var setLink = function(entity) {
+        return clbStorage.setContextMetadata(entity, nav.context)
+        .then(function() {
+          return nav;
+        });
+      };
+      // It might be the name used in a previous storage task.
+      if (context && context.storage && context.storage[descriptor.entity]) {
+        return setLink(context.storage[descriptor.entity]);
+      }
+      return clbStorage.getEntity(descriptor.entity).then(setLink);
+    };
+
+    $log.debug('Create nav item', descriptor, context);
+
+    return clbAutomator.ensureParameters(descriptor, 'app', 'name')
+    .then(function() {
+      return findApp(descriptor.app)
+      .then(createNav)
+      .then(linkToStorage);
+    });
+  }
+}]);
+
+angular.module('clb-automator')
+.run(['$log', '$q', 'clbAuthHttp', 'clbEnv', 'clbStorage', 'clbError', 'clbAutomator', 'clbCollabNav', 'clbCollabApp', function createOverview(
+  $log, $q, clbAuthHttp, clbEnv, clbStorage, clbError,
+  clbAutomator, clbCollabNav, clbCollabApp
+) {
+  clbAutomator.registerHandler('overview', overview);
+
+  /**
+   * Set the content of the overview page.
+   * If an 'entity' is specified, it will use the content of that storage file
+   * If an 'app' name is specified, it will use that app for the overview page
+   *
+   * The collab is indicated either by an id in `descriptor.collab` or a
+   * collab object in `context.collab`.
+   *
+   * @memberof module:clb-automator.Tasks
+   * @param {object} descriptor the task configuration
+   * @param {object} [descriptor.collab] id of the collab
+   * @param {string} [descriptor.entity] either a label that can be found in
+   *                 ``context.entities`` or a FileEntity UUID
+   * @param {string} [descriptor.app] the name of an application
+   * @param {object} context the current task context
+   * @param {object} [context.collab] the collab in which entities will be copied
+   * @param {object} [context.entities] a list of entities to lookup in for
+   *                   descriptor.entity value
+   * @return {object} created entities where keys are the same as provided in
+   *                  config.storage
+   */
+  function overview(descriptor, context) {
+    $log.debug('Set the content of the overview page');
+    var collabId = descriptor.collab || context.collab.id;
+    var createContentFile = function(overview, descriptor, context) {
+      $log.debug('Fill overview page with content from entity');
+
+      return fetchSourceContent(descriptor, context)
+        .then(function(source) {
+          return clbAuthHttp.post(
+            clbEnv.get('api.richtext.v0') + '/richtext/', {
+              ctx: overview.context,
+              raw: source
+            });
+        });
+    };
+
+    var updateAppId = function(overview, descriptor) {
+      $log.debug('Replace the overview page application id');
+
+      return clbCollabApp.findOne({title: descriptor.app})
+        .then(function(app) {
+          overview.update({appId: app.id});
+          return clbCollabNav.saveNode(collabId, overview);
+        });
+    };
+
+    return clbCollabNav
+      .getRoot(collabId)
+      .then(function(rootNav) {
+        var overview = rootNav.children[0];
+
+        var updateOverview = descriptor.app ?
+          updateAppId(overview, descriptor) :
+          createContentFile(overview, descriptor, context);
+
+        return updateOverview.then(function() {
+          return overview;
+        });
+      });
+  }
+
+  /**
+   * Download file entity content.
+   *
+   * @param {object} descriptor the task configuration
+   * @param {string} descriptor.entity either the label to find in
+   *                 ``context.entities`` or a the entity UUID.
+   * @param {object} context the current task context
+   * @param {object} context.entities optional entities in which to lookup for one
+   * @return {Promise} the promise of the entity content string
+   * @private
+   */
+  function fetchSourceContent(descriptor, context) {
+    var uuid;
+    if (context && context.entities && context.entities[descriptor.entity]) {
+      uuid = context.entities[descriptor.entity].uuid;
+    } else {
+      uuid = descriptor.entity;
+    }
+    return clbStorage.getContent(uuid);
+  }
+}]);
+
+angular.module('clb-automator')
+.run(['$log', '$q', 'clbError', 'clbAutomator', 'clbStorage', function createStorage(
+  $log,
+  $q,
+  clbError,
+  clbAutomator,
+  clbStorage
+) {
+  clbAutomator.registerHandler('storage', storage);
+
+  /**
+   * Copy files and folders to the destination collab storage.
+   *
+   * @memberof module:clb-automator.Tasks
+   * @param {object} descriptor the task configuration
+   * @param {object} descriptor.storage a object where keys are the file path in the
+   *                                new collab and value are the UUID of the
+   *                                entity to copy at this path.
+   * @param {object} [descriptor.collab] id of the collab
+   * @param {object} context the current task context
+   * @param {object} [context.collab] the collab in which entities will be copied
+   * @return {object} created entities where keys are the same as provided in
+   *                  config.storage
+   */
+  function storage(descriptor, context) {
+    return clbAutomator.ensureParameters(
+      descriptor, 'entities'
+    ).then(function() {
+      return clbStorage
+        .getEntity({collab: descriptor.collab || context.collab.id})
+        .then(function(projectEntity) {
+          var promises = {};
+          angular.forEach(descriptor.entities, function(value, name) {
+            if (angular.isString(value)) {
+              $log.debug("Copy entity with UUID", value);
+              promises[name] = (
+                clbStorage.copy(value, projectEntity.uuid));
+            } else {
+              $log.warn('Invalid configuration for storage task', descriptor);
+            }
+          });
+          return $q.all(promises);
+        });
+    });
+  }
+}]);
+
+angular.module('clb-ui-identity')
+.directive('clbUserAvatar', clbUserAvatar);
+
+/**
+ * Display an square icon for a user.
+ *
+ * Attributes
+ * ----------
+ *
+ * ==================  ====================================
+ * Name                Description
+ * ==================  ====================================
+ * clb-user            The ClbUser instance to display
+ * ==================  ====================================
+ *
+ * @namespace clbUserAvatar
+ * @memberof module:clb-ui-identity
+ * @return {Object} Directive Descriptor
+ * @example <caption>Display user avatar</caption>
+ * <clb-user-avatar clb-user="vm.currentUser"></clb-user-avatar>
+ */
+function clbUserAvatar() {
+  'use strict';
+  return {
+    restrict: 'EA',
+    scope: {
+      user: '=clbUser'
+    },
+    template:'<img class=clb-user-avatar-img ng-if=user.picture ng-src={{user.picture}}><svg class=clb-user-avatar-icon viewBox="0 0 40 40" preserveAspectRatio="xMidYMid meet" ng-cloak ng-if=!user.picture ng-class="\'clb-user-avatar-icon-hue-\' + hueNumber"><rect x=0 y=0 width=40 height=40 class=clb-user-avatar-icon-fill></rect><text x=50% y=58% font-size=26px class=clb-user-avatar-icon-text dominant-baseline=middle text-anchor=middle>{{char}}</text></svg>',
+    link: function(scope, elt) {
+      elt.addClass('clb-user-avatar');
+      scope.$watch('user', function() {
+        if (!scope.user || !scope.user.displayName) {
+          return;
+        }
+
+        if (scope.user.displayName) {
+          scope.char = scope.user.displayName[0].toUpperCase();
+        }
+        // Define a hue index to generate a custom class
+        var words = scope.user.displayName.split(/\s+/, 2);
+        var initials = (String(words[0][0]) +
+          (words[1] ? words[1][0] : words[0][1]))
+          .toUpperCase();
+        scope.hueNumber = (13 * initials.charCodeAt(0) * 23 *
+          initials.charCodeAt(1)) % 7 + 1;
+      });
+    }
+  };
+}
+
+angular.module('clb-ui-identity')
+.directive('clbUsercardPopover', clbUsercardPopoverDirective);
+
+/**
+ * Display the user summary in a popover element.
+ *
+ * Only one of those can be open at any time.
+ *
+ * =======================================  =========================================
+ * Name                  Description
+ * =======================================  =========================================
+ * {string|HBPUser} clb-usercard-popover    The ClbUser instance to display or its ID
+ * =======================================  =========================================
+ *
+ * @namespace clbUsercardPopoverDirective
+ * @memberof module:clb-ui-identity
+ * @param  {object} $log               DI
+ * @param  {object} $q                 DI
+ * @param  {object} clbUser            DI
+ * @param  {object} clbUsercardPopover DI
+ * @return {object}                    Directive Descriptor
+ */
+function clbUsercardPopoverDirective(
+  $log,
+  $q,
+  clbUser,
+  clbUsercardPopover
+) {
+  return {
+    restrict: 'A',
+    scope: {
+      user: '=clbUsercardPopover'
+    },
+    transclude: true,
+    template:'<span class=clb-usercard-popover popover-append-to-body=vm.popover.appendToBody popover-is-open=vm.popover.isOpen popover-trigger=outsideClick ng-click=togglePopover($event) uib-popover-template="\'usercard-popover.tpl.html\'" ng-transclude></span>',
+    controller: function() {
+      var vm = this;
+      vm.popover = {
+        isOpen: false,
+        user: null,
+        appendToBody: true
+      };
+
+      if (vm.user && vm.user.displayName) {
+        vm.popover.user = vm.user;
+      } else {
+        clbUser.get(vm.user).then(function(user) {
+          vm.popover.user = user;
+        }).catch(function(err) {
+          $log.error('Unable to get user with id', vm.user, err);
+        });
+      }
+    },
+    controllerAs: 'vm',
+    bindToController: true,
+    link: function(scope, elt, attrs, vm) {
+      var unbind = scope.$on('clbUsercardPopover.open',
+        function(event, element) {
+          vm.popover.isOpen = (element === elt);
+        });
+
+      scope.$on('$destroy', unbind);
+
+      scope.togglePopover = function($event, action) {
+        if ($event.isDefaultPrevented()) {
+          return;
+        }
+        $event.preventDefault();
+        if (action === 'close') {
+          return clbUsercardPopover.open(null);
+        }
+        clbUsercardPopover.open(vm.popover.isOpen ? null : elt);
+      };
+    }
+  };
+}
+
+angular.module('clb-ui-identity')
+.factory('clbUsercardPopover', clbUserCardPopoverService);
+
+/**
+ * A singleton to manage clb-usercard-popover instances
+ * @namespace clbUserCardPopoverService
+ * @memberof module:clb-ui-identity
+ * @private
+ * @param {object} $rootScope DI
+ * @return {object} factory descriptor
+ */
+function clbUserCardPopoverService($rootScope) {
+  return {
+    open: function(element) {
+      $rootScope.$broadcast('clbUsercardPopover.open', element);
+    }
+  };
+}
+
+angular.module('clb-ui-identity')
+.run(['$templateCache', function($templateCache) {
+  // During the build, templateUrl will be replaced by the inline template.
+  // We need to inject it in template cache as it is used for displaying
+  // the tooltip. Does it smell like a hack? sure, it is a hack!
+  var injector = {
+    template:'<clb-usercard clb-user=vm.popover.user ng-click="togglePopover($event, \'close\')"></clb-usercard>'
+  };
+  // If defined, it means that the template has been inlined during build.
+  if (injector.template) {
+    $templateCache.put('usercard-popover.tpl.html', injector.template);
+  }
+}]);
+
+angular.module('clb-ui-identity')
+.directive('clbUsercard', clbUsercard)
+.run(clbUsercardCacheTemplate);
+
+/**
+ * Display general user informations.
+ *
+ * Attributes
+ * ----------
+ *
+ * ==================  ====================================
+ * Name                Description
+ * ==================  ====================================
+ * clb-user            The ClbUser instance to display
+ * clb-template        URL of a custom template to use
+ * ==================  ====================================
+ *
+ *
+ * @param  {object} lodash Angular DI
+ * @memberof module:clb-ui-identity
+ * @return {object}        Directive Descriptor
+ * @example <caption>Display user informations</caption>
+ * <clb-usercard clb-user="vm.currentUser"></clb-usercard>
+ * @example <caption>Using a different templates</caption>
+ * <clb-usercard clb-user="vm.currentUser" clb-template="custom/simple-user.html">
+ * </clb-usercard>
+ */
+function clbUsercard(lodash) {
+  'use strict';
+  return {
+    restrict: 'EA',
+    scope: {
+      user: '=clbUser'
+    },
+    templateUrl: function(tElement, tAttrs) {
+      return tAttrs.clbTemplate || 'usercard.directive.html';
+    },
+    link: {
+      pre: function(scope) {
+        scope.$watch('user', function(newValue) {
+          scope.institution = newValue &&
+            lodash.find(newValue.institutions, 'primary');
+          scope.email = newValue &&
+            lodash(newValue.emails).filter('primary').map('value').first();
+          scope.phone = newValue &&
+            lodash(newValue.phones).filter('primary').map('value').first();
+          scope.ims = newValue && newValue.ims;
+        });
+      }
+    }
+  };
+}
+
+/**
+ * During the build, templateUrl will be replaced by the inline template.
+ * We need to inject it in template cache as it is used for displaying
+ * the tooltip. Does it smell like a hack? sure, it is a hack!
+ * @param  {object} $templateCache Angular DI
+ * @private
+ */
+function clbUsercardCacheTemplate($templateCache) {
+  //
+  var injector = {
+    template:'<div ng-if=user class="clb-usercard clb-card clb-card-default"><h3 class=clb-usercard-header><span class=clb-usercard-name>{{user.displayName}}</span> <span class="text-muted clb-usercard-username" uib-popover={{user.id}} popover-trigger=mouseenter popover-popup-close-delay=2000 popover-placement=right>@{{user.username}}</span></h3><div class=clb-usercard-pix><clb-user-avatar clb-user=user></clb-user-avatar></div><div class=clb-usercard-institution ng-if=institution><span class=clb-usercard-institution-title>{{institution.title}}</span> <span ng-if="institution.title && (institution.name || institution.department)">,</span> <span class=clb-usercard-institution-name>{{institution.name}}</span> <span ng-if="institution.name && institution.department">,</span> <span class=clb-usercard-institution-dept>{{institution.department}}</span></div><div class=clb-usercard-contact><a class="clb-usercard-contact-item clb-usercard-email" target=_top href=mailto:{{email}} ng-if=email><span class="glyphicon glyphicon-envelope"></span> {{email}}</a> <span class="clb-usercard-contact-item clb-usercard-phone" ng-if=phone><span class="glyphicon glyphicon-phone"></span> {{phone}}</span> <span class="clb-usercard-contact-item clb-usercard-im-list" ng-if=ims.length><span class="glyphicon glyphicon-bullhorn"></span> <span ng-repeat-start="im in ims"></span> <span class=clb-usercard-im>{{im.value}}({{im.type}})</span> <span ng-repeat-end></span></span></div></div>'
+  };
+  // If defined, it means that the template has been inlined during build.
+  if (injector.template) {
+    $templateCache.put('usercard.directive.html', injector.template);
+  }
+}
+
+/**
+ * @namespace clbFormControlFocus
+ * @memberof module:clb-ui-form
+ * @desc
+ * The ``clbFormControlFocus`` Directive mark a form element as the one that
+ * should receive the focus first.
+ * @example <caption>Give the focus to the search field</caption>
+ * angular.module('exampleApp', ['clb-ui-form']);
+ *
+ * // HTML snippet:
+ * // <form ng-app="exampleApp"><input type="search" clb-ui-form-control-focus></form>
+ */
+angular.module('clb-ui-form')
+.directive('clbFormControlFocus', ['$timeout', function clbFormControlFocus($timeout) {
+  return {
+    type: 'A',
+    link: function formControlFocusLink(scope, elt) {
+      $timeout(function() {
+        elt[0].focus();
+      }, 0, false);
+    }
+  };
+}]);
+
+/**
+ * @namespace clbFormGroupState
+ * @memberof module:clb-ui-form
+ * @desc
+ * ``clbFormGroupState`` directive flag the current form group with
+ * the class has-error or has-success depending on its form field
+ * current state.
+ *
+ * @example
+ * <caption>Track a field validity at the ``.form-group`` level</caption>
+ * angular.module('exampleApp', ['hbpCollaboratory']);
+ */
+angular.module('clb-ui-form')
+.directive('clbFormGroupState', function formGroupState() {
+  return {
+    type: 'A',
+    scope: {
+      model: '=clbFormGroupState'
+    },
+    link: function formGroupStateLink(scope, elt) {
+      scope.$watchGroup(['model.$touched', 'model.$valid'], function() {
+        if (!scope.model) {
+          return;
+        }
+        elt.removeClass('has-error', 'has-success');
+        if (!scope.model.$touched) {
+          return;
+        }
+        if (scope.model.$valid) {
+          elt.addClass('has-success');
+        } else {
+          elt.addClass('has-error');
+        }
+      }, true);
+    }
+  };
+});
 
 })();
 

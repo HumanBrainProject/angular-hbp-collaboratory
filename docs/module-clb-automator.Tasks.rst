@@ -85,7 +85,7 @@ collab object in `context.collab`.
     :param object context: the current task context
     :param object context.collab: the collab in which entities will be copied
     :param object context.entities: a list of entities to lookup in for
-                      descriptor.entiry value
+                      descriptor.entity value
     :return object: created entities where keys are the same as provided in
                      config.storage
     

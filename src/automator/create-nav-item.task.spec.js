@@ -47,8 +47,8 @@ describe('nav task handler', function() {
         context: 'bbb-ccc'
       },
       entity: {
-        _uuid: 'aaa',
-        _entityType: 'file'
+        uuid: 'aaa',
+        entity_type: 'file'
       }
     };
   });
@@ -114,13 +114,13 @@ describe('nav task handler', function() {
     it('can use a uuid provided in the descriptor', inject(function($q) {
       spyOn(storage, 'getEntity').and.returnValue($q.when(data.entity));
       var descriptor = angular.extend({
-        entity: data.entity._uuid,
+        entity: data.entity.uuid,
         collab: data.collab.id
       }, data.mandatory);
       createNavItem(descriptor);
       scope.$digest();
       expect(storage.getEntity)
-      .toHaveBeenCalledWith(data.entity._uuid);
+      .toHaveBeenCalledWith(data.entity.uuid);
       expect(storage.setContextMetadata)
       .toHaveBeenCalledWith(data.entity, data.navItem.context);
     }));

@@ -12,7 +12,6 @@ Contents
 
    
    module-clb-app
-   module-clb-auth
    module-clb-automator
    module-clb-collab
    module-clb-context-data

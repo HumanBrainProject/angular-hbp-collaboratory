@@ -130,7 +130,7 @@ angular.module('customCollabApp', [
 
   $scope.$watch('vm.selectedCollabId', function(id) {
     vm.loading = true;
-    clbStorage.getEntity({collab: id}).then(function(collabStorage) {
+    clbStorage.getCollabHome({collab_id: id}).then(function(collabStorage) {
       vm.collabStorage = collabStorage;
     }, function() {
       vm.collabStorage = null;  
@@ -158,7 +158,8 @@ angular.clbBootstrap('customCollabApp', {env: {
       v0: 'https://services.humanbrainproject.eu/collab/v0'
     },
     document: {
-      v0: 'https://services.humanbrainproject.eu/document/v0/api'
+      v0: 'https://services.humanbrainproject.eu/document/v0/api',
+      v1: 'https://services.humanbrainproject.eu/storage/v1/api'
     },
     user: {
       v1: 'https://services.humanbrainproject.eu/idm/v1/api',
