@@ -1,7 +1,6 @@
-/* eslint max-lines:0 camelcase:0 */
-
-angular.module('clb-storage')
-.factory('clbStorage', clbStorage);
+angular
+  .module('clb-storage')
+  .factory('clbStorage', clbStorage);
 
 /**
  * @typedef {object} EntityDescriptor
@@ -42,7 +41,6 @@ function clbStorage(
   clbUser,
   clbResultSet
 ) {
-
   var collabUrl = clbEnv.get('api.collab.v0');
   var baseUrl = clbEnv.get('api.document.v1');
   var maxFileSize = clbEnv.get('hbpFileStore.maxFileUploadSize', 41943040);
@@ -193,7 +191,6 @@ function clbStorage(
     }).catch(clbError.rejectHttpError);
   }
 
-
   /**
    * Retrieve the key to lookup for on entities given the ctx
    * @memberof module:clb-storage.clbStorage
@@ -343,7 +340,7 @@ function clbStorage(
    */
   function getCollabHome(collabId) {
     return clbAuthHttp.get(baseUrl + '/project/', {
-      params: { collab_id: collabId }
+      params: {collab_id: collabId}
     }).then(function(response) {
       return response.data;
     }).catch(clbError.rejectHttpError);
@@ -458,11 +455,10 @@ function clbStorage(
    * @return {object} Contains ``{boolean} canRead``, ``{boolean} canWrite``, ``{boolean} canManage``
    */
 
-  /** entity/uuid/collab return dictionary collab_id (int) **/
   function getUserAccess(entity) {
     return $q.all({
       // to check user access get collab id and check permission as done in collaboratory-frontend
-      collab: clbAuthHttp.get(baseUrl + '/entity/' + entity.uuid + '/collab/'),
+      collab: clbAuthHttp.get(baseUrl + '/entity/' + entity.uuid + '/collab/')
     })
     .then(function(aggregatedData) {
       var collab = aggregatedData.collab;
@@ -474,7 +470,6 @@ function clbStorage(
         };
         return access;
       });
-
     }).catch(clbError.rejectHttpError);
   }
 
@@ -567,7 +562,6 @@ function clbStorage(
     }
     if (accept && accept.length > 0) {
       return 'entity_type=' + accept.join('+');
-
     }
   }
 

@@ -28,7 +28,6 @@ describe('clbFileBrowser', function() {
     clbStorage,
     clbResultSet
   ) {
-    
     $rootScope = _$rootScope_;
     $compile = _$compile_;
     $q = _$q_;
@@ -129,7 +128,7 @@ describe('clbFileBrowser', function() {
     });
   });
 
-  describe('when clbEntity is a file', function() {
+  describe('when clbEntit yis a file', function() {
     var compile;
     beforeEach(function() {
       spyOn(storage, 'getEntity')

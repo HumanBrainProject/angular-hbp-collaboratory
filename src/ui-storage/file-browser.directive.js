@@ -236,7 +236,6 @@ function clbFileBrowser(lodash) {
      */
     function update(entity) {
       return nearestContainer(entity).then(function(container) {
-
         vm.isLoading = true;
         vm.currentEntity = container;
         vm.selectedEntity = entity;
