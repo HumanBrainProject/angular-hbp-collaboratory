@@ -131,9 +131,10 @@ angular.module('customCollabApp', [
   $scope.$watch('vm.selectedCollabId', function(id) {
     vm.loading = true;
     clbStorage.getCollabHome(id).then(function(collabStorage) {
-      vm.collabStorage = collabStorage;
+      // only one result expected
+      vm.collabStorage = collabStorage.results.length == 1 ? collabStorage.results[0] : null;
     }, function() {
-      vm.collabStorage = null;  
+      vm.collabStorage = null;
     })
     .finally(function() {
       vm.loading = false;
