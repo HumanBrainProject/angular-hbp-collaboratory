@@ -30,12 +30,14 @@
 clbApp.$inject = ['$log', '$q', '$rootScope', '$timeout', '$window', 'clbError'];
 authProvider.$inject = ['clbAppHello', 'clbEnvProvider'];
 clbAuthHttp.$inject = ['$http', 'clbAuth'];
+interceptorConfig.$inject = ['$httpProvider'];
+httpRequestInterceptor.$inject = ['$q'];
 clbAutomator.$inject = ['$q', '$log', 'clbError'];
-clbCtxData.$inject = ['clbAuthHttp', '$q', 'uuid4', 'clbEnv', 'clbError'];
 clbCollabTeamRole.$inject = ['clbAuthHttp', '$log', '$q', 'clbEnv', 'clbError'];
 clbCollabTeam.$inject = ['clbAuthHttp', '$log', '$q', 'lodash', 'clbEnv', 'clbError', 'clbCollabTeamRole', 'clbUser'];
 clbCollab.$inject = ['$log', '$q', '$cacheFactory', 'clbAuthHttp', 'lodash', 'clbContext', 'clbEnv', 'clbError', 'clbResultSet', 'clbUser', 'ClbCollabModel', 'ClbContextModel'];
 clbContext.$inject = ['clbAuthHttp', '$q', 'clbError', 'clbEnv', 'ClbContextModel'];
+clbCtxData.$inject = ['clbAuthHttp', '$q', 'uuid4', 'clbEnv', 'clbError'];
 clbEnv.$inject = ['$injector'];
 clbError.$inject = ['$q'];
 clbGroup.$inject = ['$rootScope', '$q', 'clbAuthHttp', '$cacheFactory', 'lodash', 'clbEnv', 'clbError', 'clbResultSet', 'clbIdentityUtil'];
@@ -117,6 +119,14 @@ angular.module('clb-app', ['clb-env', 'clb-error'])
 .constant('clbAppHello', hello);
 
 /**
+ * @module clb-auth
+ * @desc
+ * ``clb-auth`` provides a library based on hello.js
+ * to authenticate into the Collaboratory.
+ */
+angular.module('clb-auth', ['clb-env']);
+
+/**
  * @module clb-automator
  * @desc
  * `clb-automator` module provides an automation library for the Collaboratory
@@ -136,14 +146,6 @@ angular.module('clb-automator', [
 ]);
 
 /**
- * Provides a key value store where keys are context UUID
- * and values are string.
- *
- * @module clb-context-data
- */
-angular.module('clb-ctx-data', ['uuid4', 'clb-app', 'clb-env', 'clb-error']);
-
-/**
  * @module clb-collab
  * @desc
  * Contain services to interact with collabs (e.g.: retriving collab informations or
@@ -158,6 +160,14 @@ angular.module('clb-collab', [
   'clb-rest',
   'uuid4'
 ]);
+
+/**
+ * Provides a key value store where keys are context UUID
+ * and values are string.
+ *
+ * @module clb-context-data
+ */
+angular.module('clb-ctx-data', ['uuid4', 'clb-app', 'clb-env', 'clb-error']);
 
 /**
  * @module clb-env
@@ -258,16 +268,16 @@ angular.module('clb-ui-error', [
 angular.module('clb-ui-form', []);
 
 /**
- * Provides a simple loading directive.
- * @module clb-ui-loading
- */
-angular.module('clb-ui-loading', []);
-
-/**
  * Provides UI widgets around user and groups.
  * @module clb-ui-identity
  */
 angular.module('clb-ui-identity', ['lodash', 'clb-identity']);
+
+/**
+ * Provides a simple loading directive.
+ * @module clb-ui-loading
+ */
+angular.module('clb-ui-loading', []);
 
 /**
  * The ``clb-ui-storage`` module provides Angular directive to work
@@ -783,6 +793,57 @@ function clbBootstrap(module, options) {
     }
   }];
   return deferredBootstrapper.bootstrap(options);
+}
+
+/* global hello, document */
+angular.module('clb-auth')
+.config(interceptorConfig)
+.factory('httpRequestInterceptor', httpRequestInterceptor)
+.provider('clbAuth', clbAuth);
+
+function interceptorConfig($httpProvider) {
+  $httpProvider.interceptors.push('httpRequestInterceptor');
+}
+
+function httpRequestInterceptor($q) {
+  return {
+    request: function(requestConfig) {
+      // TODO: get token from somewhere
+      var token = 'TOKEN';
+      requestConfig.headers.Authorization = 'Bearer ' + token;
+      return requestConfig;
+    },
+    responseError: function(rejection) {
+      // TODO: check bbpOidcClient...
+      return $q.reject(rejection);
+    }
+  };
+}
+
+function clbAuth() {
+  /* eslint camelcase:[2, {properties: "never"}] */
+  hello.init({
+    hbp: {
+      oauth: {
+        version: 2,
+        auth: 'https://services.humanbrainproject.eu/oidc/authorize',
+        grant: 'https://services.humanbrainproject.eu/oidc/token'
+      },
+      scope: {
+        basic: 'openid profiles'
+      },
+      scope_delim: ' ',
+      get: {
+        me: 'userinfo'
+      },
+      base: 'https://services.humanbrainproject.eu/oidc/'
+    }
+  }, {client_id: 'portal-client', redirect_uri: document.URL});
+  return {
+    $get: function() {
+      return hello('hbp');
+    }
+  };
 }
 
 angular.module('clb-automator')
@@ -1382,117 +1443,6 @@ angular.module('clb-automator')
     });
   }
 }]);
-
-angular.module('clb-ctx-data')
-.factory('clbCtxData', clbCtxData);
-
-/**
- * A service to retrieve data for a given ctx. This is a convenient
- * way to store JSON data for a given context. Do not use it for
- * Sensitive data. There is no data migration functionality available, so if
- * the expected data format change, you are responsible to handle the old
- * format on the client side.
- *
- * @namespace clbCtxData
- * @memberof clb-ctx-data
- * @param  {object} clbAuthHttp    Angular DI
- * @param  {object} $q       Angular DI
- * @param  {object} uuid4     Angular DI
- * @param  {object} clbEnv   Angular DI
- * @param  {object} clbError Angular DI
- * @return {object}          Angular Service Descriptor
- */
-function clbCtxData(clbAuthHttp, $q, uuid4, clbEnv, clbError) {
-  var configUrl = clbEnv.get('api.collab.v0') + '/config/';
-  return {
-    /**
-     * Return an Array or an Object containing the data or
-     * ``undefined`` if there is no data stored.
-     * @memberof module:clb-ctx-data.clbCtxData
-     * @param  {UUID} ctx   the current context UUID
-     * @return {Promise}    fullfil to {undefined|object|array}
-     */
-    get: function(ctx) {
-      if (!uuid4.validate(ctx)) {
-        return $q.reject(invalidUuidError(ctx));
-      }
-      return clbAuthHttp.get(configUrl + ctx + '/')
-      .then(function(res) {
-        try {
-          return angular.fromJson(res.data.content);
-        } catch (ex) {
-          return $q.reject(clbError.error({
-            type: 'InvalidData',
-            message: 'Cannot parse JSON string: ' + res.data.content,
-            code: -2,
-            data: {
-              cause: ex
-            }
-          }));
-        }
-      })
-      .catch(function(err) {
-        if (err.code === 404) {
-          return;
-        }
-        return clbError.rejectHttpError(err);
-      });
-    },
-
-    /**
-     * @memberof module:clb-ctx-data.clbCtxData
-     * @param  {UUID} ctx The context UUID
-     * @param  {array|object|string|number} data JSON serializable data
-     * @return {Promise} Return the data when fulfilled
-     */
-    save: function(ctx, data) {
-      if (!uuid4.validate(ctx)) {
-        return $q.reject(invalidUuidError(ctx));
-      }
-      return clbAuthHttp.put(configUrl + ctx + '/', {
-        context: ctx,
-        content: angular.toJson(data)
-      }).then(function() {
-        return data;
-      })
-      .catch(clbError.rejectHttpError);
-    },
-
-    /**
-     * @memberof module:clb-ctx-data.clbCtxData
-     * @param  {UUID} ctx The context UUID
-     * @return {Promise}  fulfilled once deleted
-     */
-    delete: function(ctx) {
-      if (!uuid4.validate(ctx)) {
-        return $q.reject(invalidUuidError(ctx));
-      }
-      return clbAuthHttp.delete(configUrl + ctx + '/')
-      .then(function() {
-        return true;
-      })
-      .catch(clbError.rejectHttpError);
-    }
-  };
-
-  /**
-   * Generate the appropriate error when context is invalid.
-   * @param  {any} badCtx  the wrong ctx
-   * @return {HbpError}    The Error
-   */
-  function invalidUuidError(badCtx) {
-    return clbError.error({
-      type: 'InvalidArgument',
-      message: 'Provided ctx must be a valid UUID4 but is: ' + badCtx,
-      data: {
-        argName: 'ctx',
-        argPosition: 0,
-        argValue: badCtx
-      },
-      code: -3
-    });
-  }
-}
 
 /* eslint camelcase: 0 */
 
@@ -2567,6 +2517,117 @@ function clbContext(clbAuthHttp, $q, clbError, clbEnv, ClbContextModel) {
       return clbError.rejectHttpError(res);
     });
     return ongoingContextRequests[uuid];
+  }
+}
+
+angular.module('clb-ctx-data')
+.factory('clbCtxData', clbCtxData);
+
+/**
+ * A service to retrieve data for a given ctx. This is a convenient
+ * way to store JSON data for a given context. Do not use it for
+ * Sensitive data. There is no data migration functionality available, so if
+ * the expected data format change, you are responsible to handle the old
+ * format on the client side.
+ *
+ * @namespace clbCtxData
+ * @memberof clb-ctx-data
+ * @param  {object} clbAuthHttp    Angular DI
+ * @param  {object} $q       Angular DI
+ * @param  {object} uuid4     Angular DI
+ * @param  {object} clbEnv   Angular DI
+ * @param  {object} clbError Angular DI
+ * @return {object}          Angular Service Descriptor
+ */
+function clbCtxData(clbAuthHttp, $q, uuid4, clbEnv, clbError) {
+  var configUrl = clbEnv.get('api.collab.v0') + '/config/';
+  return {
+    /**
+     * Return an Array or an Object containing the data or
+     * ``undefined`` if there is no data stored.
+     * @memberof module:clb-ctx-data.clbCtxData
+     * @param  {UUID} ctx   the current context UUID
+     * @return {Promise}    fullfil to {undefined|object|array}
+     */
+    get: function(ctx) {
+      if (!uuid4.validate(ctx)) {
+        return $q.reject(invalidUuidError(ctx));
+      }
+      return clbAuthHttp.get(configUrl + ctx + '/')
+      .then(function(res) {
+        try {
+          return angular.fromJson(res.data.content);
+        } catch (ex) {
+          return $q.reject(clbError.error({
+            type: 'InvalidData',
+            message: 'Cannot parse JSON string: ' + res.data.content,
+            code: -2,
+            data: {
+              cause: ex
+            }
+          }));
+        }
+      })
+      .catch(function(err) {
+        if (err.code === 404) {
+          return;
+        }
+        return clbError.rejectHttpError(err);
+      });
+    },
+
+    /**
+     * @memberof module:clb-ctx-data.clbCtxData
+     * @param  {UUID} ctx The context UUID
+     * @param  {array|object|string|number} data JSON serializable data
+     * @return {Promise} Return the data when fulfilled
+     */
+    save: function(ctx, data) {
+      if (!uuid4.validate(ctx)) {
+        return $q.reject(invalidUuidError(ctx));
+      }
+      return clbAuthHttp.put(configUrl + ctx + '/', {
+        context: ctx,
+        content: angular.toJson(data)
+      }).then(function() {
+        return data;
+      })
+      .catch(clbError.rejectHttpError);
+    },
+
+    /**
+     * @memberof module:clb-ctx-data.clbCtxData
+     * @param  {UUID} ctx The context UUID
+     * @return {Promise}  fulfilled once deleted
+     */
+    delete: function(ctx) {
+      if (!uuid4.validate(ctx)) {
+        return $q.reject(invalidUuidError(ctx));
+      }
+      return clbAuthHttp.delete(configUrl + ctx + '/')
+      .then(function() {
+        return true;
+      })
+      .catch(clbError.rejectHttpError);
+    }
+  };
+
+  /**
+   * Generate the appropriate error when context is invalid.
+   * @param  {any} badCtx  the wrong ctx
+   * @return {HbpError}    The Error
+   */
+  function invalidUuidError(badCtx) {
+    return clbError.error({
+      type: 'InvalidArgument',
+      message: 'Provided ctx must be a valid UUID4 but is: ' + badCtx,
+      data: {
+        argName: 'ctx',
+        argPosition: 0,
+        argValue: badCtx
+      },
+      code: -3
+    });
   }
 }
 
@@ -4266,10 +4327,9 @@ function clbResultSet(clbAuthHttp, $q, clbError) {
   }
 }
 
-/* eslint max-lines:0 camelcase:0 */
-
-angular.module('clb-storage')
-.factory('clbStorage', clbStorage);
+angular
+  .module('clb-storage')
+  .factory('clbStorage', clbStorage);
 
 /**
  * @typedef {object} EntityDescriptor
@@ -4310,7 +4370,6 @@ function clbStorage(
   clbUser,
   clbResultSet
 ) {
-
   var collabUrl = clbEnv.get('api.collab.v0');
   var baseUrl = clbEnv.get('api.document.v1');
   var maxFileSize = clbEnv.get('hbpFileStore.maxFileUploadSize', 41943040);
@@ -4461,7 +4520,6 @@ function clbStorage(
     }).catch(clbError.rejectHttpError);
   }
 
-
   /**
    * Retrieve the key to lookup for on entities given the ctx
    * @memberof module:clb-storage.clbStorage
@@ -4611,7 +4669,7 @@ function clbStorage(
    */
   function getCollabHome(collabId) {
     return clbAuthHttp.get(baseUrl + '/project/', {
-      params: { collab_id: collabId }
+      params: {collab_id: collabId}
     }).then(function(response) {
       return response.data;
     }).catch(clbError.rejectHttpError);
@@ -4726,15 +4784,15 @@ function clbStorage(
    * @return {object} Contains ``{boolean} canRead``, ``{boolean} canWrite``, ``{boolean} canManage``
    */
 
-  /** entity/uuid/collab return dictionary collab_id (int) **/
   function getUserAccess(entity) {
     return $q.all({
       // to check user access get collab id and check permission as done in collaboratory-frontend
-      collab: clbAuthHttp.get(baseUrl + '/entity/' + entity.uuid + '/collab/'),
+      collab: clbAuthHttp.get(baseUrl + '/entity/' + entity.uuid + '/collab/')
     })
     .then(function(aggregatedData) {
       var collab = aggregatedData.collab;
-      return clbAuthHttp.get(collabUrl + '/' + collab.data.collab_id + '/permissions/').then(function(permissions) {
+      var permissionsUrl = collabUrl + '/collab/' + collab.data.collab_id + '/permissions/';
+      return clbAuthHttp.get(permissionsUrl).then(function(permissions) {
         var access = {
           canRead: permissions.VIEW,
           canWrite: permissions.UPDATE,
@@ -4742,7 +4800,6 @@ function clbStorage(
         };
         return access;
       });
-
     }).catch(clbError.rejectHttpError);
   }
 
@@ -4758,17 +4815,30 @@ function clbStorage(
    * @memberof module:clb-storage.clbStorage
    * @param {module:clb-storage.EntityDescriptor} parent The parent entity
    * @param {object} [options] Options to make the query
-   * @param {array/string} [options.accept] Array of accepted entity_type
-   * @param {boolean|array/string} [options.acceptLink] ``true`` or an array of accepted linked entity_type
+   * @param {string} [options.accept] Accepted entity_type ('file' or 'folder')
    * @param {string} [options.sort] Property to sort on
-   * @param {string} [options.filter] The result based on Acls. Values: ``read`` (default), ``write``
-   * @param {UUID} [options.until] Fetch results until the given id (exclusive with from)
-   * @param {UUID} [options.from] Fetch results from the given id (exclusive with until)
+   * @param {int} [options.page] The number of the page to return.
    * @param {int} [options.pageSize] The number of results per page. Default is provided by the service. Set to 0 to fetch all the records.
    * @return {Promise} When fulfilled, return a paginated result set. You can also access it immediately using ``promise.instance``
    */
   function getChildren(parent, options) {
     options = angular.extend({}, options);
+
+    // warn user about unsupported options
+    if (options.accept && Array.isArray(options.accept) && options.accept.length > 0) {
+      if (options.accept.length > 1) {
+        $log.warn('Only one entity_type filter is supported.');
+      }
+      options.accept = options.accept.length > 0 ? options.accept[0] : null;
+    }
+    if (options.acceptLink) {
+      $log.warn('Links not supported in the current version, `acceptLink` argument will be ignored');
+    }
+    if (options.from || options.until) {
+      $log.warn('Pagination changed in the current version. Please use `page_size` ' +
+        'and `page` instead of `from`, `until`');
+    }
+
     var url;
     if (parent) {
       url = baseUrl + '/' + parent.entity_type + '/' +
@@ -4777,66 +4847,13 @@ function clbStorage(
       url = baseUrl + '/project/';
     }
     var params = {
-      filter: buildEntityTypeFilter(options.accept, options.acceptLink),
-      sort: options.sort ? options.sort : 'name',
-      from: options.from,
-      until: options.until,
-      access: options.access,
-      limit: options.pageSize > 0 ? options.pageSize : null
+      entity_type: options.accept ? options.accept : null,
+      ordering: options.sort ? options.sort : 'name',
+      page_size: options.pageSize > 0 ? options.pageSize : null,
+      page: options.page > 0 ? options.page : null
     };
 
-    return clbResultSet.get(clbAuthHttp.get(url, {params: params}), {
-      resultKey: 'result',
-      hasNextHandler: function(res) {
-        return Boolean(res.hasMore);
-      },
-      nextHandler: function(rs) {
-        var p = angular.extend({}, params);
-        p.from = rs.nextId;
-        return clbAuthHttp.get(url, {params: p});
-      },
-      hasPreviousHandler: function(res) {
-        return Boolean(res.hasPrevious);
-      },
-      previousHandler: function(rs) {
-        var p = angular.extend({}, params);
-        p.until = rs.previousId;
-        return clbAuthHttp.get(url, {params: p});
-      },
-      resultsFactory: function(results, rs) {
-        if (rs.hasMore) {
-          var lastItem = rs.result.pop();
-          rs.nextId = lastItem.uuid;
-        }
-        if (rs.hasPrevious) {
-          var firstItem = rs.result.shift();
-          rs.previousId = firstItem.uuid;
-        }
-      }
-    });
-  }
-
-  /**
-   * @private
-   * @param  {array/string} accept Fill this array with accepted types
-   *
-   * @param  {boolean} acceptLink Should the link be accepted as well
-   * @return {string}             a query string to append to the URL
-   */
-  function buildEntityTypeFilter(accept, acceptLink) {
-    if (acceptLink) {
-      if (acceptLink === true) {
-        acceptLink = [].concat(accept);
-      }
-      var acceptLinkLength = acceptLink.length;
-      for (var i = 0; i < acceptLinkLength; i++) {
-        acceptLink.push('link:' + acceptLink[i]);
-      }
-    }
-    if (accept && accept.length > 0) {
-      return 'entity_type=' + accept.join('+');
-
-    }
+    return clbResultSet.get(clbAuthHttp.get(url, {params: params}));
   }
 
   /**
@@ -5513,98 +5530,6 @@ angular.module('clb-ui-form')
   };
 });
 
-angular.module('clb-ui-loading')
-.directive('clbLoading', clbLoading);
-
-/**
- * The directive clbLoading displays a simple loading message. If a promise
- * is given, the loading indicator will disappear once it is resolved.
- *
- * Attributes
- * ----------
- *
- * =======================  ===================================================
- * Name                     Description
- * =======================  ===================================================
- * {Promise} [clb-promise]  Hide the loading message upon fulfilment.
- * {string} [clb-message]   Displayed loading string (default=``'loading...'``)
- * =======================  ===================================================
- *
- * @memberof module:clb-ui-loading
- * @return {object} Angular directive descriptor
- * @example <caption>Directive Usage Example</caption>
- * <hbp-loading hbp-promise="myAsyncFunc()" hbp-message="'Loading My Async Func'">
- * </hbp-loading>
- */
-function clbLoading() {
-  return {
-    restrict: 'E',
-    scope: {
-      promise: '=?clbPromise',
-      message: '=?clbMessage'
-    },
-    template:'<div class="clb-loading" ng-if="loading"><span class="glyphicon glyphicon-refresh clb-spinning"></span> {{message}}</div>',
-    link: function(scope) {
-      scope.loading = true;
-      scope.message = scope.message || 'Loading...';
-      if (scope.promise) {
-        var complete = function() {
-          scope.loading = false;
-        };
-        scope.promise.then(complete, complete);
-      }
-    }
-  };
-}
-
-angular.module('clb-ui-loading')
-.directive('clbPerformAction', clbPerformAction);
-
-/**
- * @namespace clbPerformAction
- * @memberof module:clb-ui-loading
- *
- * @desc
- * clbPerformAction directive run an action when the given control is clicked.
- * it can be added as an attribute. While the action is running, the control
- * is disabled.
- *
- * @param {function} clbPerformAction  the code to run when the button is clicked.
- *                     this function must return a promise.
- * @param {string}   clbLoadingMessage text replacement for the element content.
- * @return {object}                      Directive Descriptor
- * @example <caption>use perform action to disable a button while code is running</caption>
- * <div ng-controller="myController">
- *  <input class="btn btn-primary" type="submit" clb-perform-action="doSomething()">
- * </div>
- */
-function clbPerformAction() {
-  return {
-    restrict: 'A',
-    scope: {
-      action: '&clbPerformAction'
-    },
-    link: function(scope, element, attrs) {
-      var onComplete = function() {
-        element.html(scope.text);
-        element.attr('disabled', false);
-        element.removeClass('loading');
-      };
-      var run = function() {
-        if (scope.loadingMessage) {
-          element.html(scope.loadingMessage);
-        }
-        element.addClass('loading');
-        element.attr('disabled', true);
-        scope.action().then(onComplete, onComplete);
-      };
-      scope.loadingMessage = attrs.clbLoadingMessage;
-      scope.text = scope.text || element.html();
-      element.on('click', run);
-    }
-  };
-}
-
 angular.module('clb-ui-identity')
 .directive('clbUserAvatar', clbUserAvatar);
 
@@ -5835,6 +5760,98 @@ function clbUsercardCacheTemplate($templateCache) {
   if (injector.template) {
     $templateCache.put('usercard.directive.html', injector.template);
   }
+}
+
+angular.module('clb-ui-loading')
+.directive('clbLoading', clbLoading);
+
+/**
+ * The directive clbLoading displays a simple loading message. If a promise
+ * is given, the loading indicator will disappear once it is resolved.
+ *
+ * Attributes
+ * ----------
+ *
+ * =======================  ===================================================
+ * Name                     Description
+ * =======================  ===================================================
+ * {Promise} [clb-promise]  Hide the loading message upon fulfilment.
+ * {string} [clb-message]   Displayed loading string (default=``'loading...'``)
+ * =======================  ===================================================
+ *
+ * @memberof module:clb-ui-loading
+ * @return {object} Angular directive descriptor
+ * @example <caption>Directive Usage Example</caption>
+ * <hbp-loading hbp-promise="myAsyncFunc()" hbp-message="'Loading My Async Func'">
+ * </hbp-loading>
+ */
+function clbLoading() {
+  return {
+    restrict: 'E',
+    scope: {
+      promise: '=?clbPromise',
+      message: '=?clbMessage'
+    },
+    template:'<div class="clb-loading" ng-if="loading"><span class="glyphicon glyphicon-refresh clb-spinning"></span> {{message}}</div>',
+    link: function(scope) {
+      scope.loading = true;
+      scope.message = scope.message || 'Loading...';
+      if (scope.promise) {
+        var complete = function() {
+          scope.loading = false;
+        };
+        scope.promise.then(complete, complete);
+      }
+    }
+  };
+}
+
+angular.module('clb-ui-loading')
+.directive('clbPerformAction', clbPerformAction);
+
+/**
+ * @namespace clbPerformAction
+ * @memberof module:clb-ui-loading
+ *
+ * @desc
+ * clbPerformAction directive run an action when the given control is clicked.
+ * it can be added as an attribute. While the action is running, the control
+ * is disabled.
+ *
+ * @param {function} clbPerformAction  the code to run when the button is clicked.
+ *                     this function must return a promise.
+ * @param {string}   clbLoadingMessage text replacement for the element content.
+ * @return {object}                      Directive Descriptor
+ * @example <caption>use perform action to disable a button while code is running</caption>
+ * <div ng-controller="myController">
+ *  <input class="btn btn-primary" type="submit" clb-perform-action="doSomething()">
+ * </div>
+ */
+function clbPerformAction() {
+  return {
+    restrict: 'A',
+    scope: {
+      action: '&clbPerformAction'
+    },
+    link: function(scope, element, attrs) {
+      var onComplete = function() {
+        element.html(scope.text);
+        element.attr('disabled', false);
+        element.removeClass('loading');
+      };
+      var run = function() {
+        if (scope.loadingMessage) {
+          element.html(scope.loadingMessage);
+        }
+        element.addClass('loading');
+        element.attr('disabled', true);
+        scope.action().then(onComplete, onComplete);
+      };
+      scope.loadingMessage = attrs.clbLoadingMessage;
+      scope.text = scope.text || element.html();
+      element.on('click', run);
+    }
+  };
 }
 
 angular.module('clb-ui-storage')
@@ -6177,7 +6194,6 @@ function clbFileBrowser(lodash) {
      */
     function update(entity) {
       return nearestContainer(entity).then(function(container) {
-
         vm.isLoading = true;
         vm.currentEntity = container;
         vm.selectedEntity = entity;
