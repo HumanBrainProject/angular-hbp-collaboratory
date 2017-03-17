@@ -39,7 +39,7 @@ Describe an arbitrary entity in the storage stytem. The principal types are
 
 Properties
 ----------
-- ``UUID _uuid``: The entity UUID
-- ``string _entityType``: The entity type (e.g.: ``file``, ``folder``, ``project``)
+- ``UUID uuid``: The entity UUID
+- ``string entity_type``: The entity type (e.g.: ``file``, ``folder``, ``project``)
 
 

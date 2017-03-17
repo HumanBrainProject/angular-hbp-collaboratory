@@ -226,7 +226,7 @@ function clbFileBrowser(lodash) {
         return $q.when(entity);
       }
       // Set the currentEntity to the parent and then focus the file
-      return clbStorage.getEntity(entity._parent);
+      return clbStorage.getEntity(entity.parent);
     }
 
     /**
@@ -265,9 +265,9 @@ function clbFileBrowser(lodash) {
         var promises = [];
 
         // define the new parent entity
-        if (!vm.isRoot && container._parent) {
+        if (!vm.isRoot && container.parent) {
           promises.push(
-            clbStorage.getEntity(container._parent).then(assignParentEntity)
+            clbStorage.getEntity(container.parent).then(assignParentEntity)
           );
         }
 
@@ -345,7 +345,7 @@ function clbFileBrowser(lodash) {
       if (!entity) {
         vm.isRoot = true;
       } else if (vm.rootEntity) {
-        vm.isRoot = (entity._uuid === vm.rootEntity._uuid);
+        vm.isRoot = (entity.uuid === vm.rootEntity.uuid);
       } else {
         vm.isRoot = false;
       }
@@ -418,7 +418,7 @@ function clbFileBrowser(lodash) {
      */
     function defineThumbnailUrl(file) {
       vm.thumbnailUrl = null;
-      if (file._contentType && file._contentType.match(/^image\//)) {
+      if (file.content_type && file.content_type.match(/^image\//)) {
         clbStorage.downloadUrl(file).then(function(res) {
           vm.thumbnailUrl = res;
         });

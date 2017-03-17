@@ -21,29 +21,29 @@ describe('storage task handler', function() {
     scope = $rootScope;
     backend = $httpBackend;
     baseUrl = function(path) {
-      return clbEnv.get('api.document.v0') + '/' + (path ? path : '');
+      return clbEnv.get('api.document.v1', 'https://services.humanbrainproject.eu/storage/v1/api') + '/' + (path ? path + '/' : '');
     };
     entityUrl = function(path) {
-      return baseUrl('entity/' + (path ? path : ''));
+      return baseUrl('entity/' + (path ? path + '/' : ''));
     };
   }));
   beforeEach(function() {
     data = {
       fileEntity: {
-        _uuid: '123',
-        _name: 'image.png',
-        _entityType: 'file',
-        _contentType: 'image/png'
+        uuid: '123',
+        name: 'image.png',
+        entity_type: 'file',
+        content_type: 'image/png'
       },
       rootEntity: {
-        _uuid: 'root'
+        uuid: 'root'
       },
       newEntity: {
-        _uuid: '421',
-        _name: 'test.png',
-        _entityType: 'file',
-        _contentType: 'image/png',
-        _parent: 'root'
+        uuid: '421',
+        name: 'test.png',
+        entity_type: 'file',
+        content_type: 'image/png',
+        parent: 'root'
       },
       collab: {
         id: 1,
@@ -58,7 +58,7 @@ describe('storage task handler', function() {
   });
 
   it('should copy a file to root', inject(function($q) {
-    backend.expectGET(entityUrl('?managed_by_collab=1'))
+    backend.expectGET(entityUrl('?collab_id=1'))
     .respond(200, data.rootEntity);
     spyOn(storage, 'getEntity')
       .and.returnValue($q.when(data.rootEntity));
@@ -81,8 +81,8 @@ describe('storage task handler', function() {
     scope.$digest();
     expect(storage.getEntity).toHaveBeenCalledWith({collab: data.collab.id});
     expect(storage.copy).toHaveBeenCalledWith(
-      data.fileEntity._uuid,
-      data.rootEntity._uuid
+      data.fileEntity.uuid,
+      data.rootEntity.uuid
     );
   }));
 });

@@ -33,7 +33,7 @@ Get an entity (e.g.: a project, a file or a folder) using a locator. The
 only accepted locator at this time is the entity UUID.
 
 - the entity UUID
-- an entity representation with ``{_uuid: ENTITY_UUID}``
+- an entity representation with ``{uuid: ENTITY_UUID}``
 - the entity related context ``{ctx: CONTEXT_UUID}``
 - the entity collab ID ``{collab: COLLAB_ID}``
 - the entity absolute path
@@ -197,28 +197,6 @@ Retrieves the content of a file given its id.
     :param object customConfig: contains extra configuration
     :return Promise: The raw content
     
-.. _module-clb-storage.clbStorage.getUserAccess:
-
-
-Function: ``getUserAccess``
-===========================
-
-Get current user access right to the provided entity.
-
-The returned promise will be resolved
-with an object literal containing three boolean
-flags corresponding the user access:
-
-- canRead
-- canWrite
-- canManage
-
-.. js:function:: getUserAccess(entity)
-
-    
-    :param module:clb-storage.EntityDescriptor entity: The entity to retrieve user access for
-    :return object: Contains ``{boolean} canRead``, ``{boolean} canWrite``, ``{boolean} canManage``
-    
 .. _module-clb-storage.clbStorage.getChildren:
 
 
@@ -236,8 +214,8 @@ in the queried direction.
     
     :param module:clb-storage.EntityDescriptor parent: The parent entity
     :param object options: Options to make the query
-    :param array/string options.accept: Array of accepted _entityType
-    :param boolean|array/string options.acceptLink: ``true`` or an array of accepted linked _entityType
+    :param array/string options.accept: Array of accepted entity_type
+    :param boolean|array/string options.acceptLink: ``true`` or an array of accepted linked entity_type
     :param string options.sort: Property to sort on
     :param string options.filter: The result based on Acls. Values: ``read`` (default), ``write``
     :param UUID options.until: Fetch results until the given id (exclusive with from)
@@ -294,8 +272,8 @@ Member: ``setContextMetadata``: the function links the contextId with the doc br
 by setting a specific metadata on the entity.
 
 Entity object in input must contain the following properties:
-- _entityType
-- _uuid
+- entity_type
+- uuid
 
 In case of error, the promise is rejected with a `HbpError` instance.
 
@@ -305,8 +283,8 @@ Member: ``deleteContextMetadata``: the function unlink the contextId from the en
 by deleting the context metadata.
 
 Entity object in input must contain the following properties:
-- _entityType
-- _uuid
+- entity_type
+- uuid
 
 In case of error, the promise is rejected with a `HbpError` instance.
 
@@ -316,8 +294,8 @@ Member: ``updateContextMetadata``: the function delete the contextId from the `o
 it as `newEntity` metadata.
 
 Entity objects in input must contain the following properties:
-- _entityType
-- _uuid
+- entity_type
+- uuid
 
 In case of error, the promise is rejected with a `HbpError` instance.
 

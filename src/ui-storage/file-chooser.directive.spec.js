@@ -34,25 +34,25 @@ describe('clb-file-chooser', function() {
     scope = $rootScope;
     entities = {
       file: {
-        _uuid: '1CDC0F80-1861-434C-B9EF-34CD8C3D73FA',
-        _entityType: 'file',
-        _parent: '14367A38-50C9-4C09-A3E8-4443D7624867',
-        _name: 'file'
+        uuid: '1CDC0F80-1861-434C-B9EF-34CD8C3D73FA',
+        entity_type: 'file',
+        parent: '14367A38-50C9-4C09-A3E8-4443D7624867',
+        name: 'file'
       },
       file2: {
-        _uuid: '3CEB0A3C-A0B2-4A52-9FB9-7B95612815C4',
-        _entityType: 'file',
-        _parent: '14367A38-50C9-4C09-A3E8-4443D7624867',
-        _name: 'file2'
+        uuid: '3CEB0A3C-A0B2-4A52-9FB9-7B95612815C4',
+        entity_type: 'file',
+        parent: '14367A38-50C9-4C09-A3E8-4443D7624867',
+        name: 'file2'
       },
       folder: {
-        _uuid: 'A83C3563-ECDE-432E-A3EC-5B9902C5B234',
-        _entityType: 'folder',
-        _parent: '14367A38-50C9-4C09-A3E8-4443D7624867'
+        uuid: 'A83C3563-ECDE-432E-A3EC-5B9902C5B234',
+        entity_type: 'folder',
+        parent: '14367A38-50C9-4C09-A3E8-4443D7624867'
       },
       project: {
-        _uuid: '14367A38-50C9-4C09-A3E8-4443D7624867',
-        _entityType: 'project'
+        uuid: '14367A38-50C9-4C09-A3E8-4443D7624867',
+        entity_type: 'project'
       }
     };
 
@@ -70,7 +70,7 @@ describe('clb-file-chooser', function() {
     });
     spyOn(clbStorage, 'getEntity')
     .and.callFake(function(locator) {
-      expect(locator).toBe(entities.project._uuid);
+      expect(locator).toBe(entities.project.uuid);
       return $q.when(entities.project);
     });
     spyOn(clbStorage, 'getUserAccess')
@@ -83,6 +83,7 @@ describe('clb-file-chooser', function() {
         entity: entities.file,
         root: entities.project
       };
+
       $compile(element)(scope);
       scope.$digest();
     };
@@ -203,8 +204,8 @@ describe('clb-file-chooser', function() {
   describe('clb-validate', function() {
     var checkRule;
     beforeEach(function() {
-      entities.file._contentType = 'image/png';
-      entities.file2._contentType = 'text/html';
+      entities.file.content_type = 'image/png';
+      entities.file2.content_type = 'text/html';
 
       // compile with the given rules and entities.file selected.
       // Then trigger focus event on entities.file2 and check

@@ -57,21 +57,21 @@ describe('clbFileBrowser', function() {
 
   beforeEach(function() {
     entityFile = {
-      _uuid: 'AA7D6620-CB56-4D0C-AAE1-D1DEBCFBEFF1',
-      _entityType: 'file',
-      _name: 'myfile',
-      _parent: '51677A22-F12E-45CD-9E43-007EE3E2F314'
+      uuid: 'AA7D6620-CB56-4D0C-AAE1-D1DEBCFBEFF1',
+      entity_type: 'file',
+      name: 'myfile',
+      parent: '51677A22-F12E-45CD-9E43-007EE3E2F314'
     };
     entityFolder = {
-      _uuid: '51677A22-F12E-45CD-9E43-007EE3E2F314',
-      _name: 'myfolder',
-      _entityType: 'folder',
-      _parent: '5E5D28DF-2B75-40E7-8918-72F885C52A48'
+      uuid: '51677A22-F12E-45CD-9E43-007EE3E2F314',
+      name: 'myfolder',
+      entity_type: 'folder',
+      parent: '5E5D28DF-2B75-40E7-8918-72F885C52A48'
     };
     entityProject = {
-      _uuid: '5E5D28DF-2B75-40E7-8918-72F885C52A48',
-      _name: 'someproject',
-      _entityType: 'project'
+      uuid: '5E5D28DF-2B75-40E7-8918-72F885C52A48',
+      name: 'someproject',
+      entityType: 'project'
     };
     // The content of data does not match the one from the server.
     // It is using the default from clbResultSet, not the heavily modified
@@ -128,16 +128,16 @@ describe('clbFileBrowser', function() {
     });
   });
 
-  describe('when clbEntity is a file', function() {
+  describe('when clbEntit yis a file', function() {
     var compile;
     beforeEach(function() {
       spyOn(storage, 'getEntity')
       .and.callFake(function(locator) {
-        if (locator === entityFolder._uuid) {
+        if (locator === entityFolder.uuid) {
           return $q.when(entityFolder);
-        } else if (locator === entityFile._uuid) {
+        } else if (locator === entityFile.uuid) {
           return $q.when(entityFile);
-        } else if (locator === entityProject._uuid) {
+        } else if (locator === entityProject.uuid) {
           return $q.when(entityProject);
         }
         fail('Unexpected locator:' + locator);
@@ -166,7 +166,7 @@ describe('clbFileBrowser', function() {
 
     it('should resolve the parent entity', function() {
       compile();
-      expect(storage.getEntity).toHaveBeenCalledWith(entityFolder._uuid);
+      expect(storage.getEntity).toHaveBeenCalledWith(entityFolder.uuid);
     });
 
     it('should list parent entity children', function() {
@@ -181,12 +181,12 @@ describe('clbFileBrowser', function() {
       });
     });
 
-    it('should faile if the parent cannot be fetched', function() {
+    it('should fail if the parent cannot be fetched', function() {
       storage.getEntity.and.callFake(function(locator) {
         expect(locator).toBe(-1);
         return $q.reject({message: 'Error'});
       });
-      entityFile._parent = -1;
+      entityFile.parent = -1;
       compile();
       expect(isolatedScope.browserView.error.message).toBe('Error');
     });
@@ -197,9 +197,9 @@ describe('clbFileBrowser', function() {
 
     beforeEach(function() {
       project = {
-        _uuid: '5E5D28DF-2B75-40E7-8918-72F885C52A48',
-        _name: 'someproject',
-        _entityType: 'project'
+        uuid: '5E5D28DF-2B75-40E7-8918-72F885C52A48',
+        name: 'someproject',
+        entity_type: 'project'
       };
 
       spyOn(storage, 'getChildren')
@@ -332,10 +332,10 @@ describe('clbFileBrowser', function() {
         it('should then add the file in vm.files',
         inject(function(clbStorage) {
           var expectedEntity = {
-            _uuid: 555,
-            _name: 'FileName.txt',
-            _contentType: 'text/plain',
-            _parent: scope.clbEntity._uuid
+            uuid: 555,
+            name: 'FileName.txt',
+            content_type: 'text/plain',
+            parent: scope.clbEntity.uuid
           };
           spyOn(clbStorage, 'upload')
             .and.returnValue($q.when(expectedEntity));
@@ -414,9 +414,9 @@ describe('clbFileBrowser', function() {
             preventDefault: jasmine.createSpy('preventDefault')
           };
           newFolder = {
-            _uuid: 333,
-            _name: 'The Folder',
-            _entityType: 'folder'
+            uuid: 333,
+            name: 'The Folder',
+            entity_type: 'folder'
           };
           spyOn(storage, 'create').and.returnValue($q.when(newFolder));
           vm.newFolderName = newFolder.name;
@@ -437,9 +437,9 @@ describe('clbFileBrowser', function() {
     describe('error handling', function() {
       it('should failed when parent entity cannot be fetched', function() {
         var invalidEntity = {
-          _uuid: '51677A22-F12E-45CD-9E43-007EE3E2F314',
-          _parent: -1,
-          _entityType: 'folder'
+          uuid: '51677A22-F12E-45CD-9E43-007EE3E2F314',
+          parent: -1,
+          entity_type: 'folder'
         };
         scope.clbEntity = project;
         $compile(element)(scope);

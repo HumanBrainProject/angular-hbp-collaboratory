@@ -113,16 +113,16 @@
           <div ng-if="vm.authInfo">
             <div class="form-group" ng-if="!vm.collabStorage">
               <label for="targetCollab">Select a collab:</label>
-              <select class="form-control" name="targetCollab" ng-model="vm.selectedCollabId">
+              <select class="form-control" id="targetCollab" name="targetCollab" ng-model="vm.selectedCollabId">
                 <option ng-repeat="c in vm.collabs" value="{{c.id}}">{{c.title}}</option>
               </select>
             </div>
-            <clb-file-browser ng-if="vm.collabStorage" 
-              clb-root="vm.collabStorage" 
-              clb-entity="vm.collabStorage">
+            <clb-file-browser ng-if="vm.collabStorage"
+                              clb-root="vm.collabStorage"
+                              clb-entity="vm.collabStorage">
             </clb-file-browser>
             <uib-alert type="warning" ng-if="!vm.loading && vm.selectedCollabId && !vm.collabStorage">
-              No storage available for the selected colab. Please select another one.
+              No storage available for the selected collab. Please select another one.
             </clb-alert>
           </div>
         </div>

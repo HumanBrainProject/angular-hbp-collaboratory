@@ -16,3 +16,4 @@ globals:
   fail: false
 rules:
   max-params: 0
+  camelcase: 0

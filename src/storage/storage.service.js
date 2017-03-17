@@ -1,13 +1,12 @@
-/* eslint max-lines:0 camelcase:0 */
-
-angular.module('clb-storage')
-.factory('clbStorage', clbStorage);
+angular
+  .module('clb-storage')
+  .factory('clbStorage', clbStorage);
 
 /**
  * @typedef {object} EntityDescriptor
  * @memberof module:clb-storage
- * @property {UUID} _uuid         The entity UUID
- * @property {string} _entityType The entity type (e.g.: ``file``, ``folder``, ``project``)
+ * @property {UUID} uuid         The entity UUID
+ * @property {string} entity_type The entity type (e.g.: ``file``, ``folder``, ``project``)
  * @desc
  * Describe an arbitrary entity in the storage stytem. The principal types are
  *
@@ -42,7 +41,8 @@ function clbStorage(
   clbUser,
   clbResultSet
 ) {
-  var baseUrl = clbEnv.get('api.document.v0');
+  var collabUrl = clbEnv.get('api.collab.v0');
+  var baseUrl = clbEnv.get('api.document.v1');
   var maxFileSize = clbEnv.get('hbpFileStore.maxFileUploadSize', 41943040);
   var entityUrl = baseUrl + '/entity';
   var fileUrl = baseUrl + '/file';
@@ -52,6 +52,7 @@ function clbStorage(
     getAbsolutePath: getAbsolutePath,
     upload: upload,
     query: query,
+    getCollabHome: getCollabHome,
     getContent: getContent,
     downloadUrl: downloadUrl,
     getChildren: getChildren,
@@ -75,7 +76,7 @@ function clbStorage(
    * only accepted locator at this time is the entity UUID.
    *
    * - the entity UUID
-   * - an entity representation with ``{_uuid: ENTITY_UUID}``
+   * - an entity representation with ``{uuid: ENTITY_UUID}``
    * - the entity related context ``{ctx: CONTEXT_UUID}``
    * - the entity collab ID ``{collab: COLLAB_ID}``
    * - the entity absolute path
@@ -98,8 +99,8 @@ function clbStorage(
       return getEntityByUUID(locator);
     }
     if (angular.isObject(locator)) {
-      if (uuid4.validate(locator._uuid)) {
-        return getEntityByUUID(locator._uuid);
+      if (uuid4.validate(locator.uuid)) {
+        return getEntityByUUID(locator.uuid);
       }
       if (locator.ctx && uuid4.validate(locator.ctx)) {
         return getEntityByContext(locator.ctx);
@@ -130,10 +131,10 @@ function clbStorage(
     if (!entity) {
       return $q.when(null);
     }
-    var uuid = entity._uuid || entity;
-    return clbAuthHttp.get(baseUrl + '/entity_path/' + uuid)
+    var uuid = entity.uuid || entity;
+    return clbAuthHttp.get(baseUrl + '/entity/' + uuid + '/path/')
     .then(function(res) {
-      return res.data._path;
+      return res.data.path;
     })
     .catch(clbError.rejectHttpError);
   }
@@ -164,7 +165,7 @@ function clbStorage(
    * @private
    */
   function getEntityByUUID(uuid) {
-    var url = entityUrl + '/' + uuid;
+    var url = entityUrl + '/' + uuid + '/';
     var k = 'GET ' + url;
     return runOnce(k, function() {
       return clbAuthHttp.get(url).then(function(data) {
@@ -209,8 +210,8 @@ function clbStorage(
    * by setting a specific metadata on the entity.
    *
    * Entity object in input must contain the following properties:
-   * - _entityType
-   * - _uuid
+   * - entity_type
+   * - uuid
    *
    * In case of error, the promise is rejected with a `HbpError` instance.
    *
@@ -248,8 +249,8 @@ function clbStorage(
    * by deleting the context metadata.
    *
    * Entity object in input must contain the following properties:
-   * - _entityType
-   * - _uuid
+   * - entity_type
+   * - uuid
    *
    * In case of error, the promise is rejected with a `HbpError` instance.
    *
@@ -271,8 +272,8 @@ function clbStorage(
    * it as `newEntity` metadata.
    *
    * Entity objects in input must contain the following properties:
-   * - _entityType
-   * - _uuid
+   * - entity_type
+   * - uuid
    *
    * In case of error, the promise is rejected with a `HbpError` instance.
    *
@@ -298,8 +299,8 @@ function clbStorage(
    * @return {Promise}        Resolves after the operation is completed
    */
   function addMetadata(entity, metadata) {
-    return clbAuthHttp.post(baseUrl + '/' + entity._entityType + '/' +
-    entity._uuid + '/metadata', metadata)
+    return clbAuthHttp.post(baseUrl + '/' + entity.entity_type + '/' +
+    entity.uuid + '/metadata/', metadata)
     .then(function(response) {
       return response.data;
     })
@@ -317,8 +318,8 @@ function clbStorage(
    * @return {Promise}           Resolve to the metadata
    */
   function deleteMetadata(entity, metadataKeys) {
-    return clbAuthHttp.delete(baseUrl + '/' + entity._entityType + '/' +
-      entity._uuid + '/metadata', {data: {keys: metadataKeys}})
+    return clbAuthHttp.delete(baseUrl + '/' + entity.entity_type + '/' +
+      entity.uuid + '/metadata/', {data: {keys: metadataKeys}})
     .then(function(response) {
       return response.data;
     })
@@ -338,10 +339,11 @@ function clbStorage(
    *                           this collab or reject a :doc:`module-clb-error.ClbError`.
    */
   function getCollabHome(collabId) {
-    var queryParams = {
-      managed_by_collab: collabId
-    };
-    return query(queryParams);
+    return clbAuthHttp.get(baseUrl + '/project/', {
+      params: {collab_id: collabId}
+    }).then(function(response) {
+      return response.data;
+    }).catch(clbError.rejectHttpError);
   }
 
   /**
@@ -355,10 +357,10 @@ function clbStorage(
    */
   function create(type, parent, name, options) {
     return clbAuthHttp.post(
-      baseUrl + '/' + type.split(':')[0],
+      baseUrl + '/' + type.split(':')[0] + '/',
       angular.extend({
-        _name: name,
-        _parent: (parent && parent._uuid) || parent
+        name: name,
+        parent: (parent && parent.uuid) || parent
       }, options)
     )
     .then(function(res) {
@@ -393,14 +395,14 @@ function clbStorage(
    */
   function copy(srcId, destFolderId) {
     return getEntity(srcId).then(function(src) {
-      return create(src._entityType, destFolderId, src._name, {
-        _description: src._description,
-        _contentType: src._contentType
+      return create(src.entity_type, destFolderId, src.name, {
+        description: src.description,
+        content_type: src.content_type
       })
       .then(function(dest) {
-        var url = [baseUrl, dest._entityType, dest._uuid, 'content'].join('/');
+        var url = [baseUrl, dest.entity_type, dest.uuid, 'content/'].join('/');
         return clbAuthHttp.put(url, {}, {
-          headers: {'X-Copy-From': src._uuid}
+          headers: {'X-Copy-From': src.uuid}
         }).then(function() {
           return dest;
         }).catch(function(err) {
@@ -422,7 +424,7 @@ function clbStorage(
   function getContent(id, customConfig) {
     var config = {
       method: 'GET',
-      url: fileUrl + '/' + id + '/content',
+      url: fileUrl + '/' + id + '/',
       transformResponse: function(data) {
         return data;
       }
@@ -452,35 +454,22 @@ function clbStorage(
    * @param {module:clb-storage.EntityDescriptor} entity The entity to retrieve user access for
    * @return {object} Contains ``{boolean} canRead``, ``{boolean} canWrite``, ``{boolean} canManage``
    */
+
   function getUserAccess(entity) {
     return $q.all({
-      acl: clbAuthHttp.get(baseUrl + '/' + entity._entityType + '/' +
-        entity._uuid + '/acl'),
-      user: clbUser.getCurrentUser()
+      // to check user access get collab id and check permission as done in collaboratory-frontend
+      collab: clbAuthHttp.get(baseUrl + '/entity/' + entity.uuid + '/collab/')
     })
     .then(function(aggregatedData) {
-      var acls = aggregatedData.acl.data; // expected resp: { 111: 'write', 222: 'manage', groupX: 'manage'}
-      var user = aggregatedData.user;
-
-      var access = {
-        canRead: false,
-        canWrite: false,
-        canManage: false
-      };
-
-      for (var id in acls) {
-        if (Object.prototype.hasOwnProperty.call(acls, id)) {
-          var acl = acls[id];
-          if (id === user.id || user.groups.indexOf(id) >= 0) {
-            access.canRead = access.canRead ||
-              acl === 'read' || acl === 'write' || acl === 'manage';
-            access.canWrite = access.canWrite ||
-              acl === 'write' || acl === 'manage';
-            access.canManage = access.canManage || acl === 'manage';
-          }
-        }
-      }
-      return access;
+      var collab = aggregatedData.collab;
+      return clbAuthHttp.get(collabUrl + '/' + collab.data.collab_id + '/permissions/').then(function(permissions) {
+        var access = {
+          canRead: permissions.VIEW,
+          canWrite: permissions.UPDATE,
+          canManage: permissions.DELETE
+        };
+        return access;
+      });
     }).catch(clbError.rejectHttpError);
   }
 
@@ -496,8 +485,8 @@ function clbStorage(
    * @memberof module:clb-storage.clbStorage
    * @param {module:clb-storage.EntityDescriptor} parent The parent entity
    * @param {object} [options] Options to make the query
-   * @param {array/string} [options.accept] Array of accepted _entityType
-   * @param {boolean|array/string} [options.acceptLink] ``true`` or an array of accepted linked _entityType
+   * @param {array/string} [options.accept] Array of accepted entity_type
+   * @param {boolean|array/string} [options.acceptLink] ``true`` or an array of accepted linked entity_type
    * @param {string} [options.sort] Property to sort on
    * @param {string} [options.filter] The result based on Acls. Values: ``read`` (default), ``write``
    * @param {UUID} [options.until] Fetch results until the given id (exclusive with from)
@@ -509,19 +498,20 @@ function clbStorage(
     options = angular.extend({}, options);
     var url;
     if (parent) {
-      url = baseUrl + '/' + parent._entityType + '/' +
-      (parent._uuid) + '/children';
+      url = baseUrl + '/' + parent.entity_type + '/' +
+      (parent.uuid) + '/children/';
     } else { // root projects
-      url = baseUrl + '/project';
+      url = baseUrl + '/project/';
     }
     var params = {
       filter: buildEntityTypeFilter(options.accept, options.acceptLink),
-      sort: options.sort ? options.sort : '_name',
+      sort: options.sort ? options.sort : 'name',
       from: options.from,
       until: options.until,
       access: options.access,
       limit: options.pageSize > 0 ? options.pageSize : null
     };
+
     return clbResultSet.get(clbAuthHttp.get(url, {params: params}), {
       resultKey: 'result',
       hasNextHandler: function(res) {
@@ -543,11 +533,11 @@ function clbStorage(
       resultsFactory: function(results, rs) {
         if (rs.hasMore) {
           var lastItem = rs.result.pop();
-          rs.nextId = lastItem._uuid;
+          rs.nextId = lastItem.uuid;
         }
         if (rs.hasPrevious) {
           var firstItem = rs.result.shift();
-          rs.previousId = firstItem._uuid;
+          rs.previousId = firstItem.uuid;
         }
       }
     });
@@ -556,6 +546,7 @@ function clbStorage(
   /**
    * @private
    * @param  {array/string} accept Fill this array with accepted types
+   *
    * @param  {boolean} acceptLink Should the link be accepted as well
    * @return {string}             a query string to append to the URL
    */
@@ -564,12 +555,13 @@ function clbStorage(
       if (acceptLink === true) {
         acceptLink = [].concat(accept);
       }
-      for (var i = 0; i < acceptLink.length; i++) {
+      var acceptLinkLength = acceptLink.length;
+      for (var i = 0; i < acceptLinkLength; i++) {
         acceptLink.push('link:' + acceptLink[i]);
       }
     }
     if (accept && accept.length > 0) {
-      return '_entityType=' + accept.join('+');
+      return 'entity_type=' + accept.join('+');
     }
   }
 
@@ -582,7 +574,7 @@ function clbStorage(
    */
   function uploadFile(file, entity, config) {
     var d = $q.defer();
-    clbAuthHttp.post(fileUrl + '/' + entity._uuid + '/content/upload', file,
+    clbAuthHttp.post(fileUrl + '/' + entity.uuid + '/content/upload/', file,
       angular.extend({
         headers: {
           'Content-Type': 'application/octet-stream'
@@ -595,6 +587,7 @@ function clbStorage(
         total: file.size,
         loaded: file.size
       });
+
       d.resolve(entity);
     }).error(function(err, status) {
       var uploadError = function() {
@@ -661,11 +654,11 @@ function clbStorage(
     }
 
     var entityOpts = {
-      _contentType: fixMimeType(file)
+      content_type: fixMimeType(file)
     };
     create(
       'file',
-      options.parent && options.parent._uuid,
+      options.parent && options.parent.uuid,
       file.name,
       entityOpts
     ).then(function(entity) {
@@ -730,7 +723,7 @@ function clbStorage(
    * @return {Promise}        Return once fulfilled
    */
   function deleteEntity(entity) {
-    return clbAuthHttp.delete(entityUrl + '/' + entity._uuid)
+    return clbAuthHttp.delete(entityUrl + '/' + entity.uuid + '/')
     .catch(clbError.rejectHttpError);
   }
 
@@ -740,8 +733,8 @@ function clbStorage(
    * @return {Boolean}                 Return true if it is a container
    */
   function isContainer(entity) {
-    return Boolean(entity._entityType &&
-      entity._entityType.match(/project|folder/));
+    return Boolean(entity.entity_type &&
+      entity.entity_type.match(/project|folder/));
   }
 
   /**
@@ -754,14 +747,14 @@ function clbStorage(
    */
   function getAncestors(entity, root) {
     // End recursion condition
-    if (!entity || !entity._parent || (root && entity._parent === root._uuid)) {
+    if (!entity || !entity.parent || (root && entity.parent === root.uuid)) {
       return $q.when([]);
     }
 
     var onError = function(err) {
       $q.reject(clbError.error({
         type: 'EntityAncestorRetrievalError',
-        message: 'Cannot retrieve some ancestors from entity ' + entity._name,
+        message: 'Cannot retrieve some ancestors from entity ' + entity.name,
         data: {
           entity: entity,
           root: root,
@@ -778,7 +771,7 @@ function clbStorage(
       });
     };
 
-    return getEntity(entity._parent)
+    return getEntity(entity.parent)
       .then(recurse, onError);
   }
 
@@ -794,8 +787,8 @@ function clbStorage(
    *                          is fulfilled.
    */
   function downloadUrl(entity) {
-    var id = entity._uuid || entity;
-    return clbAuthHttp.get(baseUrl + '/file/' + id + '/content/secure_link')
+    var id = entity.uuid || entity;
+    return clbAuthHttp.get(baseUrl + '/file/' + id + '/content/secure_link/')
     .then(function(response) {
       return baseUrl + response.data.signed_url;
     }).catch(clbError.rejectHttpError);
