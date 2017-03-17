@@ -462,7 +462,8 @@ function clbStorage(
     })
     .then(function(aggregatedData) {
       var collab = aggregatedData.collab;
-      return clbAuthHttp.get(collabUrl + '/' + collab.data.collab_id + '/permissions/').then(function(permissions) {
+      var permissionsUrl = collabUrl + '/collab/' + collab.data.collab_id + '/permissions/';
+      return clbAuthHttp.get(permissionsUrl).then(function(permissions) {
         var access = {
           canRead: permissions.VIEW,
           canWrite: permissions.UPDATE,
@@ -485,17 +486,30 @@ function clbStorage(
    * @memberof module:clb-storage.clbStorage
    * @param {module:clb-storage.EntityDescriptor} parent The parent entity
    * @param {object} [options] Options to make the query
-   * @param {array/string} [options.accept] Array of accepted entity_type
-   * @param {boolean|array/string} [options.acceptLink] ``true`` or an array of accepted linked entity_type
+   * @param {string} [options.accept] Accepted entity_type ('file' or 'folder')
    * @param {string} [options.sort] Property to sort on
-   * @param {string} [options.filter] The result based on Acls. Values: ``read`` (default), ``write``
-   * @param {UUID} [options.until] Fetch results until the given id (exclusive with from)
-   * @param {UUID} [options.from] Fetch results from the given id (exclusive with until)
+   * @param {int} [options.page] The number of the page to return.
    * @param {int} [options.pageSize] The number of results per page. Default is provided by the service. Set to 0 to fetch all the records.
    * @return {Promise} When fulfilled, return a paginated result set. You can also access it immediately using ``promise.instance``
    */
   function getChildren(parent, options) {
     options = angular.extend({}, options);
+
+    // warn user about unsupported options
+    if (options.accept && Array.isArray(options.accept) && options.accept.length > 0) {
+      if (options.accept.length > 1) {
+        $log.warn('Only one entity_type filter is supported.');
+      }
+      options.accept = options.accept.length > 0 ? options.accept[0] : null;
+    }
+    if (options.acceptLink) {
+      $log.warn('Links not supported in the current version, `acceptLink` argument will be ignored');
+    }
+    if (options.from || options.until) {
+      $log.warn('Pagination changed in the current version. Please use `page_size` ' +
+        'and `page` instead of `from`, `until`');
+    }
+
     var url;
     if (parent) {
       url = baseUrl + '/' + parent.entity_type + '/' +
@@ -504,65 +518,13 @@ function clbStorage(
       url = baseUrl + '/project/';
     }
     var params = {
-      filter: buildEntityTypeFilter(options.accept, options.acceptLink),
-      sort: options.sort ? options.sort : 'name',
-      from: options.from,
-      until: options.until,
-      access: options.access,
-      limit: options.pageSize > 0 ? options.pageSize : null
+      entity_type: options.accept ? options.accept : null,
+      ordering: options.sort ? options.sort : 'name',
+      page_size: options.pageSize > 0 ? options.pageSize : null,
+      page: options.page > 0 ? options.page : null
     };
 
-    return clbResultSet.get(clbAuthHttp.get(url, {params: params}), {
-      resultKey: 'result',
-      hasNextHandler: function(res) {
-        return Boolean(res.hasMore);
-      },
-      nextHandler: function(rs) {
-        var p = angular.extend({}, params);
-        p.from = rs.nextId;
-        return clbAuthHttp.get(url, {params: p});
-      },
-      hasPreviousHandler: function(res) {
-        return Boolean(res.hasPrevious);
-      },
-      previousHandler: function(rs) {
-        var p = angular.extend({}, params);
-        p.until = rs.previousId;
-        return clbAuthHttp.get(url, {params: p});
-      },
-      resultsFactory: function(results, rs) {
-        if (rs.hasMore) {
-          var lastItem = rs.result.pop();
-          rs.nextId = lastItem.uuid;
-        }
-        if (rs.hasPrevious) {
-          var firstItem = rs.result.shift();
-          rs.previousId = firstItem.uuid;
-        }
-      }
-    });
-  }
-
-  /**
-   * @private
-   * @param  {array/string} accept Fill this array with accepted types
-   *
-   * @param  {boolean} acceptLink Should the link be accepted as well
-   * @return {string}             a query string to append to the URL
-   */
-  function buildEntityTypeFilter(accept, acceptLink) {
-    if (acceptLink) {
-      if (acceptLink === true) {
-        acceptLink = [].concat(accept);
-      }
-      var acceptLinkLength = acceptLink.length;
-      for (var i = 0; i < acceptLinkLength; i++) {
-        acceptLink.push('link:' + acceptLink[i]);
-      }
-    }
-    if (accept && accept.length > 0) {
-      return 'entity_type=' + accept.join('+');
-    }
+    return clbResultSet.get(clbAuthHttp.get(url, {params: params}));
   }
 
   /**

@@ -171,16 +171,21 @@ describe('clbStorage', function() {
   describe('getChildren', function() {
     describe('root projects', function() {
       var projectEntity;
+      var projectEntityBis;
       beforeEach(function() {
         projectEntity = {
           uuid: '331C0A79-A12F-46AF-9DE4-09C43C0D8FFB',
           entity_type: 'project'
         };
+        projectEntityBis = {
+          uuid: '104facf9-f81f-4518-968c-6a69e434747a',
+          entity_type: 'project'
+        };
       });
       it('accept a null parent', function() {
-        backend.expectGET(baseUrl('project/?sort=name'))
+        backend.expectGET(baseUrl('project/?ordering=name'))
                     .respond({
-                      result: [projectEntity],
+                      results: [projectEntity],
                       hasMore: false
                     });
         service.getChildren().then(assign);
@@ -189,9 +194,9 @@ describe('clbStorage', function() {
         expect(actual.results).toDeepEqual([projectEntity]);
       });
       it('retrieve results', function() {
-        backend.expectGET(baseUrl('project/?sort=name'))
+        backend.expectGET(baseUrl('project/?ordering=name'))
                     .respond({
-                      result: [projectEntity],
+                      results: [projectEntity],
                       hasMore: false
                     });
         service.getChildren().then(assign);
@@ -200,48 +205,46 @@ describe('clbStorage', function() {
         expect(actual.results).toEqual([projectEntity]);
       });
       it('support pagination', function() {
-        backend.expectGET(baseUrl('project/?sort=name'))
+        backend.expectGET(baseUrl('project/?ordering=name'))
                     .respond({
-                      result: [projectEntity],
-                      hasMore: true
+                      results: [projectEntity],
+                      next: baseUrl('project/?page=1&page_size=1&ordering=name')
                     });
         service.getChildren().then(assign);
         backend.flush(1);
         expect(actual.hasNext).toBe(true);
-        expect(actual.results).toEqual([]);
+        expect(actual.results).toEqual([projectEntity]);
 
-        backend.expectGET(baseUrl('project/?from=' + projectEntity.uuid +
-                        '&sort=name'))
+        backend.expectGET(baseUrl('project/?page=1&page_size=1&ordering=name'))
                     .respond({
-                      result: [projectEntity],
-                      hasMore: false
+                      results: [projectEntityBis],
+                      previous: baseUrl('project/?page=0&page_size=1&ordering=name')
                     });
         actual.next();
         backend.flush(1);
         expect(actual.hasNext).toBe(false);
-        expect(actual.results).toEqual([projectEntity]);
+        expect(actual.results).toEqual([projectEntity, projectEntityBis]);
       });
       it('support backward pagination', function() {
-        backend.expectGET(baseUrl('project/?sort=name'))
+        backend.expectGET(baseUrl('project/?ordering=name'))
                     .respond({
-                      result: [projectEntity],
-                      hasPrevious: true
+                      results: [projectEntityBis],
+                      previous: baseUrl('project/?page=0&page_size=1&ordering=name')
                     });
         service.getChildren().then(assign);
         backend.flush(1);
         expect(actual.hasPrevious).toBe(true);
-        expect(actual.results).toEqual([]);
+        expect(actual.results).toEqual([projectEntityBis]);
 
-        backend.expectGET(baseUrl('project/?sort=name' +
-                        '&until=' + projectEntity.uuid))
+        backend.expectGET(baseUrl('project/?page=0&page_size=1&ordering=name'))
                     .respond({
-                      result: [projectEntity],
-                      hasPrevious: false
+                      results: [projectEntity],
+                      next: baseUrl('project/?page=1&page_size=1&ordering=name')
                     });
         actual.previous();
         backend.flush(1);
         expect(actual.hasPrevious).toBe(false);
-        expect(actual.results).toEqual([projectEntity]);
+        expect(actual.results).toEqual([projectEntity, projectEntityBis]);
       });
     });
     describe('from a folder', function() {
@@ -252,7 +255,7 @@ describe('clbStorage', function() {
         };
 
         backend.expectGET(baseUrl('folder/' + folder.uuid +
-                    '/children/?sort=name')
+                    '/children/?ordering=name')
                 ).respond({});
         service.getChildren(folder).then(assign);
         backend.flush();
