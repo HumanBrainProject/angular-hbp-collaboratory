@@ -426,7 +426,7 @@ describe('clbStorage', function() {
         expect(service.getCollabHome)
 
         // then
-        .toThrowError('Missing mandatory `id` parameter');
+        .toThrowError('Missing mandatory `collabId` parameter');
       });
 
       it('should reject with an error if no project is returned', function() {
