@@ -231,17 +231,14 @@ The returned promise will be resolved with the
 list of fetched children and a flag indicating if more results are available
 in the queried direction.
 
-.. js:function:: getChildren(parent[, options][, options.accept][, options.acceptLink][, options.sort][, options.filter][, options.until][, options.from][, options.pageSize])
+.. js:function:: getChildren(parent[, options][, options.accept][, options.sort][, options.page][, options.pageSize])
 
     
     :param module:clb-storage.EntityDescriptor parent: The parent entity
     :param object options: Options to make the query
-    :param array/string options.accept: Array of accepted entity_type
-    :param boolean|array/string options.acceptLink: ``true`` or an array of accepted linked entity_type
+    :param string options.accept: Accepted entity_type ('file' or 'folder')
     :param string options.sort: Property to sort on
-    :param string options.filter: The result based on Acls. Values: ``read`` (default), ``write``
-    :param UUID options.until: Fetch results until the given id (exclusive with from)
-    :param UUID options.from: Fetch results from the given id (exclusive with until)
+    :param int options.page: The number of the page to return.
     :param int options.pageSize: The number of results per page. Default is provided by the service. Set to 0 to fetch all the records.
     :return Promise: When fulfilled, return a paginated result set. You can also access it immediately using ``promise.instance``
     
