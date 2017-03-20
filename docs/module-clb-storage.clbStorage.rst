@@ -197,6 +197,28 @@ Retrieves the content of a file given its id.
     :param object customConfig: contains extra configuration
     :return Promise: The raw content
     
+.. _module-clb-storage.clbStorage.getUserAccess:
+
+
+Function: ``getUserAccess``
+===========================
+
+Get current user access right to the provided entity.
+
+The returned promise will be resolved
+with an object literal containing three boolean
+flags corresponding the user access:
+
+- canRead
+- canWrite
+- canManage
+
+.. js:function:: getUserAccess(entity)
+
+    
+    :param module:clb-storage.EntityDescriptor entity: The entity to retrieve user access for
+    :return object: Contains ``{boolean} canRead``, ``{boolean} canWrite``, ``{boolean} canManage``
+    
 .. _module-clb-storage.clbStorage.getChildren:
 
 
