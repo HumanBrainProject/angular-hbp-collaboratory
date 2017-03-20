@@ -339,12 +339,8 @@ function clbStorage(
    *                           this collab or reject a :doc:`module-clb-error.ClbError`.
    */
   function getCollabHome(collabId) {
-    if (collabId === undefined) {
-      throw clbError.error({
-        type: 'MissingParameter',
-        message: 'Missing mandatory `id` parameter'
-      });
-    }
+    checkMandatoryParameter('collabId', collabId);
+
     return clbAuthHttp.get(baseUrl + '/project/', {
       params: {collab_id: collabId}
     }).then(function(response) {
@@ -356,6 +352,16 @@ function clbStorage(
       }
       return response.data.results[0];
     }).catch(clbError.rejectHttpError);
+  }
+
+  function checkMandatoryParameter(name, value) {
+    if (value === undefined) {
+      throw clbError.error({
+        type: 'MissingParameter',
+        message: 'Missing mandatory `' + name + '` parameter'
+      });
+    }
+    return value;
   }
 
   /**
