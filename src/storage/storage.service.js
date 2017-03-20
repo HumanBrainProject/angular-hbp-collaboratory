@@ -339,6 +339,12 @@ function clbStorage(
    *                           this collab or reject a :doc:`module-clb-error.ClbError`.
    */
   function getCollabHome(collabId) {
+    if (collabId === undefined) {
+      throw clbError.error({
+        type: 'MissingParameter',
+        message: 'Missing mandatory `id` parameter'
+      });
+    }
     return clbAuthHttp.get(baseUrl + '/project/', {
       params: {collab_id: collabId}
     }).then(function(response) {
