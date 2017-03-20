@@ -348,6 +348,12 @@ function clbStorage(
     return clbAuthHttp.get(baseUrl + '/project/', {
       params: {collab_id: collabId}
     }).then(function(response) {
+      if (response.data.count === 0) {
+        return $q.reject(clbError.error({
+          type: 'NotFound',
+          message: 'No project is linked to collab'
+        }));
+      }
       return response.data;
     }).catch(clbError.rejectHttpError);
   }
