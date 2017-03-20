@@ -4,6 +4,6 @@
   hbp-on-touch="browserView.handleNavigation(folder)"
   ng-class="{'clb-file-browser-item-selected': browserView.selectedEntity === folder}">
   <div class="clb-file-browser-label">
-    <i class="fa" ng-class="folderIcon ? folderIcon : 'fa-folder'"></i><span>{{folderLabel || folder._name}}</span>
+    <i class="fa" ng-class="folderIcon ? folderIcon : 'fa-folder'"></i><span>{{folderLabel || folder.name}}</span>
   </div>
 </div>
