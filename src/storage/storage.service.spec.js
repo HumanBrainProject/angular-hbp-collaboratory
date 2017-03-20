@@ -394,5 +394,23 @@ describe('clbStorage', function() {
         backend.flush(3);
       });
     });
+
+    describe('getCollabHome', function() {
+      it('should reject with an error in case of a http error', function() {
+        var error;
+
+        // given
+        backend.when('GET', baseUrl('project/?collab_id=42')).respond(404);
+
+        // when
+        service.getCollabHome(42).catch(function(e) {
+          error = e;
+        });
+        backend.flush();
+
+        // then
+        expect(error.type).toEqual('NotFound');
+      });
+    });
   });
 });
