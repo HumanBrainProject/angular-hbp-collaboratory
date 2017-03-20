@@ -354,7 +354,7 @@ function clbStorage(
           message: 'No project is linked to collab'
         }));
       }
-      return response.data;
+      return response.data.results[0];
     }).catch(clbError.rejectHttpError);
   }
 

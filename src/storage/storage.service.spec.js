@@ -441,6 +441,26 @@ describe('clbStorage', function() {
         // then
         expect(error.type).toEqual('NotFound');
       });
+
+      it('should return the first project', function() {
+        var A_PROJECT = {name: 'my project'};
+        var project;
+
+        // given
+        backend
+          .when('GET', baseUrl('project/?collab_id=42'))
+          .respond(200, {count: 1, results: [A_PROJECT]});
+
+        // when
+        service.getCollabHome(42)
+          .then(function(p) {
+            project = p;
+          });
+        backend.flush();
+
+        // then
+        expect(project).toEqual(A_PROJECT);
+      });
     });
   });
 });
