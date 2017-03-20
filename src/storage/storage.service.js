@@ -337,6 +337,7 @@ function clbStorage(
    * @param  {int}    collabId collab id
    * @return {Promise}         Return the project :doc:`module-clb-storage.EntityDescriptor` linked to
    *                           this collab or reject a :doc:`module-clb-error.ClbError`.
+   * @throws a 'MissingParameter' :doc:`module-clb-error.ClbError` if collabId is not provided
    */
   function getCollabHome(collabId) {
     checkMandatoryParameter('collabId', collabId);
