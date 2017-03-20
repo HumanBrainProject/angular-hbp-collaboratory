@@ -397,7 +397,9 @@ describe('clbStorage', function() {
         var error;
 
         // given
-        backend.when('GET', baseUrl('project/?collab_id=42')).respond(404);
+        backend
+          .when('GET', baseUrl('project/?collab_id=42'))
+          .respond(404);
 
         // when
         service.getCollabHome(42)
@@ -411,7 +413,30 @@ describe('clbStorage', function() {
       });
 
       it('should throw an error if no id is provided', function() {
-        expect(service.getCollabHome).toThrowError('Missing mandatory `id` parameter');
+        // when
+        expect(service.getCollabHome)
+
+        // then
+        .toThrowError('Missing mandatory `id` parameter');
+      });
+
+      it('should reject with an error if no project is returned', function() {
+        var error;
+
+        // given
+        backend
+          .when('GET', baseUrl('project/?collab_id=42'))
+          .respond(200, {count: 0});
+
+        // when
+        service.getCollabHome(42)
+          .catch(function(e) {
+            error = e;
+          });
+        backend.flush();
+
+        // then
+        expect(error.type).toEqual('NotFound');
       });
     });
   });
