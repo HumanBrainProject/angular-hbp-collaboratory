@@ -137,11 +137,17 @@ describe('clbStorage', function() {
 
     describe('using a collab ID', function() {
       it('accept an ID set as locator.collab', function() {
+        // given
         var expectedResult = entity;
-        backend.expectGET(projectUrl('?collab_id=1'))
-                    .respond(200, expectedResult);
+        backend
+          .when('GET', baseUrl('project/?collab_id=1'))
+          .respond(200, {count: 1, results: [expectedResult]});
+
+        // when
         service.getEntity({collab: 1}).then(assign).catch(assign);
         backend.flush();
+
+        // then
         expect(actual).toDeepEqual(entity);
       });
 
