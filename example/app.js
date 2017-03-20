@@ -133,7 +133,7 @@ angular.module('customCollabApp', [
     clbStorage.getCollabHome(id || -1).then(function(collabStorage) {
       vm.collabStorage = collabStorage;
     }, function() {
-      vm.collabStorage = null;  
+      vm.collabStorage = null;
     })
     .finally(function() {
       vm.loading = false;

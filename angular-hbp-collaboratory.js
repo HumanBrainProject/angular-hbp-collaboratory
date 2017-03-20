@@ -31,11 +31,11 @@ clbApp.$inject = ['$log', '$q', '$rootScope', '$timeout', '$window', 'clbError']
 authProvider.$inject = ['clbAppHello', 'clbEnvProvider'];
 clbAuthHttp.$inject = ['$http', 'clbAuth'];
 clbAutomator.$inject = ['$q', '$log', 'clbError'];
-clbCtxData.$inject = ['clbAuthHttp', '$q', 'uuid4', 'clbEnv', 'clbError'];
 clbCollabTeamRole.$inject = ['clbAuthHttp', '$log', '$q', 'clbEnv', 'clbError'];
 clbCollabTeam.$inject = ['clbAuthHttp', '$log', '$q', 'lodash', 'clbEnv', 'clbError', 'clbCollabTeamRole', 'clbUser'];
 clbCollab.$inject = ['$log', '$q', '$cacheFactory', 'clbAuthHttp', 'lodash', 'clbContext', 'clbEnv', 'clbError', 'clbResultSet', 'clbUser', 'ClbCollabModel', 'ClbContextModel'];
 clbContext.$inject = ['clbAuthHttp', '$q', 'clbError', 'clbEnv', 'ClbContextModel'];
+clbCtxData.$inject = ['clbAuthHttp', '$q', 'uuid4', 'clbEnv', 'clbError'];
 clbEnv.$inject = ['$injector'];
 clbError.$inject = ['$q'];
 clbGroup.$inject = ['$rootScope', '$q', 'clbAuthHttp', '$cacheFactory', 'lodash', 'clbEnv', 'clbError', 'clbResultSet', 'clbIdentityUtil'];
@@ -136,14 +136,6 @@ angular.module('clb-automator', [
 ]);
 
 /**
- * Provides a key value store where keys are context UUID
- * and values are string.
- *
- * @module clb-context-data
- */
-angular.module('clb-ctx-data', ['uuid4', 'clb-app', 'clb-env', 'clb-error']);
-
-/**
  * @module clb-collab
  * @desc
  * Contain services to interact with collabs (e.g.: retriving collab informations or
@@ -158,6 +150,14 @@ angular.module('clb-collab', [
   'clb-rest',
   'uuid4'
 ]);
+
+/**
+ * Provides a key value store where keys are context UUID
+ * and values are string.
+ *
+ * @module clb-context-data
+ */
+angular.module('clb-ctx-data', ['uuid4', 'clb-app', 'clb-env', 'clb-error']);
 
 /**
  * @module clb-env
@@ -258,16 +258,16 @@ angular.module('clb-ui-error', [
 angular.module('clb-ui-form', []);
 
 /**
- * Provides a simple loading directive.
- * @module clb-ui-loading
- */
-angular.module('clb-ui-loading', []);
-
-/**
  * Provides UI widgets around user and groups.
  * @module clb-ui-identity
  */
 angular.module('clb-ui-identity', ['lodash', 'clb-identity']);
+
+/**
+ * Provides a simple loading directive.
+ * @module clb-ui-loading
+ */
+angular.module('clb-ui-loading', []);
 
 /**
  * The ``clb-ui-storage`` module provides Angular directive to work
@@ -1383,117 +1383,6 @@ angular.module('clb-automator')
   }
 }]);
 
-angular.module('clb-ctx-data')
-.factory('clbCtxData', clbCtxData);
-
-/**
- * A service to retrieve data for a given ctx. This is a convenient
- * way to store JSON data for a given context. Do not use it for
- * Sensitive data. There is no data migration functionality available, so if
- * the expected data format change, you are responsible to handle the old
- * format on the client side.
- *
- * @namespace clbCtxData
- * @memberof clb-ctx-data
- * @param  {object} clbAuthHttp    Angular DI
- * @param  {object} $q       Angular DI
- * @param  {object} uuid4     Angular DI
- * @param  {object} clbEnv   Angular DI
- * @param  {object} clbError Angular DI
- * @return {object}          Angular Service Descriptor
- */
-function clbCtxData(clbAuthHttp, $q, uuid4, clbEnv, clbError) {
-  var configUrl = clbEnv.get('api.collab.v0') + '/config/';
-  return {
-    /**
-     * Return an Array or an Object containing the data or
-     * ``undefined`` if there is no data stored.
-     * @memberof module:clb-ctx-data.clbCtxData
-     * @param  {UUID} ctx   the current context UUID
-     * @return {Promise}    fullfil to {undefined|object|array}
-     */
-    get: function(ctx) {
-      if (!uuid4.validate(ctx)) {
-        return $q.reject(invalidUuidError(ctx));
-      }
-      return clbAuthHttp.get(configUrl + ctx + '/')
-      .then(function(res) {
-        try {
-          return angular.fromJson(res.data.content);
-        } catch (ex) {
-          return $q.reject(clbError.error({
-            type: 'InvalidData',
-            message: 'Cannot parse JSON string: ' + res.data.content,
-            code: -2,
-            data: {
-              cause: ex
-            }
-          }));
-        }
-      })
-      .catch(function(err) {
-        if (err.code === 404) {
-          return;
-        }
-        return clbError.rejectHttpError(err);
-      });
-    },
-
-    /**
-     * @memberof module:clb-ctx-data.clbCtxData
-     * @param  {UUID} ctx The context UUID
-     * @param  {array|object|string|number} data JSON serializable data
-     * @return {Promise} Return the data when fulfilled
-     */
-    save: function(ctx, data) {
-      if (!uuid4.validate(ctx)) {
-        return $q.reject(invalidUuidError(ctx));
-      }
-      return clbAuthHttp.put(configUrl + ctx + '/', {
-        context: ctx,
-        content: angular.toJson(data)
-      }).then(function() {
-        return data;
-      })
-      .catch(clbError.rejectHttpError);
-    },
-
-    /**
-     * @memberof module:clb-ctx-data.clbCtxData
-     * @param  {UUID} ctx The context UUID
-     * @return {Promise}  fulfilled once deleted
-     */
-    delete: function(ctx) {
-      if (!uuid4.validate(ctx)) {
-        return $q.reject(invalidUuidError(ctx));
-      }
-      return clbAuthHttp.delete(configUrl + ctx + '/')
-      .then(function() {
-        return true;
-      })
-      .catch(clbError.rejectHttpError);
-    }
-  };
-
-  /**
-   * Generate the appropriate error when context is invalid.
-   * @param  {any} badCtx  the wrong ctx
-   * @return {HbpError}    The Error
-   */
-  function invalidUuidError(badCtx) {
-    return clbError.error({
-      type: 'InvalidArgument',
-      message: 'Provided ctx must be a valid UUID4 but is: ' + badCtx,
-      data: {
-        argName: 'ctx',
-        argPosition: 0,
-        argValue: badCtx
-      },
-      code: -3
-    });
-  }
-}
-
 /* eslint camelcase: 0 */
 
 /**
@@ -2567,6 +2456,117 @@ function clbContext(clbAuthHttp, $q, clbError, clbEnv, ClbContextModel) {
       return clbError.rejectHttpError(res);
     });
     return ongoingContextRequests[uuid];
+  }
+}
+
+angular.module('clb-ctx-data')
+.factory('clbCtxData', clbCtxData);
+
+/**
+ * A service to retrieve data for a given ctx. This is a convenient
+ * way to store JSON data for a given context. Do not use it for
+ * Sensitive data. There is no data migration functionality available, so if
+ * the expected data format change, you are responsible to handle the old
+ * format on the client side.
+ *
+ * @namespace clbCtxData
+ * @memberof clb-ctx-data
+ * @param  {object} clbAuthHttp    Angular DI
+ * @param  {object} $q       Angular DI
+ * @param  {object} uuid4     Angular DI
+ * @param  {object} clbEnv   Angular DI
+ * @param  {object} clbError Angular DI
+ * @return {object}          Angular Service Descriptor
+ */
+function clbCtxData(clbAuthHttp, $q, uuid4, clbEnv, clbError) {
+  var configUrl = clbEnv.get('api.collab.v0') + '/config/';
+  return {
+    /**
+     * Return an Array or an Object containing the data or
+     * ``undefined`` if there is no data stored.
+     * @memberof module:clb-ctx-data.clbCtxData
+     * @param  {UUID} ctx   the current context UUID
+     * @return {Promise}    fullfil to {undefined|object|array}
+     */
+    get: function(ctx) {
+      if (!uuid4.validate(ctx)) {
+        return $q.reject(invalidUuidError(ctx));
+      }
+      return clbAuthHttp.get(configUrl + ctx + '/')
+      .then(function(res) {
+        try {
+          return angular.fromJson(res.data.content);
+        } catch (ex) {
+          return $q.reject(clbError.error({
+            type: 'InvalidData',
+            message: 'Cannot parse JSON string: ' + res.data.content,
+            code: -2,
+            data: {
+              cause: ex
+            }
+          }));
+        }
+      })
+      .catch(function(err) {
+        if (err.code === 404) {
+          return;
+        }
+        return clbError.rejectHttpError(err);
+      });
+    },
+
+    /**
+     * @memberof module:clb-ctx-data.clbCtxData
+     * @param  {UUID} ctx The context UUID
+     * @param  {array|object|string|number} data JSON serializable data
+     * @return {Promise} Return the data when fulfilled
+     */
+    save: function(ctx, data) {
+      if (!uuid4.validate(ctx)) {
+        return $q.reject(invalidUuidError(ctx));
+      }
+      return clbAuthHttp.put(configUrl + ctx + '/', {
+        context: ctx,
+        content: angular.toJson(data)
+      }).then(function() {
+        return data;
+      })
+      .catch(clbError.rejectHttpError);
+    },
+
+    /**
+     * @memberof module:clb-ctx-data.clbCtxData
+     * @param  {UUID} ctx The context UUID
+     * @return {Promise}  fulfilled once deleted
+     */
+    delete: function(ctx) {
+      if (!uuid4.validate(ctx)) {
+        return $q.reject(invalidUuidError(ctx));
+      }
+      return clbAuthHttp.delete(configUrl + ctx + '/')
+      .then(function() {
+        return true;
+      })
+      .catch(clbError.rejectHttpError);
+    }
+  };
+
+  /**
+   * Generate the appropriate error when context is invalid.
+   * @param  {any} badCtx  the wrong ctx
+   * @return {HbpError}    The Error
+   */
+  function invalidUuidError(badCtx) {
+    return clbError.error({
+      type: 'InvalidArgument',
+      message: 'Provided ctx must be a valid UUID4 but is: ' + badCtx,
+      data: {
+        argName: 'ctx',
+        argPosition: 0,
+        argValue: badCtx
+      },
+      code: -3
+    });
   }
 }
 
@@ -4266,10 +4266,9 @@ function clbResultSet(clbAuthHttp, $q, clbError) {
   }
 }
 
-/* eslint max-lines:0 camelcase:0 */
-
-angular.module('clb-storage')
-.factory('clbStorage', clbStorage);
+angular
+  .module('clb-storage')
+  .factory('clbStorage', clbStorage);
 
 /**
  * @typedef {object} EntityDescriptor
@@ -4310,7 +4309,6 @@ function clbStorage(
   clbUser,
   clbResultSet
 ) {
-
   var collabUrl = clbEnv.get('api.collab.v0');
   var baseUrl = clbEnv.get('api.document.v1');
   var maxFileSize = clbEnv.get('hbpFileStore.maxFileUploadSize', 41943040);
@@ -4461,7 +4459,6 @@ function clbStorage(
     }).catch(clbError.rejectHttpError);
   }
 
-
   /**
    * Retrieve the key to lookup for on entities given the ctx
    * @memberof module:clb-storage.clbStorage
@@ -4608,13 +4605,32 @@ function clbStorage(
    * @param  {int}    collabId collab id
    * @return {Promise}         Return the project :doc:`module-clb-storage.EntityDescriptor` linked to
    *                           this collab or reject a :doc:`module-clb-error.ClbError`.
+   * @throws a 'MissingParameter' :doc:`module-clb-error.ClbError` if collabId is not provided
    */
   function getCollabHome(collabId) {
+    checkMandatoryParameter('collabId', collabId);
+
     return clbAuthHttp.get(baseUrl + '/project/', {
-      params: { collab_id: collabId }
+      params: {collab_id: collabId}
     }).then(function(response) {
-      return response.data;
+      if (response.data.count === 0) {
+        return $q.reject(clbError.error({
+          type: 'NotFound',
+          message: 'No project is linked to collab'
+        }));
+      }
+      return response.data.results[0];
     }).catch(clbError.rejectHttpError);
+  }
+
+  function checkMandatoryParameter(name, value) {
+    if (value === undefined) {
+      throw clbError.error({
+        type: 'MissingParameter',
+        message: 'Missing mandatory `' + name + '` parameter'
+      });
+    }
+    return value;
   }
 
   /**
@@ -4726,11 +4742,10 @@ function clbStorage(
    * @return {object} Contains ``{boolean} canRead``, ``{boolean} canWrite``, ``{boolean} canManage``
    */
 
-  /** entity/uuid/collab return dictionary collab_id (int) **/
   function getUserAccess(entity) {
     return $q.all({
       // to check user access get collab id and check permission as done in collaboratory-frontend
-      collab: clbAuthHttp.get(baseUrl + '/entity/' + entity.uuid + '/collab/'),
+      collab: clbAuthHttp.get(baseUrl + '/entity/' + entity.uuid + '/collab/')
     })
     .then(function(aggregatedData) {
       var collab = aggregatedData.collab;
@@ -4742,7 +4757,6 @@ function clbStorage(
         };
         return access;
       });
-
     }).catch(clbError.rejectHttpError);
   }
 
@@ -4835,7 +4849,6 @@ function clbStorage(
     }
     if (accept && accept.length > 0) {
       return 'entity_type=' + accept.join('+');
-
     }
   }
 
@@ -5513,98 +5526,6 @@ angular.module('clb-ui-form')
   };
 });
 
-angular.module('clb-ui-loading')
-.directive('clbLoading', clbLoading);
-
-/**
- * The directive clbLoading displays a simple loading message. If a promise
- * is given, the loading indicator will disappear once it is resolved.
- *
- * Attributes
- * ----------
- *
- * =======================  ===================================================
- * Name                     Description
- * =======================  ===================================================
- * {Promise} [clb-promise]  Hide the loading message upon fulfilment.
- * {string} [clb-message]   Displayed loading string (default=``'loading...'``)
- * =======================  ===================================================
- *
- * @memberof module:clb-ui-loading
- * @return {object} Angular directive descriptor
- * @example <caption>Directive Usage Example</caption>
- * <hbp-loading hbp-promise="myAsyncFunc()" hbp-message="'Loading My Async Func'">
- * </hbp-loading>
- */
-function clbLoading() {
-  return {
-    restrict: 'E',
-    scope: {
-      promise: '=?clbPromise',
-      message: '=?clbMessage'
-    },
-    template:'<div class="clb-loading" ng-if="loading"><span class="glyphicon glyphicon-refresh clb-spinning"></span> {{message}}</div>',
-    link: function(scope) {
-      scope.loading = true;
-      scope.message = scope.message || 'Loading...';
-      if (scope.promise) {
-        var complete = function() {
-          scope.loading = false;
-        };
-        scope.promise.then(complete, complete);
-      }
-    }
-  };
-}
-
-angular.module('clb-ui-loading')
-.directive('clbPerformAction', clbPerformAction);
-
-/**
- * @namespace clbPerformAction
- * @memberof module:clb-ui-loading
- *
- * @desc
- * clbPerformAction directive run an action when the given control is clicked.
- * it can be added as an attribute. While the action is running, the control
- * is disabled.
- *
- * @param {function} clbPerformAction  the code to run when the button is clicked.
- *                     this function must return a promise.
- * @param {string}   clbLoadingMessage text replacement for the element content.
- * @return {object}                      Directive Descriptor
- * @example <caption>use perform action to disable a button while code is running</caption>
- * <div ng-controller="myController">
- *  <input class="btn btn-primary" type="submit" clb-perform-action="doSomething()">
- * </div>
- */
-function clbPerformAction() {
-  return {
-    restrict: 'A',
-    scope: {
-      action: '&clbPerformAction'
-    },
-    link: function(scope, element, attrs) {
-      var onComplete = function() {
-        element.html(scope.text);
-        element.attr('disabled', false);
-        element.removeClass('loading');
-      };
-      var run = function() {
-        if (scope.loadingMessage) {
-          element.html(scope.loadingMessage);
-        }
-        element.addClass('loading');
-        element.attr('disabled', true);
-        scope.action().then(onComplete, onComplete);
-      };
-      scope.loadingMessage = attrs.clbLoadingMessage;
-      scope.text = scope.text || element.html();
-      element.on('click', run);
-    }
-  };
-}
-
 angular.module('clb-ui-identity')
 .directive('clbUserAvatar', clbUserAvatar);
 
@@ -5837,6 +5758,98 @@ function clbUsercardCacheTemplate($templateCache) {
   }
 }
 
+angular.module('clb-ui-loading')
+.directive('clbLoading', clbLoading);
+
+/**
+ * The directive clbLoading displays a simple loading message. If a promise
+ * is given, the loading indicator will disappear once it is resolved.
+ *
+ * Attributes
+ * ----------
+ *
+ * =======================  ===================================================
+ * Name                     Description
+ * =======================  ===================================================
+ * {Promise} [clb-promise]  Hide the loading message upon fulfilment.
+ * {string} [clb-message]   Displayed loading string (default=``'loading...'``)
+ * =======================  ===================================================
+ *
+ * @memberof module:clb-ui-loading
+ * @return {object} Angular directive descriptor
+ * @example <caption>Directive Usage Example</caption>
+ * <hbp-loading hbp-promise="myAsyncFunc()" hbp-message="'Loading My Async Func'">
+ * </hbp-loading>
+ */
+function clbLoading() {
+  return {
+    restrict: 'E',
+    scope: {
+      promise: '=?clbPromise',
+      message: '=?clbMessage'
+    },
+    template:'<div class="clb-loading" ng-if="loading"><span class="glyphicon glyphicon-refresh clb-spinning"></span> {{message}}</div>',
+    link: function(scope) {
+      scope.loading = true;
+      scope.message = scope.message || 'Loading...';
+      if (scope.promise) {
+        var complete = function() {
+          scope.loading = false;
+        };
+        scope.promise.then(complete, complete);
+      }
+    }
+  };
+}
+
+angular.module('clb-ui-loading')
+.directive('clbPerformAction', clbPerformAction);
+
+/**
+ * @namespace clbPerformAction
+ * @memberof module:clb-ui-loading
+ *
+ * @desc
+ * clbPerformAction directive run an action when the given control is clicked.
+ * it can be added as an attribute. While the action is running, the control
+ * is disabled.
+ *
+ * @param {function} clbPerformAction  the code to run when the button is clicked.
+ *                     this function must return a promise.
+ * @param {string}   clbLoadingMessage text replacement for the element content.
+ * @return {object}                      Directive Descriptor
+ * @example <caption>use perform action to disable a button while code is running</caption>
+ * <div ng-controller="myController">
+ *  <input class="btn btn-primary" type="submit" clb-perform-action="doSomething()">
+ * </div>
+ */
+function clbPerformAction() {
+  return {
+    restrict: 'A',
+    scope: {
+      action: '&clbPerformAction'
+    },
+    link: function(scope, element, attrs) {
+      var onComplete = function() {
+        element.html(scope.text);
+        element.attr('disabled', false);
+        element.removeClass('loading');
+      };
+      var run = function() {
+        if (scope.loadingMessage) {
+          element.html(scope.loadingMessage);
+        }
+        element.addClass('loading');
+        element.attr('disabled', true);
+        scope.action().then(onComplete, onComplete);
+      };
+      scope.loadingMessage = attrs.clbLoadingMessage;
+      scope.text = scope.text || element.html();
+      element.on('click', run);
+    }
+  };
+}
+
 angular.module('clb-ui-storage')
 .directive('clbFileBrowserFolder', clbFileBrowserFolder);
 
@@ -5850,7 +5863,7 @@ angular.module('clb-ui-storage')
  *
  * - clb-ui-storage-folder: the folder entity
  * - [clb-ui-storage-folder-icon]: a class name to display an icon
- * - [clb-ui-storage-folder-label]: a label name (default to folder._name)
+ * - [clb-ui-storage-folder-label]: a label name (default to folder.name)
  *
  * @example
  * <!-- minimal -->
@@ -5867,7 +5880,7 @@ function clbFileBrowserFolder() {
   return {
     restrict: 'A',
     require: '^clbFileBrowser',
-    template:'<div class="clb-file-browser-item clb-file-browser-folder" ng-dblclick="browserView.handleNavigation(folder)" ng-click="browserView.handleFocus(folder)" hbp-on-touch="browserView.handleNavigation(folder)" ng-class="{\'clb-file-browser-item-selected\': browserView.selectedEntity === folder}"><div class="clb-file-browser-label"><i class="fa" ng-class="folderIcon ? folderIcon : \'fa-folder\'"></i><span>{{folderLabel || folder._name}}</span></div></div>',
+    template:'<div class="clb-file-browser-item clb-file-browser-folder" ng-dblclick="browserView.handleNavigation(folder)" ng-click="browserView.handleFocus(folder)" hbp-on-touch="browserView.handleNavigation(folder)" ng-class="{\'clb-file-browser-item-selected\': browserView.selectedEntity === folder}"><div class="clb-file-browser-label"><i class="fa" ng-class="folderIcon ? folderIcon : \'fa-folder\'"></i><span>{{folderLabel || folder.name}}</span></div></div>',
     scope: {
       folder: '=clbFileBrowserFolder',
       folderIcon: '@clbFileBrowserFolderIcon',
@@ -5900,7 +5913,7 @@ function clbFileBrowserPath(clbStorage) {
   return {
     restrict: 'E',
     require: '^clbFileBrowser',
-    template:'<ul class="breadcrumb clb-file-browser-path"><li class="root" ng-if="!browserView.isRoot"><a ng-click="browserView.handleNavigation(browserView.rootEntity)">{{browserView.rootEntity._name || \'[top]\'}}</a></li><li ng-repeat="entity in ancestors"><a ng-click="browserView.handleNavigation(entity)">{{entity._name}}</a></li><li><span class="active">{{browserView.currentEntity._name || \'[top]\'}}</span></li></ul>',
+    template:'<ul class="breadcrumb clb-file-browser-path"><li class="root" ng-if="!browserView.isRoot"><a ng-click="browserView.handleNavigation(browserView.rootEntity)">{{browserView.rootEntity.name || \'[top]\'}}</a></li><li ng-repeat="entity in ancestors"><a ng-click="browserView.handleNavigation(entity)">{{entity.name}}</a></li><li><span class="active">{{browserView.currentEntity.name || \'[top]\'}}</span></li></ul>',
     link: function(scope, element, attrs, ctrl) {
       var handleAncestors = function(ancestors) {
         scope.ancestors = ancestors;
@@ -5930,7 +5943,7 @@ angular.module('clb-ui-storage')
   // We need to inject it in template cache as it is used for displaying
   // the tooltip. Does it smell like a hack? sure, it is a hack!
   var injector = {
-    template:'<div ng-init="browserView.defineThumbnailUrl(file)"><div class="file-browser-thumbnail thumbnail" ng-if="browserView.thumbnailUrl" aria-hidden="true"><img ng-src="{{browserView.thumbnailUrl}}"></div>{{file._name}}</div>'
+    template:'<div ng-init="browserView.defineThumbnailUrl(file)"><div class="file-browser-thumbnail thumbnail" ng-if="browserView.thumbnailUrl" aria-hidden="true"><img ng-src="{{browserView.thumbnailUrl}}"></div>{{file.name}}</div>'
   };
   // If defined, it means that the template has been inlined during build.
   if (injector.template) {
@@ -5989,7 +6002,7 @@ function clbFileBrowser(lodash) {
       entity: '=?clbEntity',
       root: '=clbRoot'
     },
-    template:'<div class="clb-file-browser" in-view-container ng-click="selectItem()"><clb-error-message clb-error="browserView.error"></clb-error-message><div class="navbar navbar-default"><div class="container-fluid"><div class="nav navbar-nav navbar-text"><clb-file-browser-path></clb-file-browser-path></div><div class="dropdown nav navbar-nav pull-right" uib-dropdown ng-if="browserView.canEdit"><button type="button" href class="btn btn-default navbar-btn dropdown-toggle" uib-dropdown-toggle><span class="glyphicon glyphicon-plus"></span> <span class="caret"></span></button><ul class="dropdown-menu" role="menu" uib-dropdown-menu><li ng-if="browserView.canEdit"><a ng-click="browserView.startCreateFolder()"><span class="fa fa-folder"></span> Create Folder</a></li><li ng-if="browserView.canEdit"><a ng-click="browserView.showFileUpload = true"><span class="fa fa-file"></span> Upload File</a></li></ul></div></div></div><div class="clb-file-browser-content"><div ng-if="browserView.isLoading" class="alert alert-info" role="alert">Loading...</div><div class="file-browser-upload" ng-if="browserView.showFileUpload"><button type="button" class="btn close pull-right" ng-click="browserView.showFileUpload = false"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><clb-file-upload on-drop="browserView.onFileChanged(files)" on-error="browserView.setError(error)"></clb-file-upload></div><div ng-if="browserView.isRoot && browserView.isEmpty()" class="alert alert-info" role="alert">The collab storage is still empty, use the \'+\' button to upload some content.</div><ul><li ng-if="!browserView.isRoot" clb-file-browser-folder="browserView.parent" clb-file-browser-folder-label=".." clb-file-browser-folder-icon="fa-level-up"></li><li ng-repeat="folder in browserView.folders" clb-file-browser-folder="folder"></li><li ng-if="browserView.showCreateFolder" class="clb-file-browser-item"><div class="clb-file-browser-folder"><form class="form form-inline" action="index.html" method="post" ng-submit="browserView.doCreateFolder($event)"><div class="input-group"><input type="text" class="form-control new-folder-name" name="newFolderName" ng-model="browserView.newFolderName"> <span class="input-group-btn"><input class="btn btn-primary" type="submit" name="name" value="Ok"> <button class="btn btn-default" type="button" ng-click="browserView.cancelCreateFolder()"><span aria-hidden="true">&times;</span><span class="sr-only">Cancel</span></button></span></div></form></div></li><li class="clb-file-browser-item" ng-if="browserView.hasMoreFolders"><a class="clb-file-browser-label btn" clb-perform-action="browserView.loadMoreFolders()"><span class="fa fa-refresh"></span> Load More Folders</a></li><li ng-repeat="file in browserView.files" ng-dblclick="browseToEntity(file)" ng-click="browserView.handleFocus(file)" uib-tooltip-template="\'file-browser-tooltip.tpl.html\'" tooltip-placement="bottom" tooltip-popup-delay="600" class="clb-file-browser-item" ng-class="{ \'clb-file-browser-item-selected\': browserView.selectedEntity === file }"><div class="clb-file-browser-label"><hbp-content-icon content="file._contentType"></hbp-content-icon><span>{{file.name || file.uuid}}</span></div></li><li ng-repeat="uploadInfo in browserView.uploads" ng-click="browserView.handleFocus(null)" uib-tooltip="{{uploadInfo.content.name}}" tooltip-placement="bottom" tooltip-popup-delay="600" class="clb-file-browser-item" ng-class="\'clb-file-browser-state-\' + uploadInfo.state"><div class="clb-file-browser-label"><hbp-content-icon content="file._contentType"></hbp-content-icon><span>{{uploadInfo.content.name}}</span></div><div class="clb-file-browser-item-upload progress"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploadInfo.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploadInfo.progress.percentage}}%"><span class="sr-only">{{uploadInfo.progress.percentage}}% Complete</span></div></div></li><li class="clb-file-browser-item" ng-if="browserView.hasMoreFiles"><a class="clb-file-browser-label btn" clb-perform-action="browserView.loadMoreFiles()"><span class="fa fa-refresh"></span> Load more files</a></li></ul></div></div>',
+    template:'<div class="clb-file-browser" in-view-container ng-click="selectItem()"><clb-error-message clb-error="browserView.error"></clb-error-message><div class="navbar navbar-default"><div class="container-fluid"><div class="nav navbar-nav navbar-text"><clb-file-browser-path></clb-file-browser-path></div><div class="dropdown nav navbar-nav pull-right" uib-dropdown ng-if="browserView.canEdit"><button type="button" href class="btn btn-default navbar-btn dropdown-toggle" uib-dropdown-toggle><span class="glyphicon glyphicon-plus"></span> <span class="caret"></span></button><ul class="dropdown-menu" role="menu" uib-dropdown-menu><li ng-if="browserView.canEdit"><a ng-click="browserView.startCreateFolder()"><span class="fa fa-folder"></span> Create Folder</a></li><li ng-if="browserView.canEdit"><a ng-click="browserView.showFileUpload = true"><span class="fa fa-file"></span> Upload File</a></li></ul></div></div></div><div class="clb-file-browser-content"><div ng-if="browserView.isLoading" class="alert alert-info" role="alert">Loading...</div><div class="file-browser-upload" ng-if="browserView.showFileUpload"><button type="button" class="btn close pull-right" ng-click="browserView.showFileUpload = false"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><clb-file-upload on-drop="browserView.onFileChanged(files)" on-error="browserView.setError(error)"></clb-file-upload></div><div ng-if="browserView.isRoot && browserView.isEmpty()" class="alert alert-info" role="alert">The collab storage is still empty, use the \'+\' button to upload some content.</div><ul><li ng-if="!browserView.isRoot" clb-file-browser-folder="browserView.parent" clb-file-browser-folder-label=".." clb-file-browser-folder-icon="fa-level-up"></li><li ng-repeat="folder in browserView.folders" clb-file-browser-folder="folder"></li><li ng-if="browserView.showCreateFolder" class="clb-file-browser-item"><div class="clb-file-browser-folder"><form class="form form-inline" action="index.html" method="post" ng-submit="browserView.doCreateFolder($event)"><div class="input-group"><input type="text" class="form-control new-folder-name" name="newFolderName" ng-model="browserView.newFolderName"> <span class="input-group-btn"><input class="btn btn-primary" type="submit" name="name" value="Ok"> <button class="btn btn-default" type="button" ng-click="browserView.cancelCreateFolder()"><span aria-hidden="true">&times;</span><span class="sr-only">Cancel</span></button></span></div></form></div></li><li class="clb-file-browser-item" ng-if="browserView.hasMoreFolders"><a class="clb-file-browser-label btn" clb-perform-action="browserView.loadMoreFolders()"><span class="fa fa-refresh"></span> Load More Folders</a></li><li ng-repeat="file in browserView.files" ng-dblclick="browseToEntity(file)" ng-click="browserView.handleFocus(file)" uib-tooltip-template="\'file-browser-tooltip.tpl.html\'" tooltip-placement="bottom" tooltip-popup-delay="600" class="clb-file-browser-item" ng-class="{ \'clb-file-browser-item-selected\': browserView.selectedEntity === file }"><div class="clb-file-browser-label"><hbp-content-icon content="file.content_type"></hbp-content-icon><span>{{file.name || file.uuid}}</span></div></li><li ng-repeat="uploadInfo in browserView.uploads" ng-click="browserView.handleFocus(null)" uib-tooltip="{{uploadInfo.content.name}}" tooltip-placement="bottom" tooltip-popup-delay="600" class="clb-file-browser-item" ng-class="\'clb-file-browser-state-\' + uploadInfo.state"><div class="clb-file-browser-label"><hbp-content-icon content="file.content_type"></hbp-content-icon><span>{{uploadInfo.content.name}}</span></div><div class="clb-file-browser-item-upload progress"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploadInfo.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploadInfo.progress.percentage}}%"><span class="sr-only">{{uploadInfo.progress.percentage}}% Complete</span></div></div></li><li class="clb-file-browser-item" ng-if="browserView.hasMoreFiles"><a class="clb-file-browser-label btn" clb-perform-action="browserView.loadMoreFiles()"><span class="fa fa-refresh"></span> Load more files</a></li></ul></div></div>',
     link: clbFileBrowserLink,
     controllerAs: 'browserView',
     controller: FileBrowserViewModel
@@ -6177,7 +6190,6 @@ function clbFileBrowser(lodash) {
      */
     function update(entity) {
       return nearestContainer(entity).then(function(container) {
-
         vm.isLoading = true;
         vm.currentEntity = container;
         vm.selectedEntity = entity;
