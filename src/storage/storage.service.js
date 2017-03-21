@@ -337,13 +337,32 @@ function clbStorage(
    * @param  {int}    collabId collab id
    * @return {Promise}         Return the project :doc:`module-clb-storage.EntityDescriptor` linked to
    *                           this collab or reject a :doc:`module-clb-error.ClbError`.
+   * @throws a 'MissingParameter' :doc:`module-clb-error.ClbError` if collabId is not provided
    */
   function getCollabHome(collabId) {
+    checkMandatoryParameter('collabId', collabId);
+
     return clbAuthHttp.get(baseUrl + '/project/', {
       params: {collab_id: collabId}
     }).then(function(response) {
-      return response.data;
+      if (response.data.count === 0) {
+        return $q.reject(clbError.error({
+          type: 'NotFound',
+          message: 'No project is linked to collab'
+        }));
+      }
+      return response.data.results[0];
     }).catch(clbError.rejectHttpError);
+  }
+
+  function checkMandatoryParameter(name, value) {
+    if (value === undefined) {
+      throw clbError.error({
+        type: 'MissingParameter',
+        message: 'Missing mandatory `' + name + '` parameter'
+      });
+    }
+    return value;
   }
 
   /**

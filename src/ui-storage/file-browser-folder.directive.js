@@ -11,7 +11,7 @@ angular.module('clb-ui-storage')
  *
  * - clb-ui-storage-folder: the folder entity
  * - [clb-ui-storage-folder-icon]: a class name to display an icon
- * - [clb-ui-storage-folder-label]: a label name (default to folder._name)
+ * - [clb-ui-storage-folder-label]: a label name (default to folder.name)
  *
  * @example
  * <!-- minimal -->

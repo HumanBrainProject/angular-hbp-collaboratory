@@ -137,11 +137,17 @@ describe('clbStorage', function() {
 
     describe('using a collab ID', function() {
       it('accept an ID set as locator.collab', function() {
+        // given
         var expectedResult = entity;
-        backend.expectGET(projectUrl('?collab_id=1'))
-                    .respond(200, expectedResult);
+        backend
+          .when('GET', baseUrl('project/?collab_id=1'))
+          .respond(200, {count: 1, results: [expectedResult]});
+
+        // when
         service.getEntity({collab: 1}).then(assign).catch(assign);
         backend.flush();
+
+        // then
         expect(actual).toDeepEqual(entity);
       });
 
@@ -392,6 +398,74 @@ describe('clbStorage', function() {
                       expect(err.code).toBe(500);
                     });
         backend.flush(3);
+      });
+    });
+
+    describe('getCollabHome', function() {
+      it('should reject with an error in case of a http error', function() {
+        var error;
+
+        // given
+        backend
+          .when('GET', baseUrl('project/?collab_id=42'))
+          .respond(404);
+
+        // when
+        service.getCollabHome(42)
+          .catch(function(e) {
+            error = e;
+          });
+        backend.flush();
+
+        // then
+        expect(error.type).toEqual('NotFound');
+      });
+
+      it('should throw an error if no id is provided', function() {
+        // when
+        expect(service.getCollabHome)
+
+        // then
+        .toThrowError('Missing mandatory `collabId` parameter');
+      });
+
+      it('should reject with an error if no project is returned', function() {
+        var error;
+
+        // given
+        backend
+          .when('GET', baseUrl('project/?collab_id=42'))
+          .respond(200, {count: 0});
+
+        // when
+        service.getCollabHome(42)
+          .catch(function(e) {
+            error = e;
+          });
+        backend.flush();
+
+        // then
+        expect(error.type).toEqual('NotFound');
+      });
+
+      it('should return the first project', function() {
+        var A_PROJECT = {name: 'my project'};
+        var project;
+
+        // given
+        backend
+          .when('GET', baseUrl('project/?collab_id=42'))
+          .respond(200, {count: 1, results: [A_PROJECT]});
+
+        // when
+        service.getCollabHome(42)
+          .then(function(p) {
+            project = p;
+          });
+        backend.flush();
+
+        // then
+        expect(project).toEqual(A_PROJECT);
       });
     });
   });

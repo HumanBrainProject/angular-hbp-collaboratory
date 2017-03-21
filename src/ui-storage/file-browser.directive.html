@@ -68,7 +68,7 @@
           class="clb-file-browser-item"
           ng-class="{ 'clb-file-browser-item-selected': browserView.selectedEntity === file }">
           <div class="clb-file-browser-label">
-            <hbp-content-icon content="file._contentType"></hbp-content-icon>
+            <hbp-content-icon content="file.content_type"></hbp-content-icon>
             <span>{{file.name || file.uuid}}</span>
           </div>
       </li>
@@ -78,7 +78,7 @@
           uib-tooltip="{{uploadInfo.content.name}}" tooltip-placement="bottom" tooltip-popup-delay="600"
           class="clb-file-browser-item" ng-class="'clb-file-browser-state-' + uploadInfo.state">
           <div class="clb-file-browser-label">
-            <hbp-content-icon content="file._contentType"></hbp-content-icon>
+            <hbp-content-icon content="file.content_type"></hbp-content-icon>
             <span>{{uploadInfo.content.name}}</span>
           </div>
           <div class="clb-file-browser-item-upload progress">
