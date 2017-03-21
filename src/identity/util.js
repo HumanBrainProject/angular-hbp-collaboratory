@@ -34,7 +34,7 @@ function clbIdentityUtil($log, lodash) {
   function queryParams(options) {
     var defaultOptions = {
       page: 0,
-      pageSize: 50
+      pageSize: 100
     };
     var opt = angular.extend(defaultOptions, options);
 

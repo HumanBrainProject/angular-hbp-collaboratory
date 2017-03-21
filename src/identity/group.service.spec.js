@@ -105,7 +105,7 @@ describe('clbGroup', function() {
           group = g;
         });
 
-        var expUrl = host + '/group/search?name=hbp-dev-sp01-leader&page=0&pageSize=50';
+        var expUrl = host + '/group/search?name=hbp-dev-sp01-leader&page=0&pageSize=100';
         $httpBackend.expectGET(expUrl).respond(200, stubV1.group);
         $httpBackend.flush();
         expect(group.name).toBe(stubV1.group._embedded.groups[0].name);
@@ -117,7 +117,7 @@ describe('clbGroup', function() {
           clbGroup.list().then(function(res) {
             rs = res;
           });
-          $httpBackend.expectGET(host + '/group?page=0&pageSize=50').respond(200, stubV1.group);
+          $httpBackend.expectGET(host + '/group?page=0&pageSize=100').respond(200, stubV1.group);
           $httpBackend.flush();
         });
 
@@ -141,7 +141,7 @@ describe('clbGroup', function() {
         clbGroup.list().then(function(d) {
           data = d;
         });
-        $httpBackend.expectGET(host + '/group?page=0&pageSize=50').respond(200, stubV1.group);
+        $httpBackend.expectGET(host + '/group?page=0&pageSize=100').respond(200, stubV1.group);
         $httpBackend.flush();
         expect(data.results).toBeDefined();
       });
@@ -195,7 +195,7 @@ describe('clbGroup', function() {
         clbGroup.getMembers('gid').then(function(d) {
           data = d;
         });
-        $httpBackend.expectGET(host + '/group/gid/members?page=0&pageSize=50').respond(200, members1);
+        $httpBackend.expectGET(host + '/group/gid/members?page=0&pageSize=100').respond(200, members1);
         $httpBackend.flush();
         expect(data.results).toBeDefined();
       });
@@ -206,7 +206,7 @@ describe('clbGroup', function() {
         clbGroup.getMemberGroups('gid').then(function(d) {
           data = d;
         });
-        $httpBackend.expectGET(host + '/group/gid/member-groups?page=0&pageSize=50').respond(200, {results: groups});
+        $httpBackend.expectGET(host + '/group/gid/member-groups?page=0&pageSize=100').respond(200, {results: groups});
         $httpBackend.flush();
         expect(data.results).toBeDefined();
       });
@@ -217,7 +217,7 @@ describe('clbGroup', function() {
         clbGroup.getAdminGroups('gid').then(function(d) {
           data = d;
         });
-        $httpBackend.expectGET(host + '/group/gid/admin-groups?page=0&pageSize=50').respond(200, {results: groups});
+        $httpBackend.expectGET(host + '/group/gid/admin-groups?page=0&pageSize=100').respond(200, {results: groups});
         $httpBackend.flush();
         expect(data.results).toBeDefined();
       });
@@ -228,7 +228,7 @@ describe('clbGroup', function() {
         clbGroup.getParentGroups('gid').then(function(d) {
           data = d;
         });
-        $httpBackend.expectGET(host + '/group/gid/parent-groups?page=0&pageSize=50').respond(200, {results: groups});
+        $httpBackend.expectGET(host + '/group/gid/parent-groups?page=0&pageSize=100').respond(200, {results: groups});
         $httpBackend.flush();
         expect(data.results).toBeDefined();
       });
@@ -239,7 +239,7 @@ describe('clbGroup', function() {
         clbGroup.getManagedGroups('gid').then(function(d) {
           data = d;
         });
-        $httpBackend.expectGET(host + '/group/gid/managed-groups?page=0&pageSize=50').respond(200, {results: groups});
+        $httpBackend.expectGET(host + '/group/gid/managed-groups?page=0&pageSize=100').respond(200, {results: groups});
         $httpBackend.flush();
         expect(data.results).toBeDefined();
       });
@@ -249,7 +249,7 @@ describe('clbGroup', function() {
         clbGroup.search('test').then(function(d) {
           data = d;
         });
-        $httpBackend.expectGET(host + '/group/searchByText?page=0&pageSize=50&str=test')
+        $httpBackend.expectGET(host + '/group/searchByText?page=0&pageSize=100&str=test')
         .respond(200, stubV1.group);
         $httpBackend.flush();
         expect(data.results).toBeDefined();

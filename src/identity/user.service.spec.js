@@ -449,7 +449,7 @@ describe('clbUser', function() {
   it('should search for users', function() {
     var results;
     $httpBackend.expectGET(userApiUrl +
-      'user/searchByText?page=0&pageSize=50&str=test')
+      'user/searchByText?page=0&pageSize=100&str=test')
     .respond(200, { /* paginated result set */});
     userDirectory.search('test').then(function(r) {
       results = r;
@@ -479,7 +479,7 @@ describe('clbUser', function() {
 
     it('should set default values', function() {
       $httpBackend.expectGET(userApiUrl +
-        'user?page=0&pageSize=50&sort=familyName');
+        'user?page=0&pageSize=100&sort=familyName');
       userDirectory.list();
       $httpBackend.flush(1);
     });
@@ -581,6 +581,22 @@ describe('clbUser', function() {
 
       $httpBackend.flush(2);
     });
+
+    it('should load all pages when pageSize=0', function() {
+      var options = {
+        pageSize: 0
+      };
+      var nextUrl = userApiUrl + '?user?page=1&pageSize=1000&sort=familyName';
+      $httpBackend.expectGET(userApiUrl +
+        'user?page=0&pageSize=1000&sort=familyName')
+      .respond(200, {_links: {next: {href: nextUrl}}});
+      $httpBackend.expectGET(nextUrl)
+      .respond(200, {_links: {next: null}});
+
+      userDirectory.list(options);
+
+      $httpBackend.flush(2);
+    });
   });
 
   describe('isGroupMember', function() {
@@ -634,21 +650,21 @@ describe('clbUser', function() {
   describe('memberGroups', function() {
     it('calls the member-groups endpoint for the given user id', function() {
       $httpBackend.expectGET(userApiUrl +
-        'user/1000/member-groups?page=0&pageSize=50&sort=name');
+        'user/1000/member-groups?page=0&pageSize=100&sort=name');
       userDirectory.memberGroups('1000');
       $httpBackend.flush();
     });
 
     it('calls the member-groups endpoint for the current user', function() {
       $httpBackend.expectGET(userApiUrl +
-        'user/me/member-groups?page=0&pageSize=50&sort=name');
+        'user/me/member-groups?page=0&pageSize=100&sort=name');
       userDirectory.memberGroups();
       $httpBackend.flush();
     });
 
     it('retrieve a ResultSet', function() {
       $httpBackend.expectGET(userApiUrl +
-        'user/1000/member-groups?page=0&pageSize=50&sort=name')
+        'user/1000/member-groups?page=0&pageSize=100&sort=name')
       .respond(200, {
         _embedded: {
           groups: []
@@ -664,7 +680,7 @@ describe('clbUser', function() {
     it('should retrieve admin groups of current user', function() {
       var result;
       $httpBackend.expectGET(userApiUrl +
-        'user/me/admin-groups?page=0&pageSize=50&sort=name')
+        'user/me/admin-groups?page=0&pageSize=100&sort=name')
       .respond(200, {
         _embedded: {
           groups: [{
@@ -691,14 +707,14 @@ describe('clbUser', function() {
 
     it('should retrive admin groups of another user', function() {
       $httpBackend.expectGET(userApiUrl +
-        'user/1200/admin-groups?page=0&pageSize=50&sort=name');
+        'user/1200/admin-groups?page=0&pageSize=100&sort=name');
       userDirectory.adminGroups('1200');
       $httpBackend.flush(1);
     });
 
     it('should retrieve filtered list of admin groups', function() {
       $httpBackend.expectGET(userApiUrl +
-        'user/me/admin-groups?name=one&name=two&page=0&pageSize=50&sort=name')
+        'user/me/admin-groups?name=one&name=two&page=0&pageSize=100&sort=name')
       .respond(200, {/* recordset */});
       userDirectory.adminGroups({filter: {
         name: ['one', 'two']

@@ -30,11 +30,15 @@
 clbApp.$inject = ['$log', '$q', '$rootScope', '$timeout', '$window', 'clbError'];
 authProvider.$inject = ['clbAppHello', 'clbEnvProvider'];
 clbAuthHttp.$inject = ['$http', 'clbAuth'];
+interceptorConfig.$inject = ['$httpProvider'];
+httpRequestInterceptor.$inject = ['$q'];
 clbAutomator.$inject = ['$q', '$log', 'clbError'];
 clbCollabTeamRole.$inject = ['clbAuthHttp', '$log', '$q', 'clbEnv', 'clbError'];
 clbCollabTeam.$inject = ['clbAuthHttp', '$log', '$q', 'lodash', 'clbEnv', 'clbError', 'clbCollabTeamRole', 'clbUser'];
 clbCollab.$inject = ['$log', '$q', '$cacheFactory', 'clbAuthHttp', 'lodash', 'clbContext', 'clbEnv', 'clbError', 'clbResultSet', 'clbUser', 'ClbCollabModel', 'ClbContextModel'];
 clbContext.$inject = ['clbAuthHttp', '$q', 'clbError', 'clbEnv', 'ClbContextModel'];
+clbCtxData.$inject = ['clbAuthHttp', '$q', 'uuid4', 'clbEnv', 'clbError'];
+clbEnv.$inject = ['$injector'];
 clbError.$inject = ['$q'];
 clbGroup.$inject = ['$rootScope', '$q', 'clbAuthHttp', '$cacheFactory', 'lodash', 'clbEnv', 'clbError', 'clbResultSet', 'clbIdentityUtil'];
 clbUser.$inject = ['$rootScope', '$q', 'clbAuthHttp', '$cacheFactory', '$log', 'lodash', 'clbEnv', 'clbError', 'clbResultSet', 'clbIdentityUtil'];
@@ -54,8 +58,6 @@ clbFileBrowser.$inject = ['lodash'];
 clbFileChooser.$inject = ['$q', '$log'];
 ActivityController.$inject = ['$scope', '$sce', '$log', '$window', '$q', '$compile', 'clbResourceLocator', 'clbErrorDialog'];
 FeedController.$inject = ['$rootScope', 'clbStream', 'clbUser'];
-clbCtxData.$inject = ['clbAuthHttp', '$q', 'uuid4', 'clbEnv', 'clbError'];
-clbEnv.$inject = ['$injector'];
 angular.module('hbpCollaboratoryCore', [
   'clb-app',
   'clb-automator',
@@ -117,6 +119,14 @@ angular.module('clb-app', ['clb-env', 'clb-error'])
 .constant('clbAppHello', hello);
 
 /**
+ * @module clb-auth
+ * @desc
+ * ``clb-auth`` provides a library based on hello.js
+ * to authenticate into the Collaboratory.
+ */
+angular.module('clb-auth', ['clb-env']);
+
+/**
  * @module clb-automator
  * @desc
  * `clb-automator` module provides an automation library for the Collaboratory
@@ -151,7 +161,31 @@ angular.module('clb-collab', [
   'uuid4'
 ]);
 
+/**
+ * Provides a key value store where keys are context UUID
+ * and values are string.
+ *
+ * @module clb-context-data
+ */
+angular.module('clb-ctx-data', ['uuid4', 'clb-app', 'clb-env', 'clb-error']);
+
+/**
+ * @module clb-env
+ * @desc
+ * ``clb-env`` module provides a way to information from the global environment.
+ */
+
+angular.module('clb-env', []);
+
 angular.module('clb-error', []);
+
+angular.module('clb-identity', [
+  'lodash',
+  'clb-app',
+  'clb-env',
+  'clb-error',
+  'clb-rest'
+]);
 
 /* global _ */
 /**
@@ -173,14 +207,6 @@ angular.module('lodash', [])
     lodash.keyBy = lodash.indexBy;
   }
 }]);
-
-angular.module('clb-identity', [
-  'lodash',
-  'clb-app',
-  'clb-env',
-  'clb-error',
-  'clb-rest'
-]);
 
 /**
  * @module clb-rest
@@ -280,22 +306,6 @@ angular.module('clb-ui-stream', [
   'clb-stream',
   'clb-ui-error'
 ]);
-
-/**
- * Provides a key value store where keys are context UUID
- * and values are string.
- *
- * @module clb-context-data
- */
-angular.module('clb-ctx-data', ['uuid4', 'clb-app', 'clb-env', 'clb-error']);
-
-/**
- * @module clb-env
- * @desc
- * ``clb-env`` module provides a way to information from the global environment.
- */
-
-angular.module('clb-env', []);
 
 angular.module('clb-app')
 .factory('clbApp', clbApp);
@@ -783,6 +793,57 @@ function clbBootstrap(module, options) {
     }
   }];
   return deferredBootstrapper.bootstrap(options);
+}
+
+/* global hello, document */
+angular.module('clb-auth')
+.config(interceptorConfig)
+.factory('httpRequestInterceptor', httpRequestInterceptor)
+.provider('clbAuth', clbAuth);
+
+function interceptorConfig($httpProvider) {
+  $httpProvider.interceptors.push('httpRequestInterceptor');
+}
+
+function httpRequestInterceptor($q) {
+  return {
+    request: function(requestConfig) {
+      // TODO: get token from somewhere
+      var token = 'TOKEN';
+      requestConfig.headers.Authorization = 'Bearer ' + token;
+      return requestConfig;
+    },
+    responseError: function(rejection) {
+      // TODO: check bbpOidcClient...
+      return $q.reject(rejection);
+    }
+  };
+}
+
+function clbAuth() {
+  /* eslint camelcase:[2, {properties: "never"}] */
+  hello.init({
+    hbp: {
+      oauth: {
+        version: 2,
+        auth: 'https://services.humanbrainproject.eu/oidc/authorize',
+        grant: 'https://services.humanbrainproject.eu/oidc/token'
+      },
+      scope: {
+        basic: 'openid profiles'
+      },
+      scope_delim: ' ',
+      get: {
+        me: 'userinfo'
+      },
+      base: 'https://services.humanbrainproject.eu/oidc/'
+    }
+  }, {client_id: 'portal-client', redirect_uri: document.URL});
+  return {
+    $get: function() {
+      return hello('hbp');
+    }
+  };
 }
 
 angular.module('clb-automator')
@@ -2459,6 +2520,196 @@ function clbContext(clbAuthHttp, $q, clbError, clbEnv, ClbContextModel) {
   }
 }
 
+angular.module('clb-ctx-data')
+.factory('clbCtxData', clbCtxData);
+
+/**
+ * A service to retrieve data for a given ctx. This is a convenient
+ * way to store JSON data for a given context. Do not use it for
+ * Sensitive data. There is no data migration functionality available, so if
+ * the expected data format change, you are responsible to handle the old
+ * format on the client side.
+ *
+ * @namespace clbCtxData
+ * @memberof clb-ctx-data
+ * @param  {object} clbAuthHttp    Angular DI
+ * @param  {object} $q       Angular DI
+ * @param  {object} uuid4     Angular DI
+ * @param  {object} clbEnv   Angular DI
+ * @param  {object} clbError Angular DI
+ * @return {object}          Angular Service Descriptor
+ */
+function clbCtxData(clbAuthHttp, $q, uuid4, clbEnv, clbError) {
+  var configUrl = clbEnv.get('api.collab.v0') + '/config/';
+  return {
+    /**
+     * Return an Array or an Object containing the data or
+     * ``undefined`` if there is no data stored.
+     * @memberof module:clb-ctx-data.clbCtxData
+     * @param  {UUID} ctx   the current context UUID
+     * @return {Promise}    fullfil to {undefined|object|array}
+     */
+    get: function(ctx) {
+      if (!uuid4.validate(ctx)) {
+        return $q.reject(invalidUuidError(ctx));
+      }
+      return clbAuthHttp.get(configUrl + ctx + '/')
+      .then(function(res) {
+        try {
+          return angular.fromJson(res.data.content);
+        } catch (ex) {
+          return $q.reject(clbError.error({
+            type: 'InvalidData',
+            message: 'Cannot parse JSON string: ' + res.data.content,
+            code: -2,
+            data: {
+              cause: ex
+            }
+          }));
+        }
+      })
+      .catch(function(err) {
+        if (err.code === 404) {
+          return;
+        }
+        return clbError.rejectHttpError(err);
+      });
+    },
+
+    /**
+     * @memberof module:clb-ctx-data.clbCtxData
+     * @param  {UUID} ctx The context UUID
+     * @param  {array|object|string|number} data JSON serializable data
+     * @return {Promise} Return the data when fulfilled
+     */
+    save: function(ctx, data) {
+      if (!uuid4.validate(ctx)) {
+        return $q.reject(invalidUuidError(ctx));
+      }
+      return clbAuthHttp.put(configUrl + ctx + '/', {
+        context: ctx,
+        content: angular.toJson(data)
+      }).then(function() {
+        return data;
+      })
+      .catch(clbError.rejectHttpError);
+    },
+
+    /**
+     * @memberof module:clb-ctx-data.clbCtxData
+     * @param  {UUID} ctx The context UUID
+     * @return {Promise}  fulfilled once deleted
+     */
+    delete: function(ctx) {
+      if (!uuid4.validate(ctx)) {
+        return $q.reject(invalidUuidError(ctx));
+      }
+      return clbAuthHttp.delete(configUrl + ctx + '/')
+      .then(function() {
+        return true;
+      })
+      .catch(clbError.rejectHttpError);
+    }
+  };
+
+  /**
+   * Generate the appropriate error when context is invalid.
+   * @param  {any} badCtx  the wrong ctx
+   * @return {HbpError}    The Error
+   */
+  function invalidUuidError(badCtx) {
+    return clbError.error({
+      type: 'InvalidArgument',
+      message: 'Provided ctx must be a valid UUID4 but is: ' + badCtx,
+      data: {
+        argName: 'ctx',
+        argPosition: 0,
+        argValue: badCtx
+      },
+      code: -3
+    });
+  }
+}
+
+/* global window */
+
+angular.module('clb-env')
+.provider('clbEnv', clbEnv);
+
+/**
+ * Get environement information using dotted notation with the `clbEnv` provider
+ * or service.
+ *
+ * Before being used, clbEnv must be initialized with the context values. You
+ * can do so by setting up a global bbpConfig variable or using
+ * :ref:`angular.clbBootstrap <angular.clbBootstrap>`.
+ *
+ * @function clbEnv
+ * @memberof module:clb-env
+ * @param {object} $injector AngularJS injection
+ * @return {object} provider
+ * @example <caption>Basic usage of clbEnv</caption>
+ * angular.module('myApp', ['clbEnv', 'rest'])
+ * .service('myService', function(clbEnv, clbResultSet) {
+ *   return {
+ *     listCollab: function() {
+ *       // return a paginated list of all collabs
+ *       return clbResultSet.get($http.get(clbEnv.get('api.collab.v0') + '/'));
+ *     }
+ *   };
+ * });
+ * @example <caption>Use clbEnv in your configuration</caption>
+ * angular.module('myApp', ['clbEnv', 'rest'])
+ * .config(function(clbEnvProvider, myAppServiceProvider) {
+ *   // also demonstrate how we accept a custom variable.
+ *   myAppServiceProvider.setMaxFileUpload(clbEnvProvider.get('myapp.maxFileUpload', '1m'))
+ * });
+ */
+function clbEnv($injector) {
+  return {
+    get: get,
+    $get: function() {
+      return {
+        get: get
+      };
+    }
+  };
+
+  /**
+   * ``get(key, [defaultValue])`` provides configuration value loaded at
+   * the application bootstrap.
+   *
+   * Accept a key and an optional default
+   * value. If the key cannot be found in the configurations, it will return
+   * the provided default value. If the defaultValue is undefied, it will
+   * throw an error.
+   *
+   * To ensures that those data are available when angular bootstrap the
+   * application, use angular.clbBootstrap(module, options).
+   *
+   * @memberof module:clb-env.clbEnv
+   * @param {string} key the environment variable to retrieve, using a key.
+   * @param {any} [defaultValue] an optional default value.
+   * @return {any} the value or ``defaultValue`` if the asked for configuration
+   *               is not defined.
+   */
+  function get(key, defaultValue) {
+    var parts = key.split('.');
+    var cursor = (window.bbpConfig ?
+                  window.bbpConfig : $injector.get('CLB_ENVIRONMENT'));
+    for (var i = 0; i < parts.length; i++) {
+      if (!(cursor && cursor.hasOwnProperty(parts[i]))) {
+        if (defaultValue !== undefined) {
+          return defaultValue;
+        }
+        throw new Error('UnkownConfigurationKey: <' + key + '>');
+      }
+      cursor = cursor[parts[i]];
+    }
+    return cursor;
+  }
+}
+
 /* global document */
 
 angular.module('clb-error')
@@ -3591,6 +3842,13 @@ function clbUser(
     var opt = angular.extend({
       sort: 'familyName'
     }, options);
+
+    var loadAll = false;
+    if (opt.pageSize === 0) {
+      loadAll = true;
+      opt.pageSize = 1000; // sooner or later will be all loaded, better saving on requests count
+    }
+
     var endpoint = userUrl;
 
     // append filter part to endpoint
@@ -3612,13 +3870,11 @@ function clbUser(
 
     var pageOptions = paginationOptions('users', opt.factory);
     var params = clbIdentityUtil.queryParams(opt);
-
     var result = clbResultSet.get(clbAuthHttp.get(endpoint, {
       params: params
     }), pageOptions);
 
-    // if pageSize=0 load everything
-    return (opt.pageSize === 0) ? result.instance.all() : result;
+    return (loadAll) ? result.instance.all() : result;
   }
 
   /**
@@ -3679,7 +3935,7 @@ function clbIdentityUtil($log, lodash) {
   function queryParams(options) {
     var defaultOptions = {
       page: 0,
-      pageSize: 50
+      pageSize: 100
     };
     var opt = angular.extend(defaultOptions, options);
 
@@ -6793,196 +7049,6 @@ function FeedController($rootScope, clbStream, clbUser) {
     }).finally(function() {
       vm.loadingFeed = false;
     });
-  }
-}
-
-angular.module('clb-ctx-data')
-.factory('clbCtxData', clbCtxData);
-
-/**
- * A service to retrieve data for a given ctx. This is a convenient
- * way to store JSON data for a given context. Do not use it for
- * Sensitive data. There is no data migration functionality available, so if
- * the expected data format change, you are responsible to handle the old
- * format on the client side.
- *
- * @namespace clbCtxData
- * @memberof clb-ctx-data
- * @param  {object} clbAuthHttp    Angular DI
- * @param  {object} $q       Angular DI
- * @param  {object} uuid4     Angular DI
- * @param  {object} clbEnv   Angular DI
- * @param  {object} clbError Angular DI
- * @return {object}          Angular Service Descriptor
- */
-function clbCtxData(clbAuthHttp, $q, uuid4, clbEnv, clbError) {
-  var configUrl = clbEnv.get('api.collab.v0') + '/config/';
-  return {
-    /**
-     * Return an Array or an Object containing the data or
-     * ``undefined`` if there is no data stored.
-     * @memberof module:clb-ctx-data.clbCtxData
-     * @param  {UUID} ctx   the current context UUID
-     * @return {Promise}    fullfil to {undefined|object|array}
-     */
-    get: function(ctx) {
-      if (!uuid4.validate(ctx)) {
-        return $q.reject(invalidUuidError(ctx));
-      }
-      return clbAuthHttp.get(configUrl + ctx + '/')
-      .then(function(res) {
-        try {
-          return angular.fromJson(res.data.content);
-        } catch (ex) {
-          return $q.reject(clbError.error({
-            type: 'InvalidData',
-            message: 'Cannot parse JSON string: ' + res.data.content,
-            code: -2,
-            data: {
-              cause: ex
-            }
-          }));
-        }
-      })
-      .catch(function(err) {
-        if (err.code === 404) {
-          return;
-        }
-        return clbError.rejectHttpError(err);
-      });
-    },
-
-    /**
-     * @memberof module:clb-ctx-data.clbCtxData
-     * @param  {UUID} ctx The context UUID
-     * @param  {array|object|string|number} data JSON serializable data
-     * @return {Promise} Return the data when fulfilled
-     */
-    save: function(ctx, data) {
-      if (!uuid4.validate(ctx)) {
-        return $q.reject(invalidUuidError(ctx));
-      }
-      return clbAuthHttp.put(configUrl + ctx + '/', {
-        context: ctx,
-        content: angular.toJson(data)
-      }).then(function() {
-        return data;
-      })
-      .catch(clbError.rejectHttpError);
-    },
-
-    /**
-     * @memberof module:clb-ctx-data.clbCtxData
-     * @param  {UUID} ctx The context UUID
-     * @return {Promise}  fulfilled once deleted
-     */
-    delete: function(ctx) {
-      if (!uuid4.validate(ctx)) {
-        return $q.reject(invalidUuidError(ctx));
-      }
-      return clbAuthHttp.delete(configUrl + ctx + '/')
-      .then(function() {
-        return true;
-      })
-      .catch(clbError.rejectHttpError);
-    }
-  };
-
-  /**
-   * Generate the appropriate error when context is invalid.
-   * @param  {any} badCtx  the wrong ctx
-   * @return {HbpError}    The Error
-   */
-  function invalidUuidError(badCtx) {
-    return clbError.error({
-      type: 'InvalidArgument',
-      message: 'Provided ctx must be a valid UUID4 but is: ' + badCtx,
-      data: {
-        argName: 'ctx',
-        argPosition: 0,
-        argValue: badCtx
-      },
-      code: -3
-    });
-  }
-}
-
-/* global window */
-
-angular.module('clb-env')
-.provider('clbEnv', clbEnv);
-
-/**
- * Get environement information using dotted notation with the `clbEnv` provider
- * or service.
- *
- * Before being used, clbEnv must be initialized with the context values. You
- * can do so by setting up a global bbpConfig variable or using
- * :ref:`angular.clbBootstrap <angular.clbBootstrap>`.
- *
- * @function clbEnv
- * @memberof module:clb-env
- * @param {object} $injector AngularJS injection
- * @return {object} provider
- * @example <caption>Basic usage of clbEnv</caption>
- * angular.module('myApp', ['clbEnv', 'rest'])
- * .service('myService', function(clbEnv, clbResultSet) {
- *   return {
- *     listCollab: function() {
- *       // return a paginated list of all collabs
- *       return clbResultSet.get($http.get(clbEnv.get('api.collab.v0') + '/'));
- *     }
- *   };
- * });
- * @example <caption>Use clbEnv in your configuration</caption>
- * angular.module('myApp', ['clbEnv', 'rest'])
- * .config(function(clbEnvProvider, myAppServiceProvider) {
- *   // also demonstrate how we accept a custom variable.
- *   myAppServiceProvider.setMaxFileUpload(clbEnvProvider.get('myapp.maxFileUpload', '1m'))
- * });
- */
-function clbEnv($injector) {
-  return {
-    get: get,
-    $get: function() {
-      return {
-        get: get
-      };
-    }
-  };
-
-  /**
-   * ``get(key, [defaultValue])`` provides configuration value loaded at
-   * the application bootstrap.
-   *
-   * Accept a key and an optional default
-   * value. If the key cannot be found in the configurations, it will return
-   * the provided default value. If the defaultValue is undefied, it will
-   * throw an error.
-   *
-   * To ensures that those data are available when angular bootstrap the
-   * application, use angular.clbBootstrap(module, options).
-   *
-   * @memberof module:clb-env.clbEnv
-   * @param {string} key the environment variable to retrieve, using a key.
-   * @param {any} [defaultValue] an optional default value.
-   * @return {any} the value or ``defaultValue`` if the asked for configuration
-   *               is not defined.
-   */
-  function get(key, defaultValue) {
-    var parts = key.split('.');
-    var cursor = (window.bbpConfig ?
-                  window.bbpConfig : $injector.get('CLB_ENVIRONMENT'));
-    for (var i = 0; i < parts.length; i++) {
-      if (!(cursor && cursor.hasOwnProperty(parts[i]))) {
-        if (defaultValue !== undefined) {
-          return defaultValue;
-        }
-        throw new Error('UnkownConfigurationKey: <' + key + '>');
-      }
-      cursor = cursor[parts[i]];
-    }
-    return cursor;
   }
 }
 
