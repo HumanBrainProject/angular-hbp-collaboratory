@@ -174,17 +174,19 @@ describe('clbStorage', function() {
     });
   });
 
+  describe('getProjects', function() {
+    it('lists projects', function() {
+      // tests in common with getProjects
+      testGetProjectsList(service.getProjects);
+    });
+  });
+
   describe('getChildren', function() {
     describe('root projects', function() {
       var projectEntity;
-      var projectEntityBis;
       beforeEach(function() {
         projectEntity = {
           uuid: '331C0A79-A12F-46AF-9DE4-09C43C0D8FFB',
-          entity_type: 'project'
-        };
-        projectEntityBis = {
-          uuid: '104facf9-f81f-4518-968c-6a69e434747a',
           entity_type: 'project'
         };
       });
@@ -199,60 +201,13 @@ describe('clbStorage', function() {
         expect(actual).toBeAPaginatedResultSet();
         expect(actual.results).toDeepEqual([projectEntity]);
       });
-      it('retrieve results', function() {
-        backend.expectGET(baseUrl('project/?ordering=name'))
-                    .respond({
-                      results: [projectEntity],
-                      hasMore: false
-                    });
-        service.getChildren().then(assign);
-        backend.flush(1);
-        expect(actual.hasNext).toBe(false);
-        expect(actual.results).toEqual([projectEntity]);
-      });
-      it('support pagination', function() {
-        backend.expectGET(baseUrl('project/?ordering=name'))
-                    .respond({
-                      results: [projectEntity],
-                      next: baseUrl('project/?page=1&page_size=1&ordering=name')
-                    });
-        service.getChildren().then(assign);
-        backend.flush(1);
-        expect(actual.hasNext).toBe(true);
-        expect(actual.results).toEqual([projectEntity]);
 
-        backend.expectGET(baseUrl('project/?page=1&page_size=1&ordering=name'))
-                    .respond({
-                      results: [projectEntityBis],
-                      previous: baseUrl('project/?page=0&page_size=1&ordering=name')
-                    });
-        actual.next();
-        backend.flush(1);
-        expect(actual.hasNext).toBe(false);
-        expect(actual.results).toEqual([projectEntity, projectEntityBis]);
-      });
-      it('support backward pagination', function() {
-        backend.expectGET(baseUrl('project/?ordering=name'))
-                    .respond({
-                      results: [projectEntityBis],
-                      previous: baseUrl('project/?page=0&page_size=1&ordering=name')
-                    });
-        service.getChildren().then(assign);
-        backend.flush(1);
-        expect(actual.hasPrevious).toBe(true);
-        expect(actual.results).toEqual([projectEntityBis]);
-
-        backend.expectGET(baseUrl('project/?page=0&page_size=1&ordering=name'))
-                    .respond({
-                      results: [projectEntity],
-                      next: baseUrl('project/?page=1&page_size=1&ordering=name')
-                    });
-        actual.previous();
-        backend.flush(1);
-        expect(actual.hasPrevious).toBe(false);
-        expect(actual.results).toEqual([projectEntity, projectEntityBis]);
+      it('lists projects', function() {
+        // tests in common with getProjects
+        testGetProjectsList(service.getChildren);
       });
     });
+
     describe('from a folder', function() {
       it('accept a parent entity', function() {
         var folder = {
@@ -269,6 +224,74 @@ describe('clbStorage', function() {
       });
     });
   });
+
+  function testGetProjectsList(serviceFunc) {
+    var projectEntity;
+    var projectEntityBis;
+    beforeEach(function() {
+      projectEntity = {
+        uuid: '331C0A79-A12F-46AF-9DE4-09C43C0D8FFB',
+        entity_type: 'project'
+      };
+      projectEntityBis = {
+        uuid: '104facf9-f81f-4518-968c-6a69e434747a',
+        entity_type: 'project'
+      };
+    });
+    it('retrieve results', function() {
+      backend.expectGET(baseUrl('project/?ordering=name'))
+                  .respond({
+                    results: [projectEntity],
+                    hasMore: false
+                  });
+      serviceFunc().then(assign);
+      backend.flush(1);
+      expect(actual.hasNext).toBe(false);
+      expect(actual.results).toEqual([projectEntity]);
+    });
+    it('support pagination', function() {
+      backend.expectGET(baseUrl('project/?ordering=name'))
+                  .respond({
+                    results: [projectEntity],
+                    next: baseUrl('project/?page=1&page_size=1&ordering=name')
+                  });
+      serviceFunc().then(assign);
+      backend.flush(1);
+      expect(actual.hasNext).toBe(true);
+      expect(actual.results).toEqual([projectEntity]);
+
+      backend.expectGET(baseUrl('project/?page=1&page_size=1&ordering=name'))
+                  .respond({
+                    results: [projectEntityBis],
+                    previous: baseUrl('project/?page=0&page_size=1&ordering=name')
+                  });
+      actual.next();
+      backend.flush(1);
+      expect(actual.hasNext).toBe(false);
+      expect(actual.results).toEqual([projectEntity, projectEntityBis]);
+    });
+    it('support backward pagination', function() {
+      backend.expectGET(baseUrl('project/?ordering=name'))
+                  .respond({
+                    results: [projectEntityBis],
+                    previous: baseUrl('project/?page=0&page_size=1&ordering=name')
+                  });
+      serviceFunc().then(assign);
+      backend.flush(1);
+      expect(actual.hasPrevious).toBe(true);
+      expect(actual.results).toEqual([projectEntityBis]);
+
+      backend.expectGET(baseUrl('project/?page=0&page_size=1&ordering=name'))
+                  .respond({
+                    results: [projectEntity],
+                    next: baseUrl('project/?page=1&page_size=1&ordering=name')
+                  });
+      actual.previous();
+      backend.flush(1);
+      expect(actual.hasPrevious).toBe(false);
+      expect(actual.results).toEqual([projectEntity, projectEntityBis]);
+    });
+  }
 
   describe('metadata', function() {
     describe('setContextMetadata(entity, contextId)', function() {

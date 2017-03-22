@@ -30,8 +30,6 @@
 clbApp.$inject = ['$log', '$q', '$rootScope', '$timeout', '$window', 'clbError'];
 authProvider.$inject = ['clbAppHello', 'clbEnvProvider'];
 clbAuthHttp.$inject = ['$http', 'clbAuth'];
-interceptorConfig.$inject = ['$httpProvider'];
-httpRequestInterceptor.$inject = ['$q'];
 clbAutomator.$inject = ['$q', '$log', 'clbError'];
 clbCollabTeamRole.$inject = ['clbAuthHttp', '$log', '$q', 'clbEnv', 'clbError'];
 clbCollabTeam.$inject = ['clbAuthHttp', '$log', '$q', 'lodash', 'clbEnv', 'clbError', 'clbCollabTeamRole', 'clbUser'];
@@ -117,14 +115,6 @@ angular.module('hbpCollaboratory', [
  */
 angular.module('clb-app', ['clb-env', 'clb-error'])
 .constant('clbAppHello', hello);
-
-/**
- * @module clb-auth
- * @desc
- * ``clb-auth`` provides a library based on hello.js
- * to authenticate into the Collaboratory.
- */
-angular.module('clb-auth', ['clb-env']);
 
 /**
  * @module clb-automator
@@ -793,57 +783,6 @@ function clbBootstrap(module, options) {
     }
   }];
   return deferredBootstrapper.bootstrap(options);
-}
-
-/* global hello, document */
-angular.module('clb-auth')
-.config(interceptorConfig)
-.factory('httpRequestInterceptor', httpRequestInterceptor)
-.provider('clbAuth', clbAuth);
-
-function interceptorConfig($httpProvider) {
-  $httpProvider.interceptors.push('httpRequestInterceptor');
-}
-
-function httpRequestInterceptor($q) {
-  return {
-    request: function(requestConfig) {
-      // TODO: get token from somewhere
-      var token = 'TOKEN';
-      requestConfig.headers.Authorization = 'Bearer ' + token;
-      return requestConfig;
-    },
-    responseError: function(rejection) {
-      // TODO: check bbpOidcClient...
-      return $q.reject(rejection);
-    }
-  };
-}
-
-function clbAuth() {
-  /* eslint camelcase:[2, {properties: "never"}] */
-  hello.init({
-    hbp: {
-      oauth: {
-        version: 2,
-        auth: 'https://services.humanbrainproject.eu/oidc/authorize',
-        grant: 'https://services.humanbrainproject.eu/oidc/token'
-      },
-      scope: {
-        basic: 'openid profiles'
-      },
-      scope_delim: ' ',
-      get: {
-        me: 'userinfo'
-      },
-      base: 'https://services.humanbrainproject.eu/oidc/'
-    }
-  }, {client_id: 'portal-client', redirect_uri: document.URL});
-  return {
-    $get: function() {
-      return hello('hbp');
-    }
-  };
 }
 
 angular.module('clb-automator')
@@ -4389,6 +4328,7 @@ function clbStorage(
     getCollabHome: getCollabHome,
     getContent: getContent,
     downloadUrl: downloadUrl,
+    getProjects: getProjects,
     getChildren: getChildren,
     getUserAccess: getUserAccess,
     getAncestors: getAncestors,
@@ -4807,7 +4747,6 @@ function clbStorage(
    * @param {module:clb-storage.EntityDescriptor} entity The entity to retrieve user access for
    * @return {object} Contains ``{boolean} canRead``, ``{boolean} canWrite``, ``{boolean} canManage``
    */
-
   function getUserAccess(entity) {
     return $q.all({
       // to check user access get collab id and check permission as done in collaboratory-frontend
@@ -4825,6 +4764,20 @@ function clbStorage(
         return access;
       });
     }).catch(clbError.rejectHttpError);
+  }
+
+  /**
+   * @desc
+   * Retrieves all the projects the user has read access to.
+   *
+   * @function
+   * @memberof module:clb-storage.clbStorage
+   * @param {object} options Options to make the query.
+   * @return {Promise} When fulfilled, return a paginated result set. You can also access it immediately using ``promise.instance``
+   * @see {module:clb-storage.clbStorage.getChildren} for more details on `options` param.
+   */
+  function getProjects(options) {
+    return getChildren(null, options);
   }
 
   /**
