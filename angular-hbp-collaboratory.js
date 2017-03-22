@@ -30,8 +30,6 @@
 clbApp.$inject = ['$log', '$q', '$rootScope', '$timeout', '$window', 'clbError'];
 authProvider.$inject = ['clbAppHello', 'clbEnvProvider'];
 clbAuthHttp.$inject = ['$http', 'clbAuth'];
-interceptorConfig.$inject = ['$httpProvider'];
-httpRequestInterceptor.$inject = ['$q'];
 clbAutomator.$inject = ['$q', '$log', 'clbError'];
 clbCollabTeamRole.$inject = ['clbAuthHttp', '$log', '$q', 'clbEnv', 'clbError'];
 clbCollabTeam.$inject = ['clbAuthHttp', '$log', '$q', 'lodash', 'clbEnv', 'clbError', 'clbCollabTeamRole', 'clbUser'];
@@ -117,14 +115,6 @@ angular.module('hbpCollaboratory', [
  */
 angular.module('clb-app', ['clb-env', 'clb-error'])
 .constant('clbAppHello', hello);
-
-/**
- * @module clb-auth
- * @desc
- * ``clb-auth`` provides a library based on hello.js
- * to authenticate into the Collaboratory.
- */
-angular.module('clb-auth', ['clb-env']);
 
 /**
  * @module clb-automator
@@ -253,19 +243,19 @@ angular.module('clb-stream', [
 angular.module('clb-ui-dialog', ['ui.bootstrap.modal']);
 
 /**
+ * @module clb-ui-form
+ * @desc
+ * clb-ui-form provides directive to ease creation of forms.
+ */
+angular.module('clb-ui-form', []);
+
+/**
  * @module clb-ui-error
  */
 angular.module('clb-ui-error', [
   'clb-error',
   'ui.bootstrap'
 ]);
-
-/**
- * @module clb-ui-form
- * @desc
- * clb-ui-form provides directive to ease creation of forms.
- */
-angular.module('clb-ui-form', []);
 
 /**
  * Provides UI widgets around user and groups.
@@ -793,57 +783,6 @@ function clbBootstrap(module, options) {
     }
   }];
   return deferredBootstrapper.bootstrap(options);
-}
-
-/* global hello, document */
-angular.module('clb-auth')
-.config(interceptorConfig)
-.factory('httpRequestInterceptor', httpRequestInterceptor)
-.provider('clbAuth', clbAuth);
-
-function interceptorConfig($httpProvider) {
-  $httpProvider.interceptors.push('httpRequestInterceptor');
-}
-
-function httpRequestInterceptor($q) {
-  return {
-    request: function(requestConfig) {
-      // TODO: get token from somewhere
-      var token = 'TOKEN';
-      requestConfig.headers.Authorization = 'Bearer ' + token;
-      return requestConfig;
-    },
-    responseError: function(rejection) {
-      // TODO: check bbpOidcClient...
-      return $q.reject(rejection);
-    }
-  };
-}
-
-function clbAuth() {
-  /* eslint camelcase:[2, {properties: "never"}] */
-  hello.init({
-    hbp: {
-      oauth: {
-        version: 2,
-        auth: 'https://services.humanbrainproject.eu/oidc/authorize',
-        grant: 'https://services.humanbrainproject.eu/oidc/token'
-      },
-      scope: {
-        basic: 'openid profiles'
-      },
-      scope_delim: ' ',
-      get: {
-        me: 'userinfo'
-      },
-      base: 'https://services.humanbrainproject.eu/oidc/'
-    }
-  }, {client_id: 'portal-client', redirect_uri: document.URL});
-  return {
-    $get: function() {
-      return hello('hbp');
-    }
-  };
 }
 
 angular.module('clb-automator')
@@ -4389,6 +4328,7 @@ function clbStorage(
     getCollabHome: getCollabHome,
     getContent: getContent,
     downloadUrl: downloadUrl,
+    getProjects: getProjects,
     getChildren: getChildren,
     getUserAccess: getUserAccess,
     getAncestors: getAncestors,
@@ -4807,7 +4747,6 @@ function clbStorage(
    * @param {module:clb-storage.EntityDescriptor} entity The entity to retrieve user access for
    * @return {object} Contains ``{boolean} canRead``, ``{boolean} canWrite``, ``{boolean} canManage``
    */
-
   function getUserAccess(entity) {
     return $q.all({
       // to check user access get collab id and check permission as done in collaboratory-frontend
@@ -4825,6 +4764,19 @@ function clbStorage(
         return access;
       });
     }).catch(clbError.rejectHttpError);
+  }
+
+  /**
+   * @desc
+   * Retrieves all the projects the user has read access to.
+   *
+   * @function
+   * @memberof module:clb-storage.clbStorage
+   * @param {object} options Options to make the query. @see {@link getChildren} for more details.
+   * @return {Promise} When fulfilled, return a paginated result set. You can also access it immediately using ``promise.instance``
+   */
+  function getProjects(options) {
+    return getChildren(null, options);
   }
 
   /**
@@ -5421,6 +5373,68 @@ function clbConfirm($rootScope, $uibModal) {
   }
 }
 
+/**
+ * @namespace clbFormControlFocus
+ * @memberof module:clb-ui-form
+ * @desc
+ * The ``clbFormControlFocus`` Directive mark a form element as the one that
+ * should receive the focus first.
+ * @example <caption>Give the focus to the search field</caption>
+ * angular.module('exampleApp', ['clb-ui-form']);
+ *
+ * // HTML snippet:
+ * // <form ng-app="exampleApp"><input type="search" clb-ui-form-control-focus></form>
+ */
+angular.module('clb-ui-form')
+.directive('clbFormControlFocus', ['$timeout', function clbFormControlFocus($timeout) {
+  return {
+    type: 'A',
+    link: function formControlFocusLink(scope, elt) {
+      $timeout(function() {
+        elt[0].focus();
+      }, 0, false);
+    }
+  };
+}]);
+
+/**
+ * @namespace clbFormGroupState
+ * @memberof module:clb-ui-form
+ * @desc
+ * ``clbFormGroupState`` directive flag the current form group with
+ * the class has-error or has-success depending on its form field
+ * current state.
+ *
+ * @example
+ * <caption>Track a field validity at the ``.form-group`` level</caption>
+ * angular.module('exampleApp', ['hbpCollaboratory']);
+ */
+angular.module('clb-ui-form')
+.directive('clbFormGroupState', function formGroupState() {
+  return {
+    type: 'A',
+    scope: {
+      model: '=clbFormGroupState'
+    },
+    link: function formGroupStateLink(scope, elt) {
+      scope.$watchGroup(['model.$touched', 'model.$valid'], function() {
+        if (!scope.model) {
+          return;
+        }
+        elt.removeClass('has-error', 'has-success');
+        if (!scope.model.$touched) {
+          return;
+        }
+        if (scope.model.$valid) {
+          elt.addClass('has-success');
+        } else {
+          elt.addClass('has-error');
+        }
+      }, true);
+    }
+  };
+});
+
 angular.module('clb-ui-error')
 .factory('clbErrorDialog', clbErrorDialog);
 
@@ -5491,68 +5505,6 @@ function clbErrorMessage() {
     template:'<uib-alert type="danger" ng-if="error"><div ng-switch on="error.type"><div ng-switch-when="Validation">Validation errors<span ng-show="error.data">:</span><ul><li ng-repeat="(attr, errors) in error.data">{{attr}}: {{errors.join(\', \')}}</li></ul></div><div ng-switch-default>{{error.message}}</div></div></uib-alert>'
   };
 }
-
-/**
- * @namespace clbFormControlFocus
- * @memberof module:clb-ui-form
- * @desc
- * The ``clbFormControlFocus`` Directive mark a form element as the one that
- * should receive the focus first.
- * @example <caption>Give the focus to the search field</caption>
- * angular.module('exampleApp', ['clb-ui-form']);
- *
- * // HTML snippet:
- * // <form ng-app="exampleApp"><input type="search" clb-ui-form-control-focus></form>
- */
-angular.module('clb-ui-form')
-.directive('clbFormControlFocus', ['$timeout', function clbFormControlFocus($timeout) {
-  return {
-    type: 'A',
-    link: function formControlFocusLink(scope, elt) {
-      $timeout(function() {
-        elt[0].focus();
-      }, 0, false);
-    }
-  };
-}]);
-
-/**
- * @namespace clbFormGroupState
- * @memberof module:clb-ui-form
- * @desc
- * ``clbFormGroupState`` directive flag the current form group with
- * the class has-error or has-success depending on its form field
- * current state.
- *
- * @example
- * <caption>Track a field validity at the ``.form-group`` level</caption>
- * angular.module('exampleApp', ['hbpCollaboratory']);
- */
-angular.module('clb-ui-form')
-.directive('clbFormGroupState', function formGroupState() {
-  return {
-    type: 'A',
-    scope: {
-      model: '=clbFormGroupState'
-    },
-    link: function formGroupStateLink(scope, elt) {
-      scope.$watchGroup(['model.$touched', 'model.$valid'], function() {
-        if (!scope.model) {
-          return;
-        }
-        elt.removeClass('has-error', 'has-success');
-        if (!scope.model.$touched) {
-          return;
-        }
-        if (scope.model.$valid) {
-          elt.addClass('has-success');
-        } else {
-          elt.addClass('has-error');
-        }
-      }, true);
-    }
-  };
-});
 
 angular.module('clb-ui-identity')
 .directive('clbUserAvatar', clbUserAvatar);

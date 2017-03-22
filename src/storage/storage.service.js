@@ -55,6 +55,7 @@ function clbStorage(
     getCollabHome: getCollabHome,
     getContent: getContent,
     downloadUrl: downloadUrl,
+    getProjects: getProjects,
     getChildren: getChildren,
     getUserAccess: getUserAccess,
     getAncestors: getAncestors,
@@ -473,7 +474,6 @@ function clbStorage(
    * @param {module:clb-storage.EntityDescriptor} entity The entity to retrieve user access for
    * @return {object} Contains ``{boolean} canRead``, ``{boolean} canWrite``, ``{boolean} canManage``
    */
-
   function getUserAccess(entity) {
     return $q.all({
       // to check user access get collab id and check permission as done in collaboratory-frontend
@@ -491,6 +491,19 @@ function clbStorage(
         return access;
       });
     }).catch(clbError.rejectHttpError);
+  }
+
+  /**
+   * @desc
+   * Retrieves all the projects the user has read access to.
+   *
+   * @function
+   * @memberof module:clb-storage.clbStorage
+   * @param {object} options Options to make the query. @see {@link getChildren} for more details.
+   * @return {Promise} When fulfilled, return a paginated result set. You can also access it immediately using ``promise.instance``
+   */
+  function getProjects(options) {
+    return getChildren(null, options);
   }
 
   /**
