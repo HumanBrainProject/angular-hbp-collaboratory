@@ -230,7 +230,7 @@ Retrieves all the projects the user has read access to.
 .. js:function:: getProjects(options)
 
     
-    :param object options: Options to make the query. @see {@link getChildren} for more details.
+    :param object options: Options to make the query.
     :return Promise: When fulfilled, return a paginated result set. You can also access it immediately using ``promise.instance``
     
 .. _module-clb-storage.clbStorage.getChildren:

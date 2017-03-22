@@ -499,8 +499,9 @@ function clbStorage(
    *
    * @function
    * @memberof module:clb-storage.clbStorage
-   * @param {object} options Options to make the query. @see {@link getChildren} for more details.
+   * @param {object} options Options to make the query.
    * @return {Promise} When fulfilled, return a paginated result set. You can also access it immediately using ``promise.instance``
+   * @see {module:clb-storage.clbStorage.getChildren} for more details on `options` param.
    */
   function getProjects(options) {
     return getChildren(null, options);
