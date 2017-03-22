@@ -491,5 +491,75 @@ describe('clbStorage', function() {
         expect(project).toEqual(A_PROJECT);
       });
     });
+
+    describe('update', function() {
+      it('should reject with an error in case of a http error', function() {
+        var error;
+
+        // given
+        backend
+          .when('PATCH', baseUrl('project/123/'))
+          .respond(404);
+
+        // when
+        service.update({
+          uuid: '123',
+          entity_type: 'project'
+        }).catch(function(e) {
+          error = e;
+        });
+        backend.flush();
+
+        // then
+        expect(error.type).toEqual('NotFound');
+      });
+
+      it('should throw an error if no entity is provided', function() {
+        // when
+        expect(service.update)
+        // then
+        .toThrowError('Missing mandatory `entity` parameter');
+      });
+
+      it('should throw an error if no entity uuid is provided', function() {
+        // when
+        expect(function() {
+          service.update({entity_type: 'project'});
+        })
+        // then
+        .toThrowError('Missing mandatory `entity.uuid` parameter');
+      });
+
+      it('should throw an error if no entity type is provided', function() {
+        // when
+        expect(function() {
+          service.update({uuid: '123'});
+        })
+        // then
+        .toThrowError('Missing mandatory `entity.entity_type` parameter');
+      });
+
+      it('should return the updated entity', function() {
+        var entity = {
+          uuid: '12345',
+          entity_type: 'folder',
+          name: 'my folder'
+        };
+        var result;
+
+        backend.expectPATCH(baseUrl('folder/12345/'))
+                    .respond(200, entity);
+
+        // when
+        service.update(entity)
+          .then(function(e) {
+            result = e;
+          });
+        backend.flush(1);
+
+        // then
+        expect(result).toEqual(entity);
+      });
+    });
   });
 });

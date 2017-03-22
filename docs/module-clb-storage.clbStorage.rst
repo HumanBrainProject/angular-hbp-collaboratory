@@ -167,6 +167,22 @@ Create a new entity.
     :param object options: Extend the entity descriptor with those data
     :return Promise: Resolve once done
     
+.. _module-clb-storage.clbStorage.updateEntity:
+
+
+Function: ``updateEntity``
+==========================
+
+Update an existing entity.
+
+.. js:function:: updateEntity([entity][, options.uuid][, options.entity_type])
+
+    
+    :param object entity: The entity to be updated
+    :param string options.uuid: Entity uuid - required
+    :param string options.entity_type: The entity type - required
+    :return Promise: Resolve once done
+    
 .. _module-clb-storage.clbStorage.copy:
 
 
