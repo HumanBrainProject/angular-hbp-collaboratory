@@ -4335,6 +4335,7 @@ function clbStorage(
     isContainer: isContainer,
     copy: copy,
     create: create,
+    update: updateEntity,
     delete: deleteEntity,
     setContextMetadata: setContextMetadata,
     deleteContextMetadata: deleteContextMetadata,
@@ -4677,6 +4678,28 @@ function clbStorage(
       err.cause = err.type; // preserve legacy API
       return $q.reject(err);
     });
+  }
+
+  /**
+   * Update an existing entity.
+
+   * @function
+   * @memberof module:clb-storage.clbStorage
+   * @param {object} [entity]              The entity to be updated
+   * @param {string} [options.uuid]        Entity uuid - required
+   * @param {string} [options.entity_type] The entity type - required
+   * @return {Promise}                     Resolve once done
+   */
+  function updateEntity(entity) {
+    checkMandatoryParameter('entity', entity);
+    checkMandatoryParameter('entity.uuid', entity.uuid);
+    checkMandatoryParameter('entity.entity_type', entity.entity_type);
+
+    var updateUrl = baseUrl + '/' + entity.entity_type + '/' + entity.uuid + '/';
+    return clbAuthHttp.patch(updateUrl, entity)
+      .then(function(res) {
+        return res.data;
+      }, clbError.rejectHttpError);
   }
 
   /**
