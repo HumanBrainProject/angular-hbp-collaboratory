@@ -30,19 +30,18 @@
 clbApp.$inject = ['$log', '$q', '$rootScope', '$timeout', '$window', 'clbError'];
 authProvider.$inject = ['clbAppHello', 'clbEnvProvider'];
 clbAuthHttp.$inject = ['$http', 'clbAuth'];
-clbAutomator.$inject = ['$q', '$log', 'clbError'];
 clbCollabTeamRole.$inject = ['clbAuthHttp', '$log', '$q', 'clbEnv', 'clbError'];
 clbCollabTeam.$inject = ['clbAuthHttp', '$log', '$q', 'lodash', 'clbEnv', 'clbError', 'clbCollabTeamRole', 'clbUser'];
 clbCollab.$inject = ['$log', '$q', '$cacheFactory', 'clbAuthHttp', 'lodash', 'clbContext', 'clbEnv', 'clbError', 'clbResultSet', 'clbUser', 'ClbCollabModel', 'ClbContextModel'];
 clbContext.$inject = ['clbAuthHttp', '$q', 'clbError', 'clbEnv', 'ClbContextModel'];
 clbCtxData.$inject = ['clbAuthHttp', '$q', 'uuid4', 'clbEnv', 'clbError'];
-clbEnv.$inject = ['$injector'];
 clbError.$inject = ['$q'];
 clbGroup.$inject = ['$rootScope', '$q', 'clbAuthHttp', '$cacheFactory', 'lodash', 'clbEnv', 'clbError', 'clbResultSet', 'clbIdentityUtil'];
 clbUser.$inject = ['$rootScope', '$q', 'clbAuthHttp', '$cacheFactory', '$log', 'lodash', 'clbEnv', 'clbError', 'clbResultSet', 'clbIdentityUtil'];
 clbIdentityUtil.$inject = ['$log', 'lodash'];
 clbResultSet.$inject = ['clbAuthHttp', '$q', 'clbError'];
 clbStorage.$inject = ['clbAuthHttp', '$q', '$log', 'uuid4', 'clbEnv', 'clbError', 'clbUser', 'clbResultSet'];
+clbAutomator.$inject = ['$q', '$log', 'clbError'];
 clbResourceLocator.$inject = ['$q', '$log', '$injector', 'clbError'];
 clbStream.$inject = ['clbAuthHttp', 'clbEnv', 'clbError', 'clbResultSet', 'moment'];
 clbConfirm.$inject = ['$rootScope', '$uibModal'];
@@ -51,11 +50,12 @@ clbUsercardPopoverDirective.$inject = ['$log', '$q', 'clbUser', 'clbUsercardPopo
 clbUserCardPopoverService.$inject = ['$rootScope'];
 clbUsercard.$inject = ['lodash'];
 clbUsercardCacheTemplate.$inject = ['$templateCache'];
+ActivityController.$inject = ['$scope', '$sce', '$log', '$window', '$q', '$compile', 'clbResourceLocator', 'clbErrorDialog'];
+FeedController.$inject = ['$rootScope', 'clbStream', 'clbUser'];
+clbEnv.$inject = ['$injector'];
 clbFileBrowserPath.$inject = ['clbStorage'];
 clbFileBrowser.$inject = ['lodash'];
 clbFileChooser.$inject = ['$q', '$log'];
-ActivityController.$inject = ['$scope', '$sce', '$log', '$window', '$q', '$compile', 'clbResourceLocator', 'clbErrorDialog'];
-FeedController.$inject = ['$rootScope', 'clbStream', 'clbUser'];
 angular.module('hbpCollaboratoryCore', [
   'clb-app',
   'clb-automator',
@@ -117,25 +117,6 @@ angular.module('clb-app', ['clb-env', 'clb-error'])
 .constant('clbAppHello', hello);
 
 /**
- * @module clb-automator
- * @desc
- * `clb-automator` module provides an automation library for the Collaboratory
- * using the AngularJS service :ref:`clbAutomator <module-clb-automator.clbAutomator>`.
- * It supports object describing a serie of actions that have to be run
- * either concurrently or sequentially.
- *
- * It is used for example to script the creation of new custom collab in
- * the `Create New Collab` functionality in `collaboratory-extension-core`.
- */
-angular.module('clb-automator', [
-  'clb-app',
-  'clb-env',
-  'clb-error',
-  'clb-collab',
-  'clb-storage'
-]);
-
-/**
  * @module clb-collab
  * @desc
  * Contain services to interact with collabs (e.g.: retriving collab informations or
@@ -158,14 +139,6 @@ angular.module('clb-collab', [
  * @module clb-context-data
  */
 angular.module('clb-ctx-data', ['uuid4', 'clb-app', 'clb-env', 'clb-error']);
-
-/**
- * @module clb-env
- * @desc
- * ``clb-env`` module provides a way to information from the global environment.
- */
-
-angular.module('clb-env', []);
 
 angular.module('clb-error', []);
 
@@ -221,6 +194,25 @@ angular.module('clb-storage', [
 ]);
 
 /**
+ * @module clb-automator
+ * @desc
+ * `clb-automator` module provides an automation library for the Collaboratory
+ * using the AngularJS service :ref:`clbAutomator <module-clb-automator.clbAutomator>`.
+ * It supports object describing a serie of actions that have to be run
+ * either concurrently or sequentially.
+ *
+ * It is used for example to script the creation of new custom collab in
+ * the `Create New Collab` functionality in `collaboratory-extension-core`.
+ */
+angular.module('clb-automator', [
+  'clb-app',
+  'clb-env',
+  'clb-error',
+  'clb-collab',
+  'clb-storage'
+]);
+
+/**
  * @module clb-stream
  * @desc
  * The `clb-stream` module contains a service and a few directives to retrieve
@@ -270,6 +262,23 @@ angular.module('clb-ui-identity', ['lodash', 'clb-identity']);
 angular.module('clb-ui-loading', []);
 
 /**
+ * @module clb-ui-stream
+ */
+angular.module('clb-ui-stream', [
+  'angularMoment',
+  'clb-stream',
+  'clb-ui-error'
+]);
+
+/**
+ * @module clb-env
+ * @desc
+ * ``clb-env`` module provides a way to information from the global environment.
+ */
+
+angular.module('clb-env', []);
+
+/**
  * The ``clb-ui-storage`` module provides Angular directive to work
  * with the HBP Collaboratory storage.
  *
@@ -286,15 +295,6 @@ angular.module('clb-ui-storage', [
   'ui.bootstrap',
   'clb-ui-error',
   'clb-storage'
-]);
-
-/**
- * @module clb-ui-stream
- */
-angular.module('clb-ui-stream', [
-  'angularMoment',
-  'clb-stream',
-  'clb-ui-error'
 ]);
 
 angular.module('clb-app')
@@ -784,604 +784,6 @@ function clbBootstrap(module, options) {
   }];
   return deferredBootstrapper.bootstrap(options);
 }
-
-angular.module('clb-automator')
-.factory('clbAutomator', clbAutomator);
-
-/**
- * @namespace Tasks
- * @memberof module:clb-automator
- * @desc
- * Document a list of available tasks.
- */
-
-/**
- * @namespace clbAutomator
- * @memberof module:clb-automator
- * @desc
- * clbAutomator is an AngularJS factory that
- * provide task automation to accomplish a sequence of
- * common operation in Collaboratory.
- *
- * How to add new tasks
- * --------------------
- *
- * New tasks can be added by calling ``clbAutomator.registerHandler``.
- *
- * You can see a few example of tasks in the `tasks` folder.
- *
- * Evaluate the automator
- * ----------------------
- *
- * From the root of this project, you can start a server that will let
- * you write a descriptor and run it.
- *
- * .. code-block:: bash
- *
- *    gulp example
- *
- * @example <caption>Create a Collab with a few navigation items</caption>
- * // Create a Collab with a few navigation items.
- * angular.module('MyModule', ['clb-automator'])
- * .run(function(clbAutomator, $log) {
- *   var config = {
- *     title: 'My Custom Collab',
- *     content: 'My Collab Content',
- *     private: false
- *   };
- *   clbAutomator.task(config).run().then(function(collab) {
- *   	 $log.info('Created Collab', collab);
- *   });
- * })
- * @example <caption>Create a Collab with entities and navigation items</caption>
- * clbAutomator.run({
- *   "collab": {
- *     "title": "Test Collab Creation",
- *     "content": "My Collab Description",
- *     "private": true,
- *     "after": [
- *       {
- *         "storage": {
- *           "entities": {
- *             // Use one of your file UUID here.
- *             "sample.ipynb": "155c1bcc-ee9c-43e2-8190-50c66befa1fa"
- *           },
- *           "after": [{
- *             "nav": {
- *               "name": "Example Code",
- *               "app": "Jupyter Notebook",
- *               "entity": "sample.ipynb"
- *             }
- *           }]
- *         }
- *       },
- *       {
- *         "nav": {
- *           "name": "Empty Notebook",
- *           "app": "Jupyter Notebook"
- *         }
- *       },
- *       {
- *         "nav": {
- *           "name": "Introduction",
- *           "app": "Rich Text Editor"
- *         }
- *       }
- *     ]
- *   }
- * }).then(function(collab) {
- *   $log.info('Created Collab', collab);
- * });
- *
- * @example <caption>Create a Collab with a pre-filled overview</caption>
- * clbAutomator.run({
- *   "collab": {
- *     "title": "Test Collab With Pre Filled Overview",
- *     "content": "Test collab creation with  a pre filled overview",
- *     "private": true,
- *     "after": [{
- *       "overview": {
- *         // Use one of your HTML file UUID here.
- *         "entity": "155c1bcc-ee9c-43e2-8190-50c66befa1fa"
- *       }
- *     }]
- *   }
- * }).then(function(collab) {
- *   $log.info('Created Collab', collab);
- * });
- * @param {object} $q injected service
- * @param {object} $log injected service
- * @param {object} clbError injected service
- * @return {object} the clbAutomator Angular service singleton
- */
-function clbAutomator(
-  $q,
-  $log,
-  clbError
-) {
-  var handlers = {};
-
-  /**
-   * Register a handler function for the given task name.
-   * @memberof module:clb-automator.clb-automator
-   * @param  {string}   name handle actions with the specified name
-   * @param  {Function} fn a function that accept the current context in
-   *                       parameter.
-   */
-  function registerHandler(name, fn) {
-    handlers[name] = fn;
-  }
-
-  /**
-   * Instantiate a new Task intance that will run the code describe for
-   * a handlers with the give ``name``.
-   *
-   * The descriptor is passed to the task and parametrize it.
-   * The task context is computed at the time the task is ran. A default context
-   * can be given at load time and it will be fed with the result of each parent
-   * (but not sibling) tasks as well.
-   *
-   * @memberof module:clb-automator.clbAutomator
-   * @param {string} name the name of the task to instantiate
-   * @param {object} [descriptor] a configuration object that will determine
-   *                            which task to run and in which order
-   * @param {object} [descriptor.after] an array of task to run after this one
-   * @param {object} [context] a default context to run the task with
-   *
-   * @return {Task} - the new task instance
-   */
-  function task(name, descriptor, context) {
-    try {
-      return new Task(name, descriptor, context);
-    } catch (ex) {
-      $log.error('EXCEPTION', ex);
-      throw clbError.error({
-        type: 'InvalidTask',
-        message: 'Invalid task ' + name + ': ' + ex,
-        data: {
-          cause: ex,
-          name: name,
-          descriptor: descriptor,
-          context: context
-        }
-      });
-    }
-  }
-
-  /**
-   * Directly generate tasks from given description and run them.
-   *
-   * @memberof module:clb-automator.clbAutomator
-   * @param  {object} descriptor description of the tasks to run
-   * @param  {object} [context]  the initial context
-   * @return {Promise} promise of the top level task result
-   */
-  function run(descriptor, context) {
-    for (var name in descriptor) {
-      if (descriptor.hasOwnProperty(name)) {
-        return task(name, descriptor[name], context).run();
-      }
-    }
-    return $q.reject(clbError.error({
-      type: 'NoTaskFound',
-      message: 'No task found in descriptor',
-      data: descriptor
-    }));
-  }
-
-  /**
-   * Create an array of tasks given an array containing object where
-   * the key is the task name to run and the value is the descriptor
-   * parameter.
-   *
-   * @memberof module:clb-automator.clbAutomator
-   * @param  {object} after the content of ``descriptor.after``
-   * @return {Array/Task} array of subtasks
-   * @private
-   */
-  function createSubtasks(after) {
-    var subtasks = [];
-    if (!after || !after.length) {
-      return subtasks;
-    }
-    for (var i = 0; i < after.length; i++) {
-      var taskDef = after[i];
-      for (var name in taskDef) {
-        if (taskDef.hasOwnProperty(name)) {
-          subtasks.push(task(name, taskDef[name]));
-        }
-      }
-    }
-    return subtasks;
-  }
-
-  /**
-   * @class Task
-   * @memberof module:clb-automator.clbAutomator
-   * @desc
-   * Instantiate a task given the given `config`.
-   * The task can then be run using the `run()` instance method.
-   * @param {string} name the name of the task to instantiate
-   * @param {object} [descriptor] a configuration object that will determine
-   *                            which task to run and in which order
-   * @param {object} [descriptor.after] an array of task to run after this one
-   * @param {object} [context] a default context to run the task with
-   * @see module:clb-automator.task
-   *
-   */
-  function Task(name, descriptor, context) {
-    if (!handlers[name]) {
-      throw new Error('TaskNotFound');
-    }
-    descriptor = descriptor || {};
-    context = context || {};
-    this.state = 'idle';
-    this.name = name;
-    this.descriptor = descriptor;
-    this.defaultContext = context;
-    this.state = 'idle';
-    this.promise = null;
-    this.error = null;
-    this.subtasks = createSubtasks(descriptor.after);
-  }
-
-  Task.prototype = {
-    /**
-     * Launch the task.
-     *
-     * @memberof module:clb-automator.clbAutomator.Task
-     * @param {object} context current context will be merged into the default
-     *                         one.
-     * @return {Promise} promise to return the result of the task
-     */
-    run: function(context) {
-      var self = this;
-      // run an intance of task only once.
-      if (self.state !== 'idle') {
-        return self.promise;
-      }
-      context = angular.extend({}, this.defaultContext, context);
-      var onSuccess = function(result) {
-        var subContext = angular.copy(context);
-        subContext[self.name] = result;
-        return self.runSubtasks(subContext)
-        .then(function() {
-          self.state = 'success';
-          return result;
-        });
-      };
-      var onError = function(err) {
-        self.state = 'error';
-        // noop operation if is already one
-        return $q.reject(clbError.error(err));
-      };
-      self.state = 'progress';
-      self.promise = $q.when(handlers[self.name](self.descriptor, context))
-        .then(onSuccess)
-        .catch(onError);
-      return self.promise;
-    },
-
-    /**
-     * Run all subtasks of the this tasks.
-     *
-     * @memberof module:clb-automator.clbAutomator.Task
-     * @param  {object} context the current context
-     * @return {Array}          all the results in an array
-     */
-    runSubtasks: function(context) {
-      var promises = [];
-      angular.forEach(this.subtasks, function(task) {
-        promises.push(task.run(context));
-      });
-      return $q.all(promises);
-    }
-  };
-
-  /**
-   * Return a HbpError when a parameter is missing.
-   * @memberof module:clb-automator.clbAutomator
-   * @param  {string} key    name of the key
-   * @param  {object} config the invalid configuration object
-   * @return {HbpError}      a HbpError instance
-   * @private
-   */
-  function missingDataError(key, config) {
-    return clbError({
-      type: 'KeyError',
-      message: 'Missing `' + key + '` key in config',
-      data: {
-        config: config
-      }
-    });
-  }
-
-  /**
-   * Ensure that all parameters listed after config are presents.
-   * @memberof module:clb-automator.clbAutomator
-   * @param  {object} config task descriptor
-   * @return {object} created entities
-   */
-  function ensureParameters(config) {
-    var parameters = Array.prototype.splice(1);
-    for (var p in parameters) {
-      if (angular.isUndefined(parameters[p])) {
-        return $q.reject(missingDataError(p, config));
-      }
-    }
-    return $q.when(config);
-  }
-
-  /**
-   * Return an object that only contains attributes
-   * from the `attrs` list.
-   *
-   * @memberof module:clb-automator.clbAutomator
-   * @param  {object} config key-value store
-   * @param  {Array} attrs   a list of keys to extract from `config`
-   * @return {object}        key-value store containing only keys from attrs
-   *                         found in `config`
-   */
-  function extractAttributes(config, attrs) {
-    var r = {};
-    angular.forEach(attrs, function(a) {
-      if (angular.isDefined(config[a])) {
-        r[a] = config[a];
-      }
-    });
-    return r;
-  }
-
-  return {
-    run: run,
-    task: task,
-    handlers: handlers,
-    registerHandler: registerHandler,
-    extractAttributes: extractAttributes,
-    ensureParameters: ensureParameters
-  };
-}
-
-angular.module('clb-automator')
-.run(['$log', '$q', 'clbCollab', 'clbAutomator', function createCollab(
-  $log,
-  $q,
-  clbCollab,
-  clbAutomator
-) {
-  clbAutomator.registerHandler('collab', createCollab);
-
-  /**
-   * @function createCollab
-   * @memberof module:clb-automator.Tasks
-   * @desc
-   *  Create a collab defined by the given options.
-   * @param {object} descriptor - Parameters to create the collab
-   * @param {string} descriptor.name - Name of the collab
-   * @param {string} descriptor.description - Description in less than 140 characters
-   *                                       of the collab
-   * @param {string} [descriptor.privacy] - 'private' or 'public'. Notes that only
-   *                                   HBP Members can create private collab
-   * @param {Array} [after] - descriptor of subtasks
-   * @return {Promise} - promise of a collab
-   */
-  function createCollab(descriptor) {
-    var attr = clbAutomator.extractAttributes(
-      descriptor,
-      ['title', 'content', 'private']
-    );
-    $log.debug('Create collab', descriptor);
-    return clbCollab.create(attr);
-  }
-}]);
-
-angular.module('clb-automator')
-.run(['$log', 'clbCollabApp', 'clbCollabNav', 'clbAutomator', 'clbStorage', function createNavItem(
-  $log,
-  clbCollabApp,
-  clbCollabNav,
-  clbAutomator,
-  clbStorage
-) {
-  clbAutomator.registerHandler('nav', createNavItem);
-
-  /**
-   * Create a new nav item.
-   * @memberof module:clb-automator.Tasks
-   * @param {object} descriptor a descriptor description
-   * @param {string} descriptor.name name of the nav item
-   * @param {Collab} descriptor.collabId collab in which to add the item in.
-   * @param {string} descriptor.app app name linked to the nav item
-   * @param {object} [context] the current run context
-   * @param {object} [context.collab] a collab instance created previously
-   * @return {Promise} promise of a NavItem instance
-   */
-  function createNavItem(descriptor, context) {
-    var collabId = function() {
-      return (descriptor && descriptor.collab) ||
-        (context && context.collab.id);
-    };
-    var findApp = function(app) {
-      return clbCollabApp.findOne({title: app});
-    };
-    var createNav = function(app) {
-      return clbCollabNav.getRoot(collabId())
-      .then(function(parentItem) {
-        return clbCollabNav.addNode(collabId(),
-          new clbCollabNav.NavItem({
-            collab: collabId(),
-            name: descriptor.name,
-            appId: app.id,
-            parentId: parentItem.id
-          })
-        );
-      });
-    };
-    var linkToStorage = function(nav) {
-      if (!descriptor.entity) {
-        return nav;
-      }
-      var setLink = function(entity) {
-        return clbStorage.setContextMetadata(entity, nav.context)
-        .then(function() {
-          return nav;
-        });
-      };
-      // It might be the name used in a previous storage task.
-      if (context && context.storage && context.storage[descriptor.entity]) {
-        return setLink(context.storage[descriptor.entity]);
-      }
-      return clbStorage.getEntity(descriptor.entity).then(setLink);
-    };
-
-    $log.debug('Create nav item', descriptor, context);
-
-    return clbAutomator.ensureParameters(descriptor, 'app', 'name')
-    .then(function() {
-      return findApp(descriptor.app)
-      .then(createNav)
-      .then(linkToStorage);
-    });
-  }
-}]);
-
-angular.module('clb-automator')
-.run(['$log', '$q', 'clbAuthHttp', 'clbEnv', 'clbStorage', 'clbError', 'clbAutomator', 'clbCollabNav', 'clbCollabApp', function createOverview(
-  $log, $q, clbAuthHttp, clbEnv, clbStorage, clbError,
-  clbAutomator, clbCollabNav, clbCollabApp
-) {
-  clbAutomator.registerHandler('overview', overview);
-
-  /**
-   * Set the content of the overview page.
-   * If an 'entity' is specified, it will use the content of that storage file
-   * If an 'app' name is specified, it will use that app for the overview page
-   *
-   * The collab is indicated either by an id in `descriptor.collab` or a
-   * collab object in `context.collab`.
-   *
-   * @memberof module:clb-automator.Tasks
-   * @param {object} descriptor the task configuration
-   * @param {object} [descriptor.collab] id of the collab
-   * @param {string} [descriptor.entity] either a label that can be found in
-   *                 ``context.entities`` or a FileEntity UUID
-   * @param {string} [descriptor.app] the name of an application
-   * @param {object} context the current task context
-   * @param {object} [context.collab] the collab in which entities will be copied
-   * @param {object} [context.entities] a list of entities to lookup in for
-   *                   descriptor.entity value
-   * @return {object} created entities where keys are the same as provided in
-   *                  config.storage
-   */
-  function overview(descriptor, context) {
-    $log.debug('Set the content of the overview page');
-    var collabId = descriptor.collab || context.collab.id;
-    var createContentFile = function(overview, descriptor, context) {
-      $log.debug('Fill overview page with content from entity');
-
-      return fetchSourceContent(descriptor, context)
-        .then(function(source) {
-          return clbAuthHttp.post(
-            clbEnv.get('api.richtext.v0') + '/richtext/', {
-              ctx: overview.context,
-              raw: source
-            });
-        });
-    };
-
-    var updateAppId = function(overview, descriptor) {
-      $log.debug('Replace the overview page application id');
-
-      return clbCollabApp.findOne({title: descriptor.app})
-        .then(function(app) {
-          overview.update({appId: app.id});
-          return clbCollabNav.saveNode(collabId, overview);
-        });
-    };
-
-    return clbCollabNav
-      .getRoot(collabId)
-      .then(function(rootNav) {
-        var overview = rootNav.children[0];
-
-        var updateOverview = descriptor.app ?
-          updateAppId(overview, descriptor) :
-          createContentFile(overview, descriptor, context);
-
-        return updateOverview.then(function() {
-          return overview;
-        });
-      });
-  }
-
-  /**
-   * Download file entity content.
-   *
-   * @param {object} descriptor the task configuration
-   * @param {string} descriptor.entity either the label to find in
-   *                 ``context.entities`` or a the entity UUID.
-   * @param {object} context the current task context
-   * @param {object} context.entities optional entities in which to lookup for one
-   * @return {Promise} the promise of the entity content string
-   * @private
-   */
-  function fetchSourceContent(descriptor, context) {
-    var uuid;
-    if (context && context.entities && context.entities[descriptor.entity]) {
-      uuid = context.entities[descriptor.entity].uuid;
-    } else {
-      uuid = descriptor.entity;
-    }
-    return clbStorage.getContent(uuid);
-  }
-}]);
-
-angular.module('clb-automator')
-.run(['$log', '$q', 'clbError', 'clbAutomator', 'clbStorage', function createStorage(
-  $log,
-  $q,
-  clbError,
-  clbAutomator,
-  clbStorage
-) {
-  clbAutomator.registerHandler('storage', storage);
-
-  /**
-   * Copy files and folders to the destination collab storage.
-   *
-   * @memberof module:clb-automator.Tasks
-   * @param {object} descriptor the task configuration
-   * @param {object} descriptor.storage a object where keys are the file path in the
-   *                                new collab and value are the UUID of the
-   *                                entity to copy at this path.
-   * @param {object} [descriptor.collab] id of the collab
-   * @param {object} context the current task context
-   * @param {object} [context.collab] the collab in which entities will be copied
-   * @return {object} created entities where keys are the same as provided in
-   *                  config.storage
-   */
-  function storage(descriptor, context) {
-    return clbAutomator.ensureParameters(
-      descriptor, 'entities'
-    ).then(function() {
-      return clbStorage
-        .getEntity({collab: descriptor.collab || context.collab.id})
-        .then(function(projectEntity) {
-          var promises = {};
-          angular.forEach(descriptor.entities, function(value, name) {
-            if (angular.isString(value)) {
-              $log.debug("Copy entity with UUID", value);
-              promises[name] = (
-                clbStorage.copy(value, projectEntity.uuid));
-            } else {
-              $log.warn('Invalid configuration for storage task', descriptor);
-            }
-          });
-          return $q.all(promises);
-        });
-    });
-  }
-}]);
 
 /* eslint camelcase: 0 */
 
@@ -2567,85 +1969,6 @@ function clbCtxData(clbAuthHttp, $q, uuid4, clbEnv, clbError) {
       },
       code: -3
     });
-  }
-}
-
-/* global window */
-
-angular.module('clb-env')
-.provider('clbEnv', clbEnv);
-
-/**
- * Get environement information using dotted notation with the `clbEnv` provider
- * or service.
- *
- * Before being used, clbEnv must be initialized with the context values. You
- * can do so by setting up a global bbpConfig variable or using
- * :ref:`angular.clbBootstrap <angular.clbBootstrap>`.
- *
- * @function clbEnv
- * @memberof module:clb-env
- * @param {object} $injector AngularJS injection
- * @return {object} provider
- * @example <caption>Basic usage of clbEnv</caption>
- * angular.module('myApp', ['clbEnv', 'rest'])
- * .service('myService', function(clbEnv, clbResultSet) {
- *   return {
- *     listCollab: function() {
- *       // return a paginated list of all collabs
- *       return clbResultSet.get($http.get(clbEnv.get('api.collab.v0') + '/'));
- *     }
- *   };
- * });
- * @example <caption>Use clbEnv in your configuration</caption>
- * angular.module('myApp', ['clbEnv', 'rest'])
- * .config(function(clbEnvProvider, myAppServiceProvider) {
- *   // also demonstrate how we accept a custom variable.
- *   myAppServiceProvider.setMaxFileUpload(clbEnvProvider.get('myapp.maxFileUpload', '1m'))
- * });
- */
-function clbEnv($injector) {
-  return {
-    get: get,
-    $get: function() {
-      return {
-        get: get
-      };
-    }
-  };
-
-  /**
-   * ``get(key, [defaultValue])`` provides configuration value loaded at
-   * the application bootstrap.
-   *
-   * Accept a key and an optional default
-   * value. If the key cannot be found in the configurations, it will return
-   * the provided default value. If the defaultValue is undefied, it will
-   * throw an error.
-   *
-   * To ensures that those data are available when angular bootstrap the
-   * application, use angular.clbBootstrap(module, options).
-   *
-   * @memberof module:clb-env.clbEnv
-   * @param {string} key the environment variable to retrieve, using a key.
-   * @param {any} [defaultValue] an optional default value.
-   * @return {any} the value or ``defaultValue`` if the asked for configuration
-   *               is not defined.
-   */
-  function get(key, defaultValue) {
-    var parts = key.split('.');
-    var cursor = (window.bbpConfig ?
-                  window.bbpConfig : $injector.get('CLB_ENVIRONMENT'));
-    for (var i = 0; i < parts.length; i++) {
-      if (!(cursor && cursor.hasOwnProperty(parts[i]))) {
-        if (defaultValue !== undefined) {
-          return defaultValue;
-        }
-        throw new Error('UnkownConfigurationKey: <' + key + '>');
-      }
-      cursor = cursor[parts[i]];
-    }
-    return cursor;
   }
 }
 
@@ -5086,6 +4409,604 @@ function clbStorage(
   }
 }
 
+angular.module('clb-automator')
+.factory('clbAutomator', clbAutomator);
+
+/**
+ * @namespace Tasks
+ * @memberof module:clb-automator
+ * @desc
+ * Document a list of available tasks.
+ */
+
+/**
+ * @namespace clbAutomator
+ * @memberof module:clb-automator
+ * @desc
+ * clbAutomator is an AngularJS factory that
+ * provide task automation to accomplish a sequence of
+ * common operation in Collaboratory.
+ *
+ * How to add new tasks
+ * --------------------
+ *
+ * New tasks can be added by calling ``clbAutomator.registerHandler``.
+ *
+ * You can see a few example of tasks in the `tasks` folder.
+ *
+ * Evaluate the automator
+ * ----------------------
+ *
+ * From the root of this project, you can start a server that will let
+ * you write a descriptor and run it.
+ *
+ * .. code-block:: bash
+ *
+ *    gulp example
+ *
+ * @example <caption>Create a Collab with a few navigation items</caption>
+ * // Create a Collab with a few navigation items.
+ * angular.module('MyModule', ['clb-automator'])
+ * .run(function(clbAutomator, $log) {
+ *   var config = {
+ *     title: 'My Custom Collab',
+ *     content: 'My Collab Content',
+ *     private: false
+ *   };
+ *   clbAutomator.task(config).run().then(function(collab) {
+ *   	 $log.info('Created Collab', collab);
+ *   });
+ * })
+ * @example <caption>Create a Collab with entities and navigation items</caption>
+ * clbAutomator.run({
+ *   "collab": {
+ *     "title": "Test Collab Creation",
+ *     "content": "My Collab Description",
+ *     "private": true,
+ *     "after": [
+ *       {
+ *         "storage": {
+ *           "entities": {
+ *             // Use one of your file UUID here.
+ *             "sample.ipynb": "155c1bcc-ee9c-43e2-8190-50c66befa1fa"
+ *           },
+ *           "after": [{
+ *             "nav": {
+ *               "name": "Example Code",
+ *               "app": "Jupyter Notebook",
+ *               "entity": "sample.ipynb"
+ *             }
+ *           }]
+ *         }
+ *       },
+ *       {
+ *         "nav": {
+ *           "name": "Empty Notebook",
+ *           "app": "Jupyter Notebook"
+ *         }
+ *       },
+ *       {
+ *         "nav": {
+ *           "name": "Introduction",
+ *           "app": "Rich Text Editor"
+ *         }
+ *       }
+ *     ]
+ *   }
+ * }).then(function(collab) {
+ *   $log.info('Created Collab', collab);
+ * });
+ *
+ * @example <caption>Create a Collab with a pre-filled overview</caption>
+ * clbAutomator.run({
+ *   "collab": {
+ *     "title": "Test Collab With Pre Filled Overview",
+ *     "content": "Test collab creation with  a pre filled overview",
+ *     "private": true,
+ *     "after": [{
+ *       "overview": {
+ *         // Use one of your HTML file UUID here.
+ *         "entity": "155c1bcc-ee9c-43e2-8190-50c66befa1fa"
+ *       }
+ *     }]
+ *   }
+ * }).then(function(collab) {
+ *   $log.info('Created Collab', collab);
+ * });
+ * @param {object} $q injected service
+ * @param {object} $log injected service
+ * @param {object} clbError injected service
+ * @return {object} the clbAutomator Angular service singleton
+ */
+function clbAutomator(
+  $q,
+  $log,
+  clbError
+) {
+  var handlers = {};
+
+  /**
+   * Register a handler function for the given task name.
+   * @memberof module:clb-automator.clb-automator
+   * @param  {string}   name handle actions with the specified name
+   * @param  {Function} fn a function that accept the current context in
+   *                       parameter.
+   */
+  function registerHandler(name, fn) {
+    handlers[name] = fn;
+  }
+
+  /**
+   * Instantiate a new Task intance that will run the code describe for
+   * a handlers with the give ``name``.
+   *
+   * The descriptor is passed to the task and parametrize it.
+   * The task context is computed at the time the task is ran. A default context
+   * can be given at load time and it will be fed with the result of each parent
+   * (but not sibling) tasks as well.
+   *
+   * @memberof module:clb-automator.clbAutomator
+   * @param {string} name the name of the task to instantiate
+   * @param {object} [descriptor] a configuration object that will determine
+   *                            which task to run and in which order
+   * @param {object} [descriptor.after] an array of task to run after this one
+   * @param {object} [context] a default context to run the task with
+   *
+   * @return {Task} - the new task instance
+   */
+  function task(name, descriptor, context) {
+    try {
+      return new Task(name, descriptor, context);
+    } catch (ex) {
+      $log.error('EXCEPTION', ex);
+      throw clbError.error({
+        type: 'InvalidTask',
+        message: 'Invalid task ' + name + ': ' + ex,
+        data: {
+          cause: ex,
+          name: name,
+          descriptor: descriptor,
+          context: context
+        }
+      });
+    }
+  }
+
+  /**
+   * Directly generate tasks from given description and run them.
+   *
+   * @memberof module:clb-automator.clbAutomator
+   * @param  {object} descriptor description of the tasks to run
+   * @param  {object} [context]  the initial context
+   * @return {Promise} promise of the top level task result
+   */
+  function run(descriptor, context) {
+    for (var name in descriptor) {
+      if (descriptor.hasOwnProperty(name)) {
+        return task(name, descriptor[name], context).run();
+      }
+    }
+    return $q.reject(clbError.error({
+      type: 'NoTaskFound',
+      message: 'No task found in descriptor',
+      data: descriptor
+    }));
+  }
+
+  /**
+   * Create an array of tasks given an array containing object where
+   * the key is the task name to run and the value is the descriptor
+   * parameter.
+   *
+   * @memberof module:clb-automator.clbAutomator
+   * @param  {object} after the content of ``descriptor.after``
+   * @return {Array/Task} array of subtasks
+   * @private
+   */
+  function createSubtasks(after) {
+    var subtasks = [];
+    if (!after || !after.length) {
+      return subtasks;
+    }
+    for (var i = 0; i < after.length; i++) {
+      var taskDef = after[i];
+      for (var name in taskDef) {
+        if (taskDef.hasOwnProperty(name)) {
+          subtasks.push(task(name, taskDef[name]));
+        }
+      }
+    }
+    return subtasks;
+  }
+
+  /**
+   * @class Task
+   * @memberof module:clb-automator.clbAutomator
+   * @desc
+   * Instantiate a task given the given `config`.
+   * The task can then be run using the `run()` instance method.
+   * @param {string} name the name of the task to instantiate
+   * @param {object} [descriptor] a configuration object that will determine
+   *                            which task to run and in which order
+   * @param {object} [descriptor.after] an array of task to run after this one
+   * @param {object} [context] a default context to run the task with
+   * @see module:clb-automator.task
+   *
+   */
+  function Task(name, descriptor, context) {
+    if (!handlers[name]) {
+      throw new Error('TaskNotFound');
+    }
+    descriptor = descriptor || {};
+    context = context || {};
+    this.state = 'idle';
+    this.name = name;
+    this.descriptor = descriptor;
+    this.defaultContext = context;
+    this.state = 'idle';
+    this.promise = null;
+    this.error = null;
+    this.subtasks = createSubtasks(descriptor.after);
+  }
+
+  Task.prototype = {
+    /**
+     * Launch the task.
+     *
+     * @memberof module:clb-automator.clbAutomator.Task
+     * @param {object} context current context will be merged into the default
+     *                         one.
+     * @return {Promise} promise to return the result of the task
+     */
+    run: function(context) {
+      var self = this;
+      // run an intance of task only once.
+      if (self.state !== 'idle') {
+        return self.promise;
+      }
+      context = angular.extend({}, this.defaultContext, context);
+      var onSuccess = function(result) {
+        var subContext = angular.copy(context);
+        subContext[self.name] = result;
+        return self.runSubtasks(subContext)
+        .then(function() {
+          self.state = 'success';
+          return result;
+        });
+      };
+      var onError = function(err) {
+        self.state = 'error';
+        // noop operation if is already one
+        return $q.reject(clbError.error(err));
+      };
+      self.state = 'progress';
+      self.promise = $q.when(handlers[self.name](self.descriptor, context))
+        .then(onSuccess)
+        .catch(onError);
+      return self.promise;
+    },
+
+    /**
+     * Run all subtasks of the this tasks.
+     *
+     * @memberof module:clb-automator.clbAutomator.Task
+     * @param  {object} context the current context
+     * @return {Array}          all the results in an array
+     */
+    runSubtasks: function(context) {
+      var promises = [];
+      angular.forEach(this.subtasks, function(task) {
+        promises.push(task.run(context));
+      });
+      return $q.all(promises);
+    }
+  };
+
+  /**
+   * Return a HbpError when a parameter is missing.
+   * @memberof module:clb-automator.clbAutomator
+   * @param  {string} key    name of the key
+   * @param  {object} config the invalid configuration object
+   * @return {HbpError}      a HbpError instance
+   * @private
+   */
+  function missingDataError(key, config) {
+    return clbError({
+      type: 'KeyError',
+      message: 'Missing `' + key + '` key in config',
+      data: {
+        config: config
+      }
+    });
+  }
+
+  /**
+   * Ensure that all parameters listed after config are presents.
+   * @memberof module:clb-automator.clbAutomator
+   * @param  {object} config task descriptor
+   * @return {object} created entities
+   */
+  function ensureParameters(config) {
+    var parameters = Array.prototype.splice(1);
+    for (var p in parameters) {
+      if (angular.isUndefined(parameters[p])) {
+        return $q.reject(missingDataError(p, config));
+      }
+    }
+    return $q.when(config);
+  }
+
+  /**
+   * Return an object that only contains attributes
+   * from the `attrs` list.
+   *
+   * @memberof module:clb-automator.clbAutomator
+   * @param  {object} config key-value store
+   * @param  {Array} attrs   a list of keys to extract from `config`
+   * @return {object}        key-value store containing only keys from attrs
+   *                         found in `config`
+   */
+  function extractAttributes(config, attrs) {
+    var r = {};
+    angular.forEach(attrs, function(a) {
+      if (angular.isDefined(config[a])) {
+        r[a] = config[a];
+      }
+    });
+    return r;
+  }
+
+  return {
+    run: run,
+    task: task,
+    handlers: handlers,
+    registerHandler: registerHandler,
+    extractAttributes: extractAttributes,
+    ensureParameters: ensureParameters
+  };
+}
+
+angular.module('clb-automator')
+.run(['$log', '$q', 'clbCollab', 'clbAutomator', function createCollab(
+  $log,
+  $q,
+  clbCollab,
+  clbAutomator
+) {
+  clbAutomator.registerHandler('collab', createCollab);
+
+  /**
+   * @function createCollab
+   * @memberof module:clb-automator.Tasks
+   * @desc
+   *  Create a collab defined by the given options.
+   * @param {object} descriptor - Parameters to create the collab
+   * @param {string} descriptor.name - Name of the collab
+   * @param {string} descriptor.description - Description in less than 140 characters
+   *                                       of the collab
+   * @param {string} [descriptor.privacy] - 'private' or 'public'. Notes that only
+   *                                   HBP Members can create private collab
+   * @param {Array} [after] - descriptor of subtasks
+   * @return {Promise} - promise of a collab
+   */
+  function createCollab(descriptor) {
+    var attr = clbAutomator.extractAttributes(
+      descriptor,
+      ['title', 'content', 'private']
+    );
+    $log.debug('Create collab', descriptor);
+    return clbCollab.create(attr);
+  }
+}]);
+
+angular.module('clb-automator')
+.run(['$log', 'clbCollabApp', 'clbCollabNav', 'clbAutomator', 'clbStorage', function createNavItem(
+  $log,
+  clbCollabApp,
+  clbCollabNav,
+  clbAutomator,
+  clbStorage
+) {
+  clbAutomator.registerHandler('nav', createNavItem);
+
+  /**
+   * Create a new nav item.
+   * @memberof module:clb-automator.Tasks
+   * @param {object} descriptor a descriptor description
+   * @param {string} descriptor.name name of the nav item
+   * @param {Collab} descriptor.collabId collab in which to add the item in.
+   * @param {string} descriptor.app app name linked to the nav item
+   * @param {object} [context] the current run context
+   * @param {object} [context.collab] a collab instance created previously
+   * @return {Promise} promise of a NavItem instance
+   */
+  function createNavItem(descriptor, context) {
+    var collabId = function() {
+      return (descriptor && descriptor.collab) ||
+        (context && context.collab.id);
+    };
+    var findApp = function(app) {
+      return clbCollabApp.findOne({title: app});
+    };
+    var createNav = function(app) {
+      return clbCollabNav.getRoot(collabId())
+      .then(function(parentItem) {
+        return clbCollabNav.addNode(collabId(),
+          new clbCollabNav.NavItem({
+            collab: collabId(),
+            name: descriptor.name,
+            appId: app.id,
+            parentId: parentItem.id
+          })
+        );
+      });
+    };
+    var linkToStorage = function(nav) {
+      if (!descriptor.entity) {
+        return nav;
+      }
+      var setLink = function(entity) {
+        return clbStorage.setContextMetadata(entity, nav.context)
+        .then(function() {
+          return nav;
+        });
+      };
+      // It might be the name used in a previous storage task.
+      if (context && context.storage && context.storage[descriptor.entity]) {
+        return setLink(context.storage[descriptor.entity]);
+      }
+      return clbStorage.getEntity(descriptor.entity).then(setLink);
+    };
+
+    $log.debug('Create nav item', descriptor, context);
+
+    return clbAutomator.ensureParameters(descriptor, 'app', 'name')
+    .then(function() {
+      return findApp(descriptor.app)
+      .then(createNav)
+      .then(linkToStorage);
+    });
+  }
+}]);
+
+angular.module('clb-automator')
+.run(['$log', '$q', 'clbAuthHttp', 'clbEnv', 'clbStorage', 'clbError', 'clbAutomator', 'clbCollabNav', 'clbCollabApp', function createOverview(
+  $log, $q, clbAuthHttp, clbEnv, clbStorage, clbError,
+  clbAutomator, clbCollabNav, clbCollabApp
+) {
+  clbAutomator.registerHandler('overview', overview);
+
+  /**
+   * Set the content of the overview page.
+   * If an 'entity' is specified, it will use the content of that storage file
+   * If an 'app' name is specified, it will use that app for the overview page
+   *
+   * The collab is indicated either by an id in `descriptor.collab` or a
+   * collab object in `context.collab`.
+   *
+   * @memberof module:clb-automator.Tasks
+   * @param {object} descriptor the task configuration
+   * @param {object} [descriptor.collab] id of the collab
+   * @param {string} [descriptor.entity] either a label that can be found in
+   *                 ``context.entities`` or a FileEntity UUID
+   * @param {string} [descriptor.app] the name of an application
+   * @param {object} context the current task context
+   * @param {object} [context.collab] the collab in which entities will be copied
+   * @param {object} [context.entities] a list of entities to lookup in for
+   *                   descriptor.entity value
+   * @return {object} created entities where keys are the same as provided in
+   *                  config.storage
+   */
+  function overview(descriptor, context) {
+    $log.debug('Set the content of the overview page');
+    var collabId = descriptor.collab || context.collab.id;
+    var createContentFile = function(overview, descriptor, context) {
+      $log.debug('Fill overview page with content from entity');
+
+      return fetchSourceContent(descriptor, context)
+        .then(function(source) {
+          return clbAuthHttp.post(
+            clbEnv.get('api.richtext.v0') + '/richtext/', {
+              ctx: overview.context,
+              raw: source
+            });
+        });
+    };
+
+    var updateAppId = function(overview, descriptor) {
+      $log.debug('Replace the overview page application id');
+
+      return clbCollabApp.findOne({title: descriptor.app})
+        .then(function(app) {
+          overview.update({appId: app.id});
+          return clbCollabNav.saveNode(collabId, overview);
+        });
+    };
+
+    return clbCollabNav
+      .getRoot(collabId)
+      .then(function(rootNav) {
+        var overview = rootNav.children[0];
+
+        var updateOverview = descriptor.app ?
+          updateAppId(overview, descriptor) :
+          createContentFile(overview, descriptor, context);
+
+        return updateOverview.then(function() {
+          return overview;
+        });
+      });
+  }
+
+  /**
+   * Download file entity content.
+   *
+   * @param {object} descriptor the task configuration
+   * @param {string} descriptor.entity either the label to find in
+   *                 ``context.entities`` or a the entity UUID.
+   * @param {object} context the current task context
+   * @param {object} context.entities optional entities in which to lookup for one
+   * @return {Promise} the promise of the entity content string
+   * @private
+   */
+  function fetchSourceContent(descriptor, context) {
+    var uuid;
+    if (context && context.entities && context.entities[descriptor.entity]) {
+      uuid = context.entities[descriptor.entity].uuid;
+    } else {
+      uuid = descriptor.entity;
+    }
+    return clbStorage.getContent(uuid);
+  }
+}]);
+
+angular.module('clb-automator')
+.run(['$log', '$q', 'clbError', 'clbAutomator', 'clbStorage', function createStorage(
+  $log,
+  $q,
+  clbError,
+  clbAutomator,
+  clbStorage
+) {
+  clbAutomator.registerHandler('storage', storage);
+
+  /**
+   * Copy files and folders to the destination collab storage.
+   *
+   * @memberof module:clb-automator.Tasks
+   * @param {object} descriptor the task configuration
+   * @param {object} descriptor.storage a object where keys are the file path in the
+   *                                new collab and value are the UUID of the
+   *                                entity to copy at this path.
+   * @param {object} [descriptor.collab] id of the collab
+   * @param {object} context the current task context
+   * @param {object} [context.collab] the collab in which entities will be copied
+   * @return {object} created entities where keys are the same as provided in
+   *                  config.storage
+   */
+  function storage(descriptor, context) {
+    return clbAutomator.ensureParameters(
+      descriptor, 'entities'
+    ).then(function() {
+      return clbStorage
+        .getEntity({collab: descriptor.collab || context.collab.id})
+        .then(function(projectEntity) {
+          var promises = {};
+          angular.forEach(descriptor.entities, function(value, name) {
+            if (angular.isString(value)) {
+              $log.debug("Copy entity with UUID", value);
+              promises[name] = (
+                clbStorage.copy(value, projectEntity.uuid));
+            } else {
+              $log.warn('Invalid configuration for storage task', descriptor);
+            }
+          });
+          return $q.all(promises);
+        });
+    });
+  }
+}]);
+
 angular.module('clb-stream')
 .provider('clbResourceLocator', clbResourceLocatorProvider);
 
@@ -5852,6 +5773,436 @@ function clbPerformAction() {
       element.on('click', run);
     }
   };
+}
+
+angular.module('clb-ui-stream')
+.directive('clbActivity', clbActivity);
+
+/**
+ * @name clbActivity
+ * @desc
+ * ``clb-activity`` directive is displays an activity retrieved by
+ * the HBP Stream service in a common way.
+ *
+ * It try to look up for a detailled description of the event and fallback
+ * to the summary if he cannot.
+ *
+ * @memberof module:clb-ui-stream
+ * @return {object} the directive
+ */
+function clbActivity() {
+  return {
+    restrict: 'A',
+    scope: {
+      activity: '=clbActivity'
+    },
+    controller: ActivityController,
+    controllerAs: 'vm',
+    bindToController: true,
+    template:'<div class="clb-activity-metadata"><div class="clb-activity-time" am-time-ago="vm.activity.time"></div><a clb-usercard-popover="vm.activity.actor.data" ng-click="vm.navigate($event, false)"><clb-user-avatar class="clb-activity-avatar" clb-user="vm.activity.actor.data" ng-if="vm.activity.actor.data"></clb-user-avatar></a></div><div class="clb-activity-summary"><span class="clb-activity-link" ng-repeat="p in vm.parts" ng-class="\'clb-activity-link-\' + p.tag"><a ng-if="p.tag && p.ref.type === \'HBPUser\'" clb-usercard-popover="p.ref.id" ng-click="vm.navigate($event, false)">{{p.text}}</a> <a ng-if="p.tag && p.ref.type !== \'HBPUser\'" ng-init="vm.resolveUrl(p)" ng-href="{{p.url}}">{{p.text}}</a> <span ng-if="!p.tag">{{p.text}}</span></span></div>',
+    link: {
+      post: function(scope, elt, attr, ctrl) {
+        elt.addClass('clb-activity').addClass(ctrl.verbClass);
+        scope.$watch('vm.activity.verb', function(newVal) {
+          if (newVal) {
+            elt.addClass('clb-activity-' + newVal.toLowerCase());
+          }
+        });
+      }
+    }
+  };
+}
+
+/**
+ * ViewModel of an activity used to render the clb-activity directive
+ * @param {object} $scope    DI
+ * @param {object} $sce      DI
+ * @param {object} $log      DI
+ * @param {object} $window   DI
+ * @param {object} $q        DI
+ * @param {object} $compile  DI
+ * @param {object} clbResourceLocator DI
+ * @param {object} clbErrorDialog DI
+ */
+function ActivityController(
+  $scope,
+  $sce,
+  $log,
+  $window,
+  $q,
+  $compile,
+  clbResourceLocator,
+  clbErrorDialog
+) {
+  var vm = this;
+  vm.navigate = function(event, data) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!angular.isDefined(data)) {
+      $scope.$emit('clbActivity.interaction', {
+        action: 'usePrimaryNavigation',
+        tag: 'object'
+      });
+      $window.location = vm.primaryLink;
+    } else if (data.ref && data.ref.type && data.ref.id) {
+      $scope.$emit('clbActivity.interaction', {
+        action: 'useSecondaryNavigation',
+        tag: data.tag
+      });
+      clbResourceLocator.urlFor(data.ref, vm.activity)
+      .then(function(url) {
+        $window.location = url;
+      })
+      .catch(function(err) {
+        $scope.$emit('clbActivity.interaction', {
+          action: 'secondaryNavigationFailed',
+          tag: data.tag
+        });
+        clbErrorDialog.open({
+          type: 'Not Found',
+          message: 'The system cannot generate a valid URL ' +
+                   'to display this object.',
+          code: 400,
+          data: {
+            error: err
+          }
+        });
+      });
+    } else {
+      $scope.$emit('clbActivity.interaction', {
+        action: 'openUserDetails',
+        tag: 'actor'
+      });
+    }
+  };
+
+  vm.resolveUrl = function(data) {
+    clbResourceLocator.urlFor(data.ref, vm.activity)
+    .then(function(url) {
+      data.url = url;
+    });
+  };
+
+  activate();
+
+  /* ------------- */
+
+  /**
+   * Replace references in the summary with proper names and links.
+   *
+   * This is a naive implementation. using an array of string that is
+   * concatenated at the end. The advantage is that I don't have to
+   * sort the references before processing them so the code is a bit
+   * easier to read.
+   * @private
+   * @return {object} the list of parts as object with keys `tag`, `text` and `ref`.
+   */
+  function resolveReferences() {
+    // Using a linked list to segment the text.
+    var root = {
+      // root only has a next property
+      next: {
+        // The node data
+        data: {
+          tag: null,
+          ref: null
+        },
+        indices: [0, vm.activity.summary.length],
+        next: null
+      }
+    };
+
+    // flatten the list of references
+    if (vm.activity.references) {
+      for (var tag in vm.activity.references) {
+        if (Object.prototype.hasOwnProperty.call(
+            vm.activity.references, tag)) {
+          var refs = vm.activity.references[tag];
+          if (!angular.isArray(refs)) {
+            refs = [refs];
+          }
+          for (var i = 0; i < refs.length; i++) {
+            var ref = refs[i];
+            processRef(root, tag, ref.indices);
+          }
+        }
+      }
+    }
+
+    var head = root.next;
+    var parts = [];
+    while (head) {
+      head.data.text = String.prototype.substring.apply(
+        vm.activity.summary, head.indices);
+      // disable object link for 'delete' verb
+      if (vm.activity.verb === 'DELETE' &&
+          head.data.tag === 'object') {
+        head.data.tag = null;
+      }
+      parts.push(head.data);
+      head = head.next;
+    }
+    return parts;
+  }
+
+  /**
+   * Used by resolveReferences.
+   * @private
+   * @param  {object} root         The linked list root
+   * @param  {string} tag          position in the sentence (actor|object|context)
+   * @param  {array}  indices      [startIndex, endIndex]
+   */
+  function processRef(root, tag, indices) {
+    // previous -> head -> next
+
+    var previous = root;
+    var head = root.next;
+    // Find the last node which has an end index greater
+    // than the node to insert. We do not handle the case
+    // where the new node is crossing multiple existing nodes as this would
+    // be invalid data.
+    while (head.next && (
+      indices[0] >= head.indices[1] // cannot be inverted
+                                    // the head indices[1] is +1 after the
+                                    // last char
+    )) {
+      previous = head;
+      head = head.next;
+    }
+
+    // previous -> node|head -> next
+    var node = {
+      next: null,
+      indices: indices,
+      data: {
+        tag: tag,
+        ref: vm.activity[tag]
+      }
+    };
+
+    if (head.indices[0] < indices[0]) {
+      // previous -> head:before -> node
+      // head -> next
+      var before = angular.copy(head);
+      before.indices[1] = indices[0]; // stop where the new part begin
+      before.next = node;
+      previous.next = before;
+      previous = before;
+    } else if (previous) {
+      // previous -> node
+      // head -> next
+      previous.next = node;
+    }
+
+    // previous -> node
+    // head -> next
+    if (head.indices[1] > indices[1]) {
+      // previous -> node -> head -> next
+      head.indices[0] = indices[1];
+      node.next = head;
+    } else {
+      // previous -> node -> next
+      node.next = head.next;
+    }
+  }
+
+  /**
+   * init controller
+   */
+  function activate() {
+    clbResourceLocator.urlFor(vm.activity.object, vm.activity)
+    .then(function(url) {
+      vm.primaryLink = url;
+    })
+    .catch(function(err) {
+      $log.warn('unclickable activity', err);
+    });
+
+    vm.parts = resolveReferences();
+  }
+}
+
+angular.module('clb-ui-stream')
+.directive('clbFeed', clbFeed);
+
+/**
+ * @name clbFeed
+ * @desc
+ * ``clb-feed`` directive displays a feed of activity retrieved by
+ * the HBP Stream service. It handles scrolling and loading of activities.
+ * Each activity is rendered using the ``clb-activity`` directive.
+ *
+ * @memberof module:clb-ui-stream
+ * @return {object} the directive
+ */
+function clbFeed() {
+  return {
+    restrict: 'E',
+    scope: {
+      feedType: '=clbFeedType',
+      feedId: '=clbFeedId'
+    },
+    controller: FeedController,
+    controllerAs: 'vm',
+    bindToController: true,
+    template:'<div ng-if="vm.loadingFeed" class="alert alert-info"><div ng-switch on="vm.feedDate"><div ng-switch-when="null">Loading all activities...</div><div class="animate-switch" ng-switch-default>Loading Feed for {{vm.feedDate}}...</div></div></div><p ng-if="vm.feedDate != null">Selected date: {{vm.feedDate}}</p><ul class="feed list-group" ng-if="!vm.loadingFeed" ng-class="{\'feed-empty\': vm.activities.results.length === 0}"><li ng-if="vm.error" class="list-group-item"><div class="alert alert-error"><strong>Load Error:</strong> {{vm.error}}</div></li><li class="list-group-item" ng-if="!vm.activities && !vm.error"><hbp-loading></hbp-loading></li><li class="list-group-item" ng-if="vm.activities.results.length === 0 && vm.feedDate"><div class="alert alert-info">No activities on {{vm.feedDate}}</div></li><li class="list-group-item" ng-if="vm.activities.results.length === 0 && !vm.feedDate"><div class="alert alert-info">No activities to show</div></li><li class="list-group-item" ng-repeat="a in vm.activities.results track by $index" clb-activity="a"></li><li class="list-group-item" ng-if="vm.activities.hasNext"><a clb-perform-action="vm.activities.next()" class="btn btn-default">Show More</a></li></ul>',
+    link: function(scope, elt) {
+      elt.addClass('clb-feed');
+      var unbind = scope.$on(
+        'clbActivity.interaction',
+        function($event, data) {
+          data.feedType = scope.feedType;
+          scope.$emit('clbFeed.interaction', data);
+        }
+      );
+      scope.$on('$destroy', unbind);
+    }
+  };
+}
+
+/**
+ * ViewModel of an activity used to render the clb-activity directive
+ * @param {object} $rootScope angular injection
+ * @param {object} clbStream DI
+ * @param {object} clbUser DI
+ */
+function FeedController($rootScope, clbStream, clbUser) {
+  var vm = this;
+
+  if (vm.feedType === 'HBPCollab') {
+    vm.pageSize = 15;
+  }
+
+  vm.feedDate = null;
+
+  activate();
+
+  $rootScope.$on('feedDate.changed', function(event, data) {
+    vm.feedDate = data;
+    activate();
+  });
+  /* ------------- */
+
+  function hydrateActors(activities) {  // eslint-disable-line require-jsdoc
+    if (!activities || activities.length === 0) {
+      return;
+    }
+
+    var acc = [];
+    for (var i = 0; i < activities.length; i++) {
+      if (activities[i].actor.type === 'HBPUser') {
+        acc.push(activities[i].actor.id);
+      }
+    }
+    return clbUser.get(acc)
+    .then(function(users) {
+      for (var i = 0; i < activities.length; i++) {
+        var actor = activities[i].actor;
+        if (actor.type === 'HBPUser' && users[actor.id]) {
+          actor.data = users[actor.id];
+        }
+      }
+    });
+  }
+
+  /**
+   * init controller
+   */
+  function activate() {
+    vm.loadingFeed = true;
+    clbStream.getStream(vm.feedType, vm.feedId, {
+      resultsFactory: hydrateActors,
+      date: vm.feedDate,
+      pageSize: vm.pageSize
+    })
+    .then(function(rs) {
+      vm.activities = rs;
+    })
+    .catch(function(err) {
+      vm.error = err.message;
+    }).finally(function() {
+      vm.loadingFeed = false;
+    });
+  }
+}
+
+/* global window */
+
+angular.module('clb-env')
+.provider('clbEnv', clbEnv);
+
+/**
+ * Get environement information using dotted notation with the `clbEnv` provider
+ * or service.
+ *
+ * Before being used, clbEnv must be initialized with the context values. You
+ * can do so by setting up a global bbpConfig variable or using
+ * :ref:`angular.clbBootstrap <angular.clbBootstrap>`.
+ *
+ * @function clbEnv
+ * @memberof module:clb-env
+ * @param {object} $injector AngularJS injection
+ * @return {object} provider
+ * @example <caption>Basic usage of clbEnv</caption>
+ * angular.module('myApp', ['clbEnv', 'rest'])
+ * .service('myService', function(clbEnv, clbResultSet) {
+ *   return {
+ *     listCollab: function() {
+ *       // return a paginated list of all collabs
+ *       return clbResultSet.get($http.get(clbEnv.get('api.collab.v0') + '/'));
+ *     }
+ *   };
+ * });
+ * @example <caption>Use clbEnv in your configuration</caption>
+ * angular.module('myApp', ['clbEnv', 'rest'])
+ * .config(function(clbEnvProvider, myAppServiceProvider) {
+ *   // also demonstrate how we accept a custom variable.
+ *   myAppServiceProvider.setMaxFileUpload(clbEnvProvider.get('myapp.maxFileUpload', '1m'))
+ * });
+ */
+function clbEnv($injector) {
+  return {
+    get: get,
+    $get: function() {
+      return {
+        get: get
+      };
+    }
+  };
+
+  /**
+   * ``get(key, [defaultValue])`` provides configuration value loaded at
+   * the application bootstrap.
+   *
+   * Accept a key and an optional default
+   * value. If the key cannot be found in the configurations, it will return
+   * the provided default value. If the defaultValue is undefied, it will
+   * throw an error.
+   *
+   * To ensures that those data are available when angular bootstrap the
+   * application, use angular.clbBootstrap(module, options).
+   *
+   * @memberof module:clb-env.clbEnv
+   * @param {string} key the environment variable to retrieve, using a key.
+   * @param {any} [defaultValue] an optional default value.
+   * @return {any} the value or ``defaultValue`` if the asked for configuration
+   *               is not defined.
+   */
+  function get(key, defaultValue) {
+    var parts = key.split('.');
+    var cursor = (window.bbpConfig ?
+                  window.bbpConfig : $injector.get('CLB_ENVIRONMENT'));
+    for (var i = 0; i < parts.length; i++) {
+      if (!(cursor && cursor.hasOwnProperty(parts[i]))) {
+        if (defaultValue !== undefined) {
+          return defaultValue;
+        }
+        throw new Error('UnkownConfigurationKey: <' + key + '>');
+      }
+      cursor = cursor[parts[i]];
+    }
+    return cursor;
+  }
 }
 
 angular.module('clb-ui-storage')
@@ -6676,357 +7027,6 @@ angular.module('clb-ui-storage')
     }
   };
 });
-
-angular.module('clb-ui-stream')
-.directive('clbActivity', clbActivity);
-
-/**
- * @name clbActivity
- * @desc
- * ``clb-activity`` directive is displays an activity retrieved by
- * the HBP Stream service in a common way.
- *
- * It try to look up for a detailled description of the event and fallback
- * to the summary if he cannot.
- *
- * @memberof module:clb-ui-stream
- * @return {object} the directive
- */
-function clbActivity() {
-  return {
-    restrict: 'A',
-    scope: {
-      activity: '=clbActivity'
-    },
-    controller: ActivityController,
-    controllerAs: 'vm',
-    bindToController: true,
-    template:'<div class="clb-activity-metadata"><div class="clb-activity-time" am-time-ago="vm.activity.time"></div><a clb-usercard-popover="vm.activity.actor.data" ng-click="vm.navigate($event, false)"><clb-user-avatar class="clb-activity-avatar" clb-user="vm.activity.actor.data" ng-if="vm.activity.actor.data"></clb-user-avatar></a></div><div class="clb-activity-summary"><span class="clb-activity-link" ng-repeat="p in vm.parts" ng-class="\'clb-activity-link-\' + p.tag"><a ng-if="p.tag && p.ref.type === \'HBPUser\'" clb-usercard-popover="p.ref.id" ng-click="vm.navigate($event, false)">{{p.text}}</a> <a ng-if="p.tag && p.ref.type !== \'HBPUser\'" ng-init="vm.resolveUrl(p)" ng-href="{{p.url}}">{{p.text}}</a> <span ng-if="!p.tag">{{p.text}}</span></span></div>',
-    link: {
-      post: function(scope, elt, attr, ctrl) {
-        elt.addClass('clb-activity').addClass(ctrl.verbClass);
-        scope.$watch('vm.activity.verb', function(newVal) {
-          if (newVal) {
-            elt.addClass('clb-activity-' + newVal.toLowerCase());
-          }
-        });
-      }
-    }
-  };
-}
-
-/**
- * ViewModel of an activity used to render the clb-activity directive
- * @param {object} $scope    DI
- * @param {object} $sce      DI
- * @param {object} $log      DI
- * @param {object} $window   DI
- * @param {object} $q        DI
- * @param {object} $compile  DI
- * @param {object} clbResourceLocator DI
- * @param {object} clbErrorDialog DI
- */
-function ActivityController(
-  $scope,
-  $sce,
-  $log,
-  $window,
-  $q,
-  $compile,
-  clbResourceLocator,
-  clbErrorDialog
-) {
-  var vm = this;
-  vm.navigate = function(event, data) {
-    event.preventDefault();
-    event.stopPropagation();
-    if (!angular.isDefined(data)) {
-      $scope.$emit('clbActivity.interaction', {
-        action: 'usePrimaryNavigation',
-        tag: 'object'
-      });
-      $window.location = vm.primaryLink;
-    } else if (data.ref && data.ref.type && data.ref.id) {
-      $scope.$emit('clbActivity.interaction', {
-        action: 'useSecondaryNavigation',
-        tag: data.tag
-      });
-      clbResourceLocator.urlFor(data.ref, vm.activity)
-      .then(function(url) {
-        $window.location = url;
-      })
-      .catch(function(err) {
-        $scope.$emit('clbActivity.interaction', {
-          action: 'secondaryNavigationFailed',
-          tag: data.tag
-        });
-        clbErrorDialog.open({
-          type: 'Not Found',
-          message: 'The system cannot generate a valid URL ' +
-                   'to display this object.',
-          code: 400,
-          data: {
-            error: err
-          }
-        });
-      });
-    } else {
-      $scope.$emit('clbActivity.interaction', {
-        action: 'openUserDetails',
-        tag: 'actor'
-      });
-    }
-  };
-
-  vm.resolveUrl = function(data) {
-    clbResourceLocator.urlFor(data.ref, vm.activity)
-    .then(function(url) {
-      data.url = url;
-    });
-  };
-
-  activate();
-
-  /* ------------- */
-
-  /**
-   * Replace references in the summary with proper names and links.
-   *
-   * This is a naive implementation. using an array of string that is
-   * concatenated at the end. The advantage is that I don't have to
-   * sort the references before processing them so the code is a bit
-   * easier to read.
-   * @private
-   * @return {object} the list of parts as object with keys `tag`, `text` and `ref`.
-   */
-  function resolveReferences() {
-    // Using a linked list to segment the text.
-    var root = {
-      // root only has a next property
-      next: {
-        // The node data
-        data: {
-          tag: null,
-          ref: null
-        },
-        indices: [0, vm.activity.summary.length],
-        next: null
-      }
-    };
-
-    // flatten the list of references
-    if (vm.activity.references) {
-      for (var tag in vm.activity.references) {
-        if (Object.prototype.hasOwnProperty.call(
-            vm.activity.references, tag)) {
-          var refs = vm.activity.references[tag];
-          if (!angular.isArray(refs)) {
-            refs = [refs];
-          }
-          for (var i = 0; i < refs.length; i++) {
-            var ref = refs[i];
-            processRef(root, tag, ref.indices);
-          }
-        }
-      }
-    }
-
-    var head = root.next;
-    var parts = [];
-    while (head) {
-      head.data.text = String.prototype.substring.apply(
-        vm.activity.summary, head.indices);
-      // disable object link for 'delete' verb
-      if (vm.activity.verb === 'DELETE' &&
-          head.data.tag === 'object') {
-        head.data.tag = null;
-      }
-      parts.push(head.data);
-      head = head.next;
-    }
-    return parts;
-  }
-
-  /**
-   * Used by resolveReferences.
-   * @private
-   * @param  {object} root         The linked list root
-   * @param  {string} tag          position in the sentence (actor|object|context)
-   * @param  {array}  indices      [startIndex, endIndex]
-   */
-  function processRef(root, tag, indices) {
-    // previous -> head -> next
-
-    var previous = root;
-    var head = root.next;
-    // Find the last node which has an end index greater
-    // than the node to insert. We do not handle the case
-    // where the new node is crossing multiple existing nodes as this would
-    // be invalid data.
-    while (head.next && (
-      indices[0] >= head.indices[1] // cannot be inverted
-                                    // the head indices[1] is +1 after the
-                                    // last char
-    )) {
-      previous = head;
-      head = head.next;
-    }
-
-    // previous -> node|head -> next
-    var node = {
-      next: null,
-      indices: indices,
-      data: {
-        tag: tag,
-        ref: vm.activity[tag]
-      }
-    };
-
-    if (head.indices[0] < indices[0]) {
-      // previous -> head:before -> node
-      // head -> next
-      var before = angular.copy(head);
-      before.indices[1] = indices[0]; // stop where the new part begin
-      before.next = node;
-      previous.next = before;
-      previous = before;
-    } else if (previous) {
-      // previous -> node
-      // head -> next
-      previous.next = node;
-    }
-
-    // previous -> node
-    // head -> next
-    if (head.indices[1] > indices[1]) {
-      // previous -> node -> head -> next
-      head.indices[0] = indices[1];
-      node.next = head;
-    } else {
-      // previous -> node -> next
-      node.next = head.next;
-    }
-  }
-
-  /**
-   * init controller
-   */
-  function activate() {
-    clbResourceLocator.urlFor(vm.activity.object, vm.activity)
-    .then(function(url) {
-      vm.primaryLink = url;
-    })
-    .catch(function(err) {
-      $log.warn('unclickable activity', err);
-    });
-
-    vm.parts = resolveReferences();
-  }
-}
-
-angular.module('clb-ui-stream')
-.directive('clbFeed', clbFeed);
-
-/**
- * @name clbFeed
- * @desc
- * ``clb-feed`` directive displays a feed of activity retrieved by
- * the HBP Stream service. It handles scrolling and loading of activities.
- * Each activity is rendered using the ``clb-activity`` directive.
- *
- * @memberof module:clb-ui-stream
- * @return {object} the directive
- */
-function clbFeed() {
-  return {
-    restrict: 'E',
-    scope: {
-      feedType: '=clbFeedType',
-      feedId: '=clbFeedId'
-    },
-    controller: FeedController,
-    controllerAs: 'vm',
-    bindToController: true,
-    template:'<div ng-if="vm.loadingFeed" class="alert alert-info"><div ng-switch on="vm.feedDate"><div ng-switch-when="null">Loading all activities...</div><div class="animate-switch" ng-switch-default>Loading Feed for {{vm.feedDate}}...</div></div></div><p ng-if="vm.feedDate != null">Selected date: {{vm.feedDate}}</p><ul class="feed list-group" ng-if="!vm.loadingFeed" ng-class="{\'feed-empty\': vm.activities.results.length === 0}"><li ng-if="vm.error" class="list-group-item"><div class="alert alert-error"><strong>Load Error:</strong> {{vm.error}}</div></li><li class="list-group-item" ng-if="!vm.activities && !vm.error"><hbp-loading></hbp-loading></li><li class="list-group-item" ng-if="vm.activities.results.length === 0 && vm.feedDate"><div class="alert alert-info">No activities on {{vm.feedDate}}</div></li><li class="list-group-item" ng-if="vm.activities.results.length === 0 && !vm.feedDate"><div class="alert alert-info">No activities to show</div></li><li class="list-group-item" ng-repeat="a in vm.activities.results track by $index" clb-activity="a"></li><li class="list-group-item" ng-if="vm.activities.hasNext"><a clb-perform-action="vm.activities.next()" class="btn btn-default">Show More</a></li></ul>',
-    link: function(scope, elt) {
-      elt.addClass('clb-feed');
-      var unbind = scope.$on(
-        'clbActivity.interaction',
-        function($event, data) {
-          data.feedType = scope.feedType;
-          scope.$emit('clbFeed.interaction', data);
-        }
-      );
-      scope.$on('$destroy', unbind);
-    }
-  };
-}
-
-/**
- * ViewModel of an activity used to render the clb-activity directive
- * @param {object} $rootScope angular injection
- * @param {object} clbStream DI
- * @param {object} clbUser DI
- */
-function FeedController($rootScope, clbStream, clbUser) {
-  var vm = this;
-
-  if (vm.feedType === 'HBPCollab') {
-    vm.pageSize = 15;
-  }
-
-  vm.feedDate = null;
-
-  activate();
-
-  $rootScope.$on('feedDate.changed', function(event, data) {
-    vm.feedDate = data;
-    activate();
-  });
-  /* ------------- */
-
-  function hydrateActors(activities) {  // eslint-disable-line require-jsdoc
-    if (!activities || activities.length === 0) {
-      return;
-    }
-
-    var acc = [];
-    for (var i = 0; i < activities.length; i++) {
-      if (activities[i].actor.type === 'HBPUser') {
-        acc.push(activities[i].actor.id);
-      }
-    }
-    return clbUser.get(acc)
-    .then(function(users) {
-      for (var i = 0; i < activities.length; i++) {
-        var actor = activities[i].actor;
-        if (actor.type === 'HBPUser' && users[actor.id]) {
-          actor.data = users[actor.id];
-        }
-      }
-    });
-  }
-
-  /**
-   * init controller
-   */
-  function activate() {
-    vm.loadingFeed = true;
-    clbStream.getStream(vm.feedType, vm.feedId, {
-      resultsFactory: hydrateActors,
-      date: vm.feedDate,
-      pageSize: vm.pageSize
-    })
-    .then(function(rs) {
-      vm.activities = rs;
-    })
-    .catch(function(err) {
-      vm.error = err.message;
-    }).finally(function() {
-      vm.loadingFeed = false;
-    });
-  }
-}
 
 })();
 
