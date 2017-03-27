@@ -600,5 +600,75 @@ describe('clbStorage', function() {
         expect(result).toEqual(entity);
       });
     });
+
+    describe('delete', function() {
+      it('should reject with an error in case of a http error', function() {
+        var error;
+
+        // given
+        backend
+          .when('DELETE', baseUrl('file/123/'))
+          .respond(403);
+
+        // when
+        service.delete({
+          uuid: '123',
+          entity_type: 'file'
+        }).catch(function(e) {
+          error = e;
+        });
+        backend.flush();
+
+        // then
+        expect(error.type).toEqual('Forbidden');
+      });
+
+      it('should throw an error if no entity is provided', function() {
+        // when
+        expect(service.delete)
+        // then
+        .toThrowError('Missing mandatory `entity` parameter');
+      });
+
+      it('should throw an error if no entity uuid is provided', function() {
+        // when
+        expect(function() {
+          service.delete({entity_type: 'file'});
+        })
+        // then
+        .toThrowError('Missing mandatory `entity.uuid` parameter');
+      });
+
+      it('should throw an error if no entity type is provided', function() {
+        // when
+        expect(function() {
+          service.delete({uuid: '123'});
+        })
+        // then
+        .toThrowError('Missing mandatory `entity.entity_type` parameter');
+      });
+
+      it('should resolve successfully', function() {
+        var entity = {
+          uuid: '12345',
+          entity_type: 'folder',
+          name: 'my folder'
+        };
+        var status;
+
+        backend.expectDELETE(baseUrl('folder/12345/'))
+                    .respond(204);
+
+        // when
+        service.delete(entity)
+          .then(function(e) {
+            status = e.status;
+          });
+        backend.flush(1);
+
+        // then
+        expect(status).toEqual(204);
+      });
+    });
   });
 });
