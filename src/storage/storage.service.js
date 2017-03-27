@@ -303,8 +303,8 @@ function clbStorage(
    * @return {Promise}        Resolves after the operation is completed
    */
   function addMetadata(entity, metadata) {
-    return clbAuthHttp.post(baseUrl + '/' + entity.entity_type + '/' +
-    entity.uuid + '/metadata/', metadata)
+    var metadataUrl = buildEntityUrl(entity) + 'metadata/';
+    return clbAuthHttp.post(metadataUrl, metadata)
     .then(function(response) {
       return response.data;
     })
@@ -322,8 +322,8 @@ function clbStorage(
    * @return {Promise}           Resolve to the metadata
    */
   function deleteMetadata(entity, metadataKeys) {
-    return clbAuthHttp.delete(baseUrl + '/' + entity.entity_type + '/' +
-      entity.uuid + '/metadata/', {data: {keys: metadataKeys}})
+    var metadataUrl = buildEntityUrl(entity) + 'metadata/';
+    return clbAuthHttp.delete(metadataUrl, {data: {keys: metadataKeys}})
     .then(function(response) {
       return response.data;
     })
@@ -357,16 +357,6 @@ function clbStorage(
       }
       return response.data.results[0];
     }).catch(clbError.rejectHttpError);
-  }
-
-  function checkMandatoryParameter(name, value) {
-    if (value === undefined) {
-      throw clbError.error({
-        type: 'MissingParameter',
-        message: 'Missing mandatory `' + name + '` parameter'
-      });
-    }
-    return value;
   }
 
   /**
@@ -420,11 +410,7 @@ function clbStorage(
    * @return {Promise}                     Resolve once done
    */
   function updateEntity(entity) {
-    checkMandatoryParameter('entity', entity);
-    checkMandatoryParameter('entity.uuid', entity.uuid);
-    checkMandatoryParameter('entity.entity_type', entity.entity_type);
-
-    var updateUrl = baseUrl + '/' + entity.entity_type + '/' + entity.uuid + '/';
+    var updateUrl = buildEntityUrl(entity);
     return clbAuthHttp.patch(updateUrl, entity)
       .then(function(res) {
         return res.data;
@@ -768,7 +754,7 @@ function clbStorage(
    * @return {Promise}        Return once fulfilled
    */
   function deleteEntity(entity) {
-    return clbAuthHttp.delete(entityUrl + '/' + entity.uuid + '/')
+    return clbAuthHttp.delete(buildEntityUrl(entity))
     .catch(clbError.rejectHttpError);
   }
 
@@ -837,5 +823,40 @@ function clbStorage(
     .then(function(response) {
       return baseUrl + response.data.signed_url;
     }).catch(clbError.rejectHttpError);
+  }
+
+  /**
+   * Checks that the value in input is defined.
+   *
+   * @private
+   * @param {string} name name of the param (used for error message)
+   * @param {object} value param value to check
+   * @return {boolean} the value in input if defined
+   * @throws a 'MissingParameter' :doc:`module-clb-error.ClbError` if value is undefined
+   */
+  function checkMandatoryParameter(name, value) {
+    if (value === undefined) {
+      throw clbError.error({
+        type: 'MissingParameter',
+        message: 'Missing mandatory `' + name + '` parameter'
+      });
+    }
+    return value;
+  }
+
+  /**
+   * Given an entity object, checks the required properties (uuid and entity_type)
+   * and returns the corresponding URL.
+   *
+   * @private
+   * @param {module:clb-storage.EntityDescriptor} entity a storage entity
+   * @return {string} the entity URL
+   */
+  function buildEntityUrl(entity) {
+    checkMandatoryParameter('entity', entity);
+    checkMandatoryParameter('entity.uuid', entity.uuid);
+    checkMandatoryParameter('entity.entity_type', entity.entity_type);
+
+    return baseUrl + '/' + entity.entity_type + '/' + entity.uuid + '/';
   }
 }
