@@ -1,8 +1,10 @@
 /* eslint camelcase:0 */
 
 describe('clbStorage', function() {
+  var $q;
   var backend;
   var service;
+  var clbUser;
   var contextId;
   var actual;
   var assign = function(val) {
@@ -17,20 +19,19 @@ describe('clbStorage', function() {
 
   beforeEach(module('clb-storage'));
 
-  beforeEach(inject(function($q,
+  beforeEach(inject(function(_$q_,
                                 $httpBackend,
                                 $rootScope,
                                 clbStorage,
-                                clbEnv) {
+                                clbEnv,
+                                _clbUser_) {
+    $q = _$q_;
     backend = $httpBackend;
     service = clbStorage;
-
-    // String.prototype.endsWith = function(suffix) {
-    //   return this.indexOf(suffix, this.length - suffix.length) !== -1;
-    // };
+    clbUser = _clbUser_;
 
     baseUrl = function(path) {
-      return clbEnv.get('api.document.v1', 'https://services.humanbrainproject.eu/storage/v1/api') + '/' + (path ? path : '');
+      return clbEnv.get('api.document.v1') + '/' + (path ? path : '');
     };
 
     addSlashDecorator = function(path) {
@@ -187,7 +188,9 @@ describe('clbStorage', function() {
       beforeEach(function() {
         projectEntity = {
           uuid: '331C0A79-A12F-46AF-9DE4-09C43C0D8FFB',
-          entity_type: 'project'
+          entity_type: 'project',
+          created_by: '111',
+          modified_by: '222'
         };
       });
       it('accept a null parent', function() {
@@ -200,6 +203,42 @@ describe('clbStorage', function() {
         backend.flush();
         expect(actual).toBeAPaginatedResultSet();
         expect(actual.results).toDeepEqual([projectEntity]);
+      });
+
+      it('resolves user ids, if requested', function() {
+        var projectEntityBis = {
+          uuid: '104facf9-f81f-4518-968c-6a69e434747a',
+          entity_type: 'project',
+          created_by: '333',
+          modified_by: '444'
+        };
+
+        var ben = {id: '111', displayName: 'Ben'};
+        var and = {id: '222', displayName: 'And'};
+        var jerry = {id: '333', displayName: 'Jerry'};
+        // 444 is not found
+        spyOn(clbUser, 'get').and.returnValue($q.when({
+          111: ben,
+          222: and,
+          333: jerry
+        }));
+
+        backend.expectGET(baseUrl('project/?ordering=name'))
+                    .respond({
+                      results: [projectEntity, projectEntityBis],
+                      hasMore: false
+                    });
+        service.getChildren(null, {
+          resolveUserId: true
+        }).then(assign);
+        backend.flush(1);
+        expect(actual.hasNext).toBe(false);
+        expect(clbUser.get).toHaveBeenCalledWith(['111', '222', '333', '444']);
+        // test user resolution
+        expect(actual.results[0].created_by_user.displayName).toEqual('Ben');
+        expect(actual.results[0].modified_by_user.displayName).toEqual('And');
+        expect(actual.results[1].created_by_user.displayName).toEqual('Jerry');
+        expect(actual.results[1].modified_by_user).toBeUndefined();
       });
 
       it('lists projects', function() {
