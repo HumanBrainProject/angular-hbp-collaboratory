@@ -261,7 +261,7 @@ The returned promise will be resolved with the
 list of fetched children and a flag indicating if more results are available
 in the queried direction.
 
-.. js:function:: getChildren(parent[, options][, options.accept][, options.sort][, options.page][, options.pageSize])
+.. js:function:: getChildren(parent[, options][, options.accept][, options.sort][, options.page][, options.pageSize][, options.resolveUserId])
 
     
     :param module:clb-storage.EntityDescriptor parent: The parent entity
@@ -270,6 +270,7 @@ in the queried direction.
     :param string options.sort: Property to sort on
     :param int options.page: The number of the page to return.
     :param int options.pageSize: The number of results per page. Default is provided by the service. Set to 0 to fetch all the records.
+    :param boolean options.resolveUserId: if true, resolve user ids to user names (default: false)
     :return Promise: When fulfilled, return a paginated result set. You can also access it immediately using ``promise.instance``
     
 .. _module-clb-storage.clbStorage.upload:

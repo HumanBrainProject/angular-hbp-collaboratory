@@ -25,6 +25,7 @@ angular
  * @param  {object} $q           Angular DI
  * @param  {object} $log         Angular DI
  * @param  {object} uuid4        Angular DI
+ * @param  {object} lodash       Angular DI
  * @param  {object} clbEnv       Angular DI
  * @param  {object} clbError     Angular DI
  * @param  {object} clbUser      Angular DI
@@ -36,6 +37,7 @@ function clbStorage(
   $q,
   $log,
   uuid4,
+  lodash,
   clbEnv,
   clbError,
   clbUser,
@@ -546,6 +548,7 @@ function clbStorage(
    * @param {string} [options.sort] Property to sort on
    * @param {int} [options.page] The number of the page to return.
    * @param {int} [options.pageSize] The number of results per page. Default is provided by the service. Set to 0 to fetch all the records.
+   * @param {boolean} [options.resolveUserId] if true, resolve user ids to user names (default: false)
    * @return {Promise} When fulfilled, return a paginated result set. You can also access it immediately using ``promise.instance``
    */
   function getChildren(parent, options) {
@@ -580,7 +583,31 @@ function clbStorage(
       page: options.page > 0 ? options.page : null
     };
 
-    return clbResultSet.get(clbAuthHttp.get(url, {params: params}));
+    var resultSetOptions = {};
+    if (options.resolveUserId) {
+      resultSetOptions.resultsFactory = resultsFactory;
+    }
+    return clbResultSet.get(clbAuthHttp.get(url, {params: params}), resultSetOptions);
+  }
+
+  /**
+   * Resolves all the user ids in the result to a user profile.
+   * @private
+   * @param  {Array}   result Array of entities
+   * @return {Promise} Return once fullfilled
+   */
+  function resultsFactory(result) {
+    // Get the list of user's ids and try to find thier name
+    var userIds = lodash.uniq(lodash.reduce(result, function(ids, entity) {
+      return ids.concat([entity.created_by, entity.modified_by]);
+    }, []));
+
+    return clbUser.get(userIds).then(function(users) {
+      for (var i = 0; i < result.length; i++) {
+        result[i].created_by_user = users[result[i].created_by];
+        result[i].modified_by_user = users[result[i].modified_by];
+      }
+    });
   }
 
   /**
