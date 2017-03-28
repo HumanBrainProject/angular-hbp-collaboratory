@@ -69,6 +69,7 @@ function clbStorage(
     setContextMetadata: setContextMetadata,
     deleteContextMetadata: deleteContextMetadata,
     updateContextMetadata: updateContextMetadata,
+    getMetadata: getMetadata,
     addMetadata: addMetadata,
     deleteMetadata: deleteMetadata
   };
@@ -290,6 +291,23 @@ function clbStorage(
     return deleteContextMetadata(oldEntity, contextId).then(function() {
       return setContextMetadata(newEntity, contextId);
     }).catch(clbError.rejectHttpError);
+  }
+
+  /**
+   * Return the metadata of the provided entity.
+   *
+   * @function
+   * @memberof module:clb-storage.clbStorage
+   * @param {object} entity   Entity Descriptor
+   * @return {Promise}        Resolves to an object containing all the entity metadata
+   */
+  function getMetadata(entity) {
+    var metadataUrl = buildEntityUrl(entity) + 'metadata/';
+    return clbAuthHttp.get(metadataUrl)
+    .then(function(response) {
+      return response.data;
+    })
+    .catch(clbError.rejectHttpError);
   }
 
   /**

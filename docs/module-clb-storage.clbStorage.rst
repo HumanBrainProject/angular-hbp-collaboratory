@@ -118,6 +118,20 @@ Retrieve the key to lookup for on entities given the ctx
     :param string ctx: application context UUID
     :return string: name of the entity attribute that should be used
     
+.. _module-clb-storage.clbStorage.getMetadata:
+
+
+Function: ``getMetadata``
+=========================
+
+Return the metadata of the provided entity.
+
+.. js:function:: getMetadata(entity)
+
+    
+    :param object entity: Entity Descriptor
+    :return Promise: Resolves to an object containing all the entity metadata
+    
 .. _module-clb-storage.clbStorage.addMetadata:
 
 
