@@ -178,7 +178,9 @@ function clbUser(
       deferred.resolve(single ? response[ids[0]] : response);
     } else {
       // Get the list of URLs to call
-      var userBaseUrl = '/search?id=';
+      // no need to handle more that 300 results because the URL will be split in chunks
+      // of 2000 char each (and every ID is at least 6 char long + '&id=' + baseUrl).
+      var userBaseUrl = '/search?pageSize=300&id=';
       splitInURl(uncachedUser, userUrl + userBaseUrl, urls, 'id');
 
       // Async calls and combination of result
