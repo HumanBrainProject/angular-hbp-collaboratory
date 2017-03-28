@@ -66,7 +66,7 @@ describe('clbUser', function() {
   var veryLongId2 = '';
   var listResponse;
   beforeEach(function() {
-    $httpBackend.whenGET(userApiUrl + 'user/search?id=foo&id=gul&id=Sbar')
+    $httpBackend.whenGET(userApiUrl + 'user/search?pageSize=300&id=foo&id=gul&id=Sbar')
     .respond(200, {
       _embedded: {
         users: [{
@@ -84,7 +84,7 @@ describe('clbUser', function() {
       veryLongId1 += 'a';
       veryLongId2 += 'b';
     }
-    $httpBackend.whenGET(userApiUrl + 'user/search?id=' + veryLongId1)
+    $httpBackend.whenGET(userApiUrl + 'user/search?pageSize=300&id=' + veryLongId1)
     .respond(200, {
       _embedded: {
         users: [{
@@ -93,7 +93,7 @@ describe('clbUser', function() {
         }]
       }
     });
-    $httpBackend.whenGET(userApiUrl + 'user/search?id=' + veryLongId2)
+    $httpBackend.whenGET(userApiUrl + 'user/search?pageSize=300&id=' + veryLongId2)
     .respond(200, {
       _embedded: {
         users: [{
@@ -104,7 +104,7 @@ describe('clbUser', function() {
 
     $httpBackend.whenGET(userApiUrl + 'user/me')
     .respond(200, me);
-    $httpBackend.whenGET(userApiUrl + 'user/search?id=' + user.id)
+    $httpBackend.whenGET(userApiUrl + 'user/search?pageSize=300&id=' + user.id)
     .respond(200, {_embedded: {users: [user]}});
 
     $httpBackend.whenGET(userApiUrl + 'user/me/member-groups').respond(200, {
@@ -155,7 +155,7 @@ describe('clbUser', function() {
 
   it('should call to the rest service and return information', function() {
     var result;
-    $httpBackend.expectGET(userApiUrl + 'user/search?id=foo&id=gul&id=Sbar');
+    $httpBackend.expectGET(userApiUrl + 'user/search?pageSize=300&id=foo&id=gul&id=Sbar');
     userDirectory.get(['foo', 'Sbar', 'gul']).then(function(users) {
       result = users;
     });
@@ -170,7 +170,7 @@ describe('clbUser', function() {
 
   it('should support single id call', function() {
     var result;
-    $httpBackend.expectGET(userApiUrl + 'user/search?id=foo')
+    $httpBackend.expectGET(userApiUrl + 'user/search?pageSize=300&id=foo')
     .respond(200, {
       _embedded: {
         users: [{
@@ -188,7 +188,7 @@ describe('clbUser', function() {
 
   it('should support single array id call', function() {
     var result;
-    $httpBackend.expectGET(userApiUrl + 'user/search?id=foo')
+    $httpBackend.expectGET(userApiUrl + 'user/search?pageSize=300&id=foo')
     .respond(200, {
       _embedded: {
         users: [{
@@ -206,8 +206,8 @@ describe('clbUser', function() {
 
   it('should split the call in URL no longer than 2000 chars', function() {
     var result;
-    $httpBackend.expectGET(userApiUrl + 'user/search?id=' + veryLongId1);
-    $httpBackend.expectGET(userApiUrl + 'user/search?id=' + veryLongId2);
+    $httpBackend.expectGET(userApiUrl + 'user/search?pageSize=300&id=' + veryLongId1);
+    $httpBackend.expectGET(userApiUrl + 'user/search?pageSize=300&id=' + veryLongId2);
     userDirectory.get([veryLongId1, veryLongId2]).then(function(users) {
       result = users;
     });
@@ -338,7 +338,7 @@ describe('clbUser', function() {
         var updatedUser;
         var called;
 
-        $httpBackend.expectGET(userApiUrl + 'user/search?id=923288');
+        $httpBackend.expectGET(userApiUrl + 'user/search?pageSize=300&id=923288');
 
         userDirectory.update(user).then(function(user) {
           called = true;
@@ -418,7 +418,7 @@ describe('clbUser', function() {
         var expectedUser = angular.extend({}, user, data);
         var done = false;
         $httpBackend.expectPATCH(userApiUrl + 'user/' + user.id, data);
-        $httpBackend.expectGET(userApiUrl + 'user/search?id=' + user.id)
+        $httpBackend.expectGET(userApiUrl + 'user/search?pageSize=300&id=' + user.id)
         .respond({_embedded: {users: [expectedUser]}});
         userDirectory.update(user, data).then(function() {
           expect(cache.get(user.id)).toDeepEqual(expectedUser);
@@ -438,7 +438,7 @@ describe('clbUser', function() {
           done = true;
         });
         $httpBackend.expectPATCH(userApiUrl + 'user/' + me.id, data);
-        $httpBackend.expectGET(userApiUrl + 'user/search?id=' + me.id)
+        $httpBackend.expectGET(userApiUrl + 'user/search?pageSize=300&id=' + me.id)
         .respond({_embedded: {users: [expectedMe]}});
         $httpBackend.flush();
         expect(done).toBe(true);
