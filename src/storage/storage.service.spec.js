@@ -241,6 +241,39 @@ describe('clbStorage', function() {
         expect(actual.results[1].modified_by_user).toBeUndefined();
       });
 
+      it('does not fail if modified_by or created_by is not provided', function() {
+        var projectEntityBis = {
+          uuid: '104facf9-f81f-4518-968c-6a69e434747a',
+          entity_type: 'project',
+          created_by: '111'
+        };
+        var projectEntityTer = {
+          uuid: '104facf9-f81f-4518-968c-6a69e434747a',
+          entity_type: 'project'
+        };
+        var ben = {id: '111', displayName: 'Ben'};
+        spyOn(clbUser, 'get').and.returnValue($q.when({
+          111: ben
+        }));
+
+        backend.expectGET(baseUrl('project/?ordering=name'))
+                    .respond({
+                      results: [projectEntityBis, projectEntityTer],
+                      hasMore: false
+                    });
+        service.getChildren(null, {
+          resolveUserId: true
+        }).then(assign);
+        backend.flush(1);
+        expect(actual.hasNext).toBe(false);
+        expect(clbUser.get).toHaveBeenCalledWith(['111']);
+        // test user resolution
+        expect(actual.results[0].created_by_user.displayName).toEqual('Ben');
+        expect(actual.results[0].modified_by_user).toBeUndefined();
+        expect(actual.results[1].created_by_user).toBeUndefined();
+        expect(actual.results[1].modified_by_user).toBeUndefined();
+      });
+
       it('lists projects', function() {
         // tests in common with getProjects
         testGetProjectsList(service.getChildren);

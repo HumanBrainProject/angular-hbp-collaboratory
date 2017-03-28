@@ -584,9 +584,11 @@ function clbStorage(
    */
   function resultsFactory(result) {
     // Get the list of user's ids and try to find thier name
-    var userIds = lodash.uniq(lodash.reduce(result, function(ids, entity) {
-      return ids.concat([entity.created_by, entity.modified_by]);
-    }, []));
+    var userIds = lodash.uniq( // removes duplicates
+                    lodash.compact( // removes null, undefined, ''
+                      lodash.reduce(result, function(ids, entity) {
+                        return ids.concat([entity.created_by, entity.modified_by]);
+                      }, [])));
 
     return clbUser.get(userIds).then(function(users) {
       for (var i = 0; i < result.length; i++) {
