@@ -417,6 +417,18 @@ describe('clbStorage', function() {
         backend.flush(1);
       });
     });
+    it('returns entity metadata', function() {
+      var metadata = {_contentUri: '/a/b/c'};
+      backend.expectGET(
+                  baseUrl('file/106884F1-9EA1-4542-AF73-E28F27629400/metadata/')
+              ).respond(200, metadata);
+      var result;
+      service.getMetadata(entity).then(function(meta) {
+        result = meta;
+      });
+      backend.flush(1);
+      expect(result).toEqual(metadata);
+    });
   });
 
   describe('File Upload', function() {
