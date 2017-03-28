@@ -1,7 +1,7 @@
 {
   "name": "angular-hbp-collaboratory",
   "description": "An AngularJS tool to develop web application based on the HBP Collaboratory",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": [
     "angular-hbp-collaboratory.js",
     "src/main.scss",
@@ -11,6 +11,8 @@
     "Olivier Amblet <olivier.amblet@epfl.ch>",
     "Stefano Zaninetta <stefano.zaninetta@epfl.ch>",
     "Genrich Ivaska <genrich.ivaska@epfl.ch>",
+    "Annapaola Santarsiero <annapaola.santarsiero@epfl.ch>",
+    "Allan Thierry Francani <allan.francani@epfl.ch>",
     "Selim Arserver"
   ],
   "license": "MIT",

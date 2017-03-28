@@ -36,13 +36,13 @@ clbCollabTeam.$inject = ['clbAuthHttp', '$log', '$q', 'lodash', 'clbEnv', 'clbEr
 clbCollab.$inject = ['$log', '$q', '$cacheFactory', 'clbAuthHttp', 'lodash', 'clbContext', 'clbEnv', 'clbError', 'clbResultSet', 'clbUser', 'ClbCollabModel', 'ClbContextModel'];
 clbContext.$inject = ['clbAuthHttp', '$q', 'clbError', 'clbEnv', 'ClbContextModel'];
 clbCtxData.$inject = ['clbAuthHttp', '$q', 'uuid4', 'clbEnv', 'clbError'];
-clbEnv.$inject = ['$injector'];
 clbError.$inject = ['$q'];
 clbGroup.$inject = ['$rootScope', '$q', 'clbAuthHttp', '$cacheFactory', 'lodash', 'clbEnv', 'clbError', 'clbResultSet', 'clbIdentityUtil'];
 clbUser.$inject = ['$rootScope', '$q', 'clbAuthHttp', '$cacheFactory', '$log', 'lodash', 'clbEnv', 'clbError', 'clbResultSet', 'clbIdentityUtil'];
 clbIdentityUtil.$inject = ['$log', 'lodash'];
-clbResultSet.$inject = ['clbAuthHttp', '$q', 'clbError'];
+clbEnv.$inject = ['$injector'];
 clbStorage.$inject = ['clbAuthHttp', '$q', '$log', 'uuid4', 'lodash', 'clbEnv', 'clbError', 'clbUser', 'clbResultSet'];
+clbResultSet.$inject = ['clbAuthHttp', '$q', 'clbError'];
 clbResourceLocator.$inject = ['$q', '$log', '$injector', 'clbError'];
 clbStream.$inject = ['clbAuthHttp', 'clbEnv', 'clbError', 'clbResultSet', 'moment'];
 clbConfirm.$inject = ['$rootScope', '$uibModal'];
@@ -51,11 +51,11 @@ clbUsercardPopoverDirective.$inject = ['$log', '$q', 'clbUser', 'clbUsercardPopo
 clbUserCardPopoverService.$inject = ['$rootScope'];
 clbUsercard.$inject = ['lodash'];
 clbUsercardCacheTemplate.$inject = ['$templateCache'];
+ActivityController.$inject = ['$scope', '$sce', '$log', '$window', '$q', '$compile', 'clbResourceLocator', 'clbErrorDialog'];
+FeedController.$inject = ['$rootScope', 'clbStream', 'clbUser'];
 clbFileBrowserPath.$inject = ['clbStorage'];
 clbFileBrowser.$inject = ['lodash'];
 clbFileChooser.$inject = ['$q', '$log'];
-ActivityController.$inject = ['$scope', '$sce', '$log', '$window', '$q', '$compile', 'clbResourceLocator', 'clbErrorDialog'];
-FeedController.$inject = ['$rootScope', 'clbStream', 'clbUser'];
 angular.module('hbpCollaboratoryCore', [
   'clb-app',
   'clb-automator',
@@ -159,14 +159,6 @@ angular.module('clb-collab', [
  */
 angular.module('clb-ctx-data', ['uuid4', 'clb-app', 'clb-env', 'clb-error']);
 
-/**
- * @module clb-env
- * @desc
- * ``clb-env`` module provides a way to information from the global environment.
- */
-
-angular.module('clb-env', []);
-
 angular.module('clb-error', []);
 
 angular.module('clb-identity', [
@@ -176,6 +168,14 @@ angular.module('clb-identity', [
   'clb-error',
   'clb-rest'
 ]);
+
+/**
+ * @module clb-env
+ * @desc
+ * ``clb-env`` module provides a way to information from the global environment.
+ */
+
+angular.module('clb-env', []);
 
 /* global _ */
 /**
@@ -199,13 +199,6 @@ angular.module('lodash', [])
 }]);
 
 /**
- * @module clb-rest
- * @desc
- * ``clb-rest`` module contains util for simplifying access to Rest service.
- */
-angular.module('clb-rest', ['clb-app', 'clb-error']);
-
-/**
  * @module clb-storage
  * @desc
  * The ``clb-storage`` module contains tools needed to access and work with the
@@ -219,6 +212,13 @@ angular.module('clb-storage', [
   'clb-rest',
   'clb-identity'
 ]);
+
+/**
+ * @module clb-rest
+ * @desc
+ * ``clb-rest`` module contains util for simplifying access to Rest service.
+ */
+angular.module('clb-rest', ['clb-app', 'clb-error']);
 
 /**
  * @module clb-stream
@@ -258,16 +258,25 @@ angular.module('clb-ui-error', [
 angular.module('clb-ui-form', []);
 
 /**
+ * Provides a simple loading directive.
+ * @module clb-ui-loading
+ */
+angular.module('clb-ui-loading', []);
+
+/**
  * Provides UI widgets around user and groups.
  * @module clb-ui-identity
  */
 angular.module('clb-ui-identity', ['lodash', 'clb-identity']);
 
 /**
- * Provides a simple loading directive.
- * @module clb-ui-loading
+ * @module clb-ui-stream
  */
-angular.module('clb-ui-loading', []);
+angular.module('clb-ui-stream', [
+  'angularMoment',
+  'clb-stream',
+  'clb-ui-error'
+]);
 
 /**
  * The ``clb-ui-storage`` module provides Angular directive to work
@@ -286,15 +295,6 @@ angular.module('clb-ui-storage', [
   'ui.bootstrap',
   'clb-ui-error',
   'clb-storage'
-]);
-
-/**
- * @module clb-ui-stream
- */
-angular.module('clb-ui-stream', [
-  'angularMoment',
-  'clb-stream',
-  'clb-ui-error'
 ]);
 
 angular.module('clb-app')
@@ -2570,85 +2570,6 @@ function clbCtxData(clbAuthHttp, $q, uuid4, clbEnv, clbError) {
   }
 }
 
-/* global window */
-
-angular.module('clb-env')
-.provider('clbEnv', clbEnv);
-
-/**
- * Get environement information using dotted notation with the `clbEnv` provider
- * or service.
- *
- * Before being used, clbEnv must be initialized with the context values. You
- * can do so by setting up a global bbpConfig variable or using
- * :ref:`angular.clbBootstrap <angular.clbBootstrap>`.
- *
- * @function clbEnv
- * @memberof module:clb-env
- * @param {object} $injector AngularJS injection
- * @return {object} provider
- * @example <caption>Basic usage of clbEnv</caption>
- * angular.module('myApp', ['clbEnv', 'rest'])
- * .service('myService', function(clbEnv, clbResultSet) {
- *   return {
- *     listCollab: function() {
- *       // return a paginated list of all collabs
- *       return clbResultSet.get($http.get(clbEnv.get('api.collab.v0') + '/'));
- *     }
- *   };
- * });
- * @example <caption>Use clbEnv in your configuration</caption>
- * angular.module('myApp', ['clbEnv', 'rest'])
- * .config(function(clbEnvProvider, myAppServiceProvider) {
- *   // also demonstrate how we accept a custom variable.
- *   myAppServiceProvider.setMaxFileUpload(clbEnvProvider.get('myapp.maxFileUpload', '1m'))
- * });
- */
-function clbEnv($injector) {
-  return {
-    get: get,
-    $get: function() {
-      return {
-        get: get
-      };
-    }
-  };
-
-  /**
-   * ``get(key, [defaultValue])`` provides configuration value loaded at
-   * the application bootstrap.
-   *
-   * Accept a key and an optional default
-   * value. If the key cannot be found in the configurations, it will return
-   * the provided default value. If the defaultValue is undefied, it will
-   * throw an error.
-   *
-   * To ensures that those data are available when angular bootstrap the
-   * application, use angular.clbBootstrap(module, options).
-   *
-   * @memberof module:clb-env.clbEnv
-   * @param {string} key the environment variable to retrieve, using a key.
-   * @param {any} [defaultValue] an optional default value.
-   * @return {any} the value or ``defaultValue`` if the asked for configuration
-   *               is not defined.
-   */
-  function get(key, defaultValue) {
-    var parts = key.split('.');
-    var cursor = (window.bbpConfig ?
-                  window.bbpConfig : $injector.get('CLB_ENVIRONMENT'));
-    for (var i = 0; i < parts.length; i++) {
-      if (!(cursor && cursor.hasOwnProperty(parts[i]))) {
-        if (defaultValue !== undefined) {
-          return defaultValue;
-        }
-        throw new Error('UnkownConfigurationKey: <' + key + '>');
-      }
-      cursor = cursor[parts[i]];
-    }
-    return cursor;
-  }
-}
-
 /* global document */
 
 angular.module('clb-error')
@@ -3902,374 +3823,82 @@ function clbIdentityUtil($log, lodash) {
   }
 }
 
-angular.module('clb-rest')
-.factory('clbResultSet', clbResultSet);
+/* global window */
+
+angular.module('clb-env')
+.provider('clbEnv', clbEnv);
 
 /**
- * @namespace clbResultSet
- * @memberof module:clb-rest
- * @param  {object} clbAuthHttp           Angular DI
- * @param  {object} $q              Angular DI
- * @param  {object} clbError Angular DI
- * @return {object}                 Angular Service
+ * Get environement information using dotted notation with the `clbEnv` provider
+ * or service.
+ *
+ * Before being used, clbEnv must be initialized with the context values. You
+ * can do so by setting up a global bbpConfig variable or using
+ * :ref:`angular.clbBootstrap <angular.clbBootstrap>`.
+ *
+ * @function clbEnv
+ * @memberof module:clb-env
+ * @param {object} $injector AngularJS injection
+ * @return {object} provider
+ * @example <caption>Basic usage of clbEnv</caption>
+ * angular.module('myApp', ['clbEnv', 'rest'])
+ * .service('myService', function(clbEnv, clbResultSet) {
+ *   return {
+ *     listCollab: function() {
+ *       // return a paginated list of all collabs
+ *       return clbResultSet.get($http.get(clbEnv.get('api.collab.v0') + '/'));
+ *     }
+ *   };
+ * });
+ * @example <caption>Use clbEnv in your configuration</caption>
+ * angular.module('myApp', ['clbEnv', 'rest'])
+ * .config(function(clbEnvProvider, myAppServiceProvider) {
+ *   // also demonstrate how we accept a custom variable.
+ *   myAppServiceProvider.setMaxFileUpload(clbEnvProvider.get('myapp.maxFileUpload', '1m'))
+ * });
  */
-function clbResultSet(clbAuthHttp, $q, clbError) {
-  /**
-   * @attribute ResultSetEOL
-   * @memberof module:clb-rest.clbResultSet
-   * @desc error thrown when module:clb-rest.ResultSet is crawled when at an
-   *       extremity.
-   */
-  var ResultSetEOL = clbError.error({
-    type: 'ResultSet::EOL',
-    message: 'End of list reached'
-  });
-
+function clbEnv($injector) {
   return {
-    get: getPaginatedResultSet,
-    EOL: ResultSetEOL
+    get: get,
+    $get: function() {
+      return {
+        get: get
+      };
+    }
   };
 
   /**
-   * @name get
-   * @memberof module:clb-rest.clbResultSet
-   * @desc
-   * Return a promise that will resolve once the result set first page is loaded.
+   * ``get(key, [defaultValue])`` provides configuration value loaded at
+   * the application bootstrap.
    *
-   * The promise contains the `instance` of the result set as well.
+   * Accept a key and an optional default
+   * value. If the key cannot be found in the configurations, it will return
+   * the provided default value. If the defaultValue is undefied, it will
+   * throw an error.
    *
-   * @param  {Object} res     a HTTPResponse or a promise which resolve to a HTTPResponse
-   * @param  {Object} [options] configuration
-   * @param  {string} [options.nextUrlKey] name of (or dot notation path to) the attribute containing the URL to fetch next results
-   * @param  {function} [options.hasNextHandler] A function that receive the JSON data as its first argument and must
-   *                                             return a boolean value that will be assigned to the ``hasNext`` property.
-   *                                             When this option is given, ``options.nextUrlHandler`` SHOULD be defined as well.
-   * @param  {function} [options.nextHandler] A function that receive the JSON data as its first argument and must return a promise
-   *                                          to the next results. This handler will be called when ``next()`` is called on the
-   *                                          RecordSet.
-   *                                          When this option is given ``options.hasNextHandler`` MUST be defined as well.
-   *                                          When this option is given ``options.nextUrlKey`` is ignored.
-   * @param  {string} [options.previousUrlKey] name of (or dot notation path to) the attribute containing the URL to fetch previous results
-   * @param  {function} [options.hasPreviousHandler] A function that receive the JSON data as its first argument and must
-   *                                                 return a boolean value that will be assigned to the ``hasPrevious`` property.
-   *                                                 When this option is given, ``options.previousUrlHandler`` SHOULD be defined as well.
-   * @param  {function} [options.previousHandler] A function that receive the JSON data as its first argument and must return a string value
-   *                                              that represent the previous URL that will be fetched by a call to ``.previous()``.
-   *                                              When this option is given ``options.hasPreviousHandler`` MUST be defined as well.
-   *                                              When this option is given ``options.previousUrlKey`` is ignored.
-   * @param  {string} [options.resultKey] name of (or dot notation path to) the attribute containing an array with all the results
-   * @param  {string} [options.countKey] name of (or dot notation path to) the attribute containing the number of results returned
-   * @param  {function} [options.resultsFactory] a function to which a new array of results is passed.
-   *                    The function can return ``undefined``, a ``Promise`` or an ``array`` as result.
-   * @return {Promise} After the promise is fulfilled, it will return a new instance of :doc:`module-clb-rest.clbResultSet.ResultSet`.
+   * To ensures that those data are available when angular bootstrap the
+   * application, use angular.clbBootstrap(module, options).
+   *
+   * @memberof module:clb-env.clbEnv
+   * @param {string} key the environment variable to retrieve, using a key.
+   * @param {any} [defaultValue] an optional default value.
+   * @return {any} the value or ``defaultValue`` if the asked for configuration
+   *               is not defined.
    */
-  function getPaginatedResultSet(res, options) {
-    return new ResultSet(res, options).promise;
-  }
-
-  /**
-   * @class ResultSet
-   * @memberof module:clb-rest.clbResultSet
-   * @desc
-   * Build a result set with internal support for fetching next and previous results.
-   *
-   * @param {Object} pRes the promise of the first result page
-   * @param {Object} options various options to specify how to handle the pagination
-   * @see {module:clb-rest.clbResultSet.get}
-   */
-  function ResultSet(pRes, options) {
-    var self = this;
-    // Hold call to next and previous when using customization.
-    var wrappedNextCall;
-    var wrappedPreviousCall;
-
-    /**
-     * The array containing all fetched results. Previous pages are added
-     * to the beginning of the results, next pages at the end.
-     * @type {array}
-     */
-    self.results = [];
-    /**
-     * Define with the last ClbError instance that occured.
-     * @type {module:clb-error.ClbError}
-     */
-    self.error = null;
-    /**
-     * ``true`` if there is more results to be loaded.
-     * @type {Boolean}
-     */
-    self.hasNext = null;
-    /**
-     * ``true`` if there is previous page to be loaded.
-     * @type {Boolean}
-     */
-    self.hasPrevious = null;
-    /**
-     * The promise associated with the last operation in the queue.
-     * @type {Promise}
-     */
-    self.promise = null;
-    /**
-     * A function that handle any error during an operation.
-     * @type {Function}
-     */
-    self.errorHandler = null;
-    self.next = enqueue(next);
-    self.previous = enqueue(previous);
-    self.toArray = enqueue(toArray);
-    self.all = enqueue(all);
-    self.count = -1;
-
-    options = angular.extend({
-      resultKey: 'results',
-      nextUrlKey: 'next',
-      hasNextHandler: function(rs) {
-        // by default, has next is defined if the received data
-        // defines a next URL.
-        return Boolean(at(rs, options.nextUrlKey));
-      },
-      previousUrlKey: 'previous',
-      hasPreviousHandler: function(rs) {
-        // by default, has previous is defined if the received data
-        // defines a next URL.
-        return Boolean(at(rs, options.previousUrlKey));
-      },
-      countKey: 'count'
-    }, options);
-
-    self.promise = $q.when(pRes)
-    .then(initialize)
-    .catch(handleError);
-    self.promise.instance = self;
-
-    /**
-     * @name next
-     * @memberof module:clb-rest.ResultSet
-     * @desc
-     * Retrieve the next result page.
-     * @memberof module:clb-rest.clbResultSet.ResultSet
-     *
-     * @return {Object} a promise that will resolve when the next page is fetched.
-     */
-    function next() {
-      if (!self.hasNext) {
-        return $q.reject(ResultSetEOL);
+  function get(key, defaultValue) {
+    var parts = key.split('.');
+    var cursor = (window.bbpConfig ?
+                  window.bbpConfig : $injector.get('CLB_ENVIRONMENT'));
+    for (var i = 0; i < parts.length; i++) {
+      if (!(cursor && cursor.hasOwnProperty(parts[i]))) {
+        if (defaultValue !== undefined) {
+          return defaultValue;
+        }
+        throw new Error('UnkownConfigurationKey: <' + key + '>');
       }
-      var promise = (options.nextHandler ?
-        wrappedNextCall() :
-        clbAuthHttp.get(self.nextUrl)
-      );
-      return promise.then(handleNextResults);
+      cursor = cursor[parts[i]];
     }
-
-    /**
-     * @name previous
-     * @memberof module:clb-rest.ResultSet
-     * @desc
-     * Retrieve the previous result page
-     *
-     * @return {Object} a promise that will resolve when the previous page is fetched.
-     */
-    function previous() {
-      if (!self.hasPrevious) {
-        return $q.reject(ResultSetEOL);
-      }
-      var promise = (options.previousHandler ?
-        wrappedPreviousCall() :
-        clbAuthHttp.get(self.previousUrl)
-      );
-      return promise.then(handlePreviousResults);
-    }
-
-    /**
-     * @name toArray
-     * @memberof module:clb-rest.ResultSet
-     * @desc
-     * Retrieve an array containing ALL the results. Beware that this
-     * can be very long to resolve depending on your dataset.
-     *
-     * @return {Promise} a promise that will resolve to the array when
-     * all data has been fetched.
-     */
-    function toArray() {
-      return all().then(function() {
-        return self.results.slice();
-      });
-    }
-
-    /**
-     * Load all pages.
-     * @memberof module:clb-rest.ResultSet
-     * @return {Promise} Resolve once everything is loaded
-     */
-    function all() {
-      if (self.hasNext) {
-        return next().then(all);
-      }
-      return $q.when(self);
-    }
-
-    /**
-     * parse the next result set according to options.
-     * @param  {HTTPResponse} res response containing the results.
-     * @return {ResultSet} self for chaining
-     * @private
-     */
-    function handleNextResults(res) {
-      var rs = res.data;
-      var result = at(rs, options.resultKey);
-
-      var fResult;
-      if (options.resultsFactory) {
-        fResult = options.resultsFactory(result, rs);
-      }
-      return $q.when(fResult)
-      .then(function(computedResult) {
-        self.results.push.apply(self.results, (computedResult || result));
-        counting(rs);
-        bindNext(rs);
-        return self;
-      });
-    }
-
-    /**
-     * parse the previous result set according to options.
-     * @param  {HTTPResponse} res response containing the results.
-     * @return {ResultSet} self for chaining
-     * @private
-     */
-    function handlePreviousResults(res) {
-      var rs = res.data;
-      var result = at(rs, options.resultKey);
-      var fResult;
-      if (options.resultsFactory) {
-        fResult = options.resultsFactory(result, rs);
-      }
-      return $q.when(fResult)
-      .then(function(computedResult) {
-        self.results.unshift.apply(self.results, (computedResult || result));
-        counting(rs);
-        bindPrevious(rs);
-        return self;
-      });
-    }
-
-    /**
-     * @name at
-     * @desc
-     * Lodash 'at' function replacement. This is needed because the 'at' function
-     * supports Object as first arg only starting from v4.0.0.
-     * Migration to that version has big impacts.
-     *
-     * See: https://lodash.com/docs#at
-     * @param {object} obj the object to search in
-     * @param {string} desc the dotted path to the location
-     * @return {instance} the found value
-     * @private
-     */
-    function at(obj, desc) {
-      var arr = desc.split('.');
-      while (arr.length && obj) {
-        obj = obj[arr.shift()];
-      }
-      return obj;
-    }
-
-    /**
-     * Handle an error retrieved by calling
-     * ``options.errorHandler``, passing the ``ClbError`` instance in parameter
-     * if ``options.errorHandler`` is a function.
-     * Then reject the current request with the same error instance.
-     * @param  {object} res the HTTP error object
-     * @return {Promise} rejected Promise with the error.
-     * @private
-     */
-    function handleError(res) {
-      self.error = clbError.httpError(res);
-      if (angular.isFunction(options.errorHandler)) {
-        options.errorHandler(self.error);
-      }
-      return $q.reject(self.error);
-    }
-
-    /**
-     * Configure the next page state of the result set.
-     * @param  {object} rs the last page results.
-     * @private
-     */
-    function bindNext(rs) {
-      self.hasNext = options.hasNextHandler(rs);
-      if (options.nextHandler) {
-        wrappedNextCall = function() {
-          return options.nextHandler(rs);
-        };
-      } else if (self.hasNext) {
-        self.nextUrl = at(rs, options.nextUrlKey);
-      } else {
-        self.nextUrl = null;
-      }
-    }
-
-    /**
-     * Configure the previous page state of the result set.
-     * @param  {object} rs the last page results.
-     * @private
-     */
-    function bindPrevious(rs) {
-      self.hasPrevious = options.hasPreviousHandler(rs);
-      if (options.previousHandler) {
-        wrappedPreviousCall = function() {
-          return options.previousHandler(rs);
-        };
-      } else if (self.hasPrevious) {
-        self.previousUrl = at(rs, options.previousUrlKey);
-      } else {
-        self.previousUrl = null;
-      }
-    }
-
-    /**
-     * Set the current count of results.
-     * @param  {object} rs the last page results.
-     * @private
-     */
-    function counting(rs) {
-      var c = at(rs, options.countKey);
-      if (angular.isDefined(c)) {
-        self.count = c;
-      }
-    }
-
-    /**
-     * Ensure that we don't mess with query result order.
-     * @param  {Function} fn the next function to run once all pending calls
-     *                       have been resolved.
-     * @return {Promise}     the promise will resolve when this function had run.
-     * @private
-     */
-    function enqueue(fn) {
-      return function() {
-        self.promise = $q
-        .when(self.promise.then(fn))
-        .catch(handleError);
-        self.promise.instance = self;
-        return self.promise;
-      };
-    }
-
-    /**
-     * Bootstrap the pagination.
-     * @param  {HTTPResponse|Promise} res Angular HTTP Response
-     * @return {ResultSet} self for chaining
-     * @private
-     */
-    function initialize(res) {
-      return handleNextResults(res)
-      .then(function() {
-        bindPrevious(res.data);
-        return self;
-      });
-    }
+    return cursor;
   }
 }
 
@@ -5156,6 +4785,377 @@ function clbStorage(
   }
 }
 
+angular.module('clb-rest')
+.factory('clbResultSet', clbResultSet);
+
+/**
+ * @namespace clbResultSet
+ * @memberof module:clb-rest
+ * @param  {object} clbAuthHttp           Angular DI
+ * @param  {object} $q              Angular DI
+ * @param  {object} clbError Angular DI
+ * @return {object}                 Angular Service
+ */
+function clbResultSet(clbAuthHttp, $q, clbError) {
+  /**
+   * @attribute ResultSetEOL
+   * @memberof module:clb-rest.clbResultSet
+   * @desc error thrown when module:clb-rest.ResultSet is crawled when at an
+   *       extremity.
+   */
+  var ResultSetEOL = clbError.error({
+    type: 'ResultSet::EOL',
+    message: 'End of list reached'
+  });
+
+  return {
+    get: getPaginatedResultSet,
+    EOL: ResultSetEOL
+  };
+
+  /**
+   * @name get
+   * @memberof module:clb-rest.clbResultSet
+   * @desc
+   * Return a promise that will resolve once the result set first page is loaded.
+   *
+   * The promise contains the `instance` of the result set as well.
+   *
+   * @param  {Object} res     a HTTPResponse or a promise which resolve to a HTTPResponse
+   * @param  {Object} [options] configuration
+   * @param  {string} [options.nextUrlKey] name of (or dot notation path to) the attribute containing the URL to fetch next results
+   * @param  {function} [options.hasNextHandler] A function that receive the JSON data as its first argument and must
+   *                                             return a boolean value that will be assigned to the ``hasNext`` property.
+   *                                             When this option is given, ``options.nextUrlHandler`` SHOULD be defined as well.
+   * @param  {function} [options.nextHandler] A function that receive the JSON data as its first argument and must return a promise
+   *                                          to the next results. This handler will be called when ``next()`` is called on the
+   *                                          RecordSet.
+   *                                          When this option is given ``options.hasNextHandler`` MUST be defined as well.
+   *                                          When this option is given ``options.nextUrlKey`` is ignored.
+   * @param  {string} [options.previousUrlKey] name of (or dot notation path to) the attribute containing the URL to fetch previous results
+   * @param  {function} [options.hasPreviousHandler] A function that receive the JSON data as its first argument and must
+   *                                                 return a boolean value that will be assigned to the ``hasPrevious`` property.
+   *                                                 When this option is given, ``options.previousUrlHandler`` SHOULD be defined as well.
+   * @param  {function} [options.previousHandler] A function that receive the JSON data as its first argument and must return a string value
+   *                                              that represent the previous URL that will be fetched by a call to ``.previous()``.
+   *                                              When this option is given ``options.hasPreviousHandler`` MUST be defined as well.
+   *                                              When this option is given ``options.previousUrlKey`` is ignored.
+   * @param  {string} [options.resultKey] name of (or dot notation path to) the attribute containing an array with all the results
+   * @param  {string} [options.countKey] name of (or dot notation path to) the attribute containing the number of results returned
+   * @param  {function} [options.resultsFactory] a function to which a new array of results is passed.
+   *                    The function can return ``undefined``, a ``Promise`` or an ``array`` as result.
+   * @return {Promise} After the promise is fulfilled, it will return a new instance of :doc:`module-clb-rest.clbResultSet.ResultSet`.
+   */
+  function getPaginatedResultSet(res, options) {
+    return new ResultSet(res, options).promise;
+  }
+
+  /**
+   * @class ResultSet
+   * @memberof module:clb-rest.clbResultSet
+   * @desc
+   * Build a result set with internal support for fetching next and previous results.
+   *
+   * @param {Object} pRes the promise of the first result page
+   * @param {Object} options various options to specify how to handle the pagination
+   * @see {module:clb-rest.clbResultSet.get}
+   */
+  function ResultSet(pRes, options) {
+    var self = this;
+    // Hold call to next and previous when using customization.
+    var wrappedNextCall;
+    var wrappedPreviousCall;
+
+    /**
+     * The array containing all fetched results. Previous pages are added
+     * to the beginning of the results, next pages at the end.
+     * @type {array}
+     */
+    self.results = [];
+    /**
+     * Define with the last ClbError instance that occured.
+     * @type {module:clb-error.ClbError}
+     */
+    self.error = null;
+    /**
+     * ``true`` if there is more results to be loaded.
+     * @type {Boolean}
+     */
+    self.hasNext = null;
+    /**
+     * ``true`` if there is previous page to be loaded.
+     * @type {Boolean}
+     */
+    self.hasPrevious = null;
+    /**
+     * The promise associated with the last operation in the queue.
+     * @type {Promise}
+     */
+    self.promise = null;
+    /**
+     * A function that handle any error during an operation.
+     * @type {Function}
+     */
+    self.errorHandler = null;
+    self.next = enqueue(next);
+    self.previous = enqueue(previous);
+    self.toArray = enqueue(toArray);
+    self.all = enqueue(all);
+    self.count = -1;
+
+    options = angular.extend({
+      resultKey: 'results',
+      nextUrlKey: 'next',
+      hasNextHandler: function(rs) {
+        // by default, has next is defined if the received data
+        // defines a next URL.
+        return Boolean(at(rs, options.nextUrlKey));
+      },
+      previousUrlKey: 'previous',
+      hasPreviousHandler: function(rs) {
+        // by default, has previous is defined if the received data
+        // defines a next URL.
+        return Boolean(at(rs, options.previousUrlKey));
+      },
+      countKey: 'count'
+    }, options);
+
+    self.promise = $q.when(pRes)
+    .then(initialize)
+    .catch(handleError);
+    self.promise.instance = self;
+
+    /**
+     * @name next
+     * @memberof module:clb-rest.ResultSet
+     * @desc
+     * Retrieve the next result page.
+     * @memberof module:clb-rest.clbResultSet.ResultSet
+     *
+     * @return {Object} a promise that will resolve when the next page is fetched.
+     */
+    function next() {
+      if (!self.hasNext) {
+        return $q.reject(ResultSetEOL);
+      }
+      var promise = (options.nextHandler ?
+        wrappedNextCall() :
+        clbAuthHttp.get(self.nextUrl)
+      );
+      return promise.then(handleNextResults);
+    }
+
+    /**
+     * @name previous
+     * @memberof module:clb-rest.ResultSet
+     * @desc
+     * Retrieve the previous result page
+     *
+     * @return {Object} a promise that will resolve when the previous page is fetched.
+     */
+    function previous() {
+      if (!self.hasPrevious) {
+        return $q.reject(ResultSetEOL);
+      }
+      var promise = (options.previousHandler ?
+        wrappedPreviousCall() :
+        clbAuthHttp.get(self.previousUrl)
+      );
+      return promise.then(handlePreviousResults);
+    }
+
+    /**
+     * @name toArray
+     * @memberof module:clb-rest.ResultSet
+     * @desc
+     * Retrieve an array containing ALL the results. Beware that this
+     * can be very long to resolve depending on your dataset.
+     *
+     * @return {Promise} a promise that will resolve to the array when
+     * all data has been fetched.
+     */
+    function toArray() {
+      return all().then(function() {
+        return self.results.slice();
+      });
+    }
+
+    /**
+     * Load all pages.
+     * @memberof module:clb-rest.ResultSet
+     * @return {Promise} Resolve once everything is loaded
+     */
+    function all() {
+      if (self.hasNext) {
+        return next().then(all);
+      }
+      return $q.when(self);
+    }
+
+    /**
+     * parse the next result set according to options.
+     * @param  {HTTPResponse} res response containing the results.
+     * @return {ResultSet} self for chaining
+     * @private
+     */
+    function handleNextResults(res) {
+      var rs = res.data;
+      var result = at(rs, options.resultKey);
+
+      var fResult;
+      if (options.resultsFactory) {
+        fResult = options.resultsFactory(result, rs);
+      }
+      return $q.when(fResult)
+      .then(function(computedResult) {
+        self.results.push.apply(self.results, (computedResult || result));
+        counting(rs);
+        bindNext(rs);
+        return self;
+      });
+    }
+
+    /**
+     * parse the previous result set according to options.
+     * @param  {HTTPResponse} res response containing the results.
+     * @return {ResultSet} self for chaining
+     * @private
+     */
+    function handlePreviousResults(res) {
+      var rs = res.data;
+      var result = at(rs, options.resultKey);
+      var fResult;
+      if (options.resultsFactory) {
+        fResult = options.resultsFactory(result, rs);
+      }
+      return $q.when(fResult)
+      .then(function(computedResult) {
+        self.results.unshift.apply(self.results, (computedResult || result));
+        counting(rs);
+        bindPrevious(rs);
+        return self;
+      });
+    }
+
+    /**
+     * @name at
+     * @desc
+     * Lodash 'at' function replacement. This is needed because the 'at' function
+     * supports Object as first arg only starting from v4.0.0.
+     * Migration to that version has big impacts.
+     *
+     * See: https://lodash.com/docs#at
+     * @param {object} obj the object to search in
+     * @param {string} desc the dotted path to the location
+     * @return {instance} the found value
+     * @private
+     */
+    function at(obj, desc) {
+      var arr = desc.split('.');
+      while (arr.length && obj) {
+        obj = obj[arr.shift()];
+      }
+      return obj;
+    }
+
+    /**
+     * Handle an error retrieved by calling
+     * ``options.errorHandler``, passing the ``ClbError`` instance in parameter
+     * if ``options.errorHandler`` is a function.
+     * Then reject the current request with the same error instance.
+     * @param  {object} res the HTTP error object
+     * @return {Promise} rejected Promise with the error.
+     * @private
+     */
+    function handleError(res) {
+      self.error = clbError.httpError(res);
+      if (angular.isFunction(options.errorHandler)) {
+        options.errorHandler(self.error);
+      }
+      return $q.reject(self.error);
+    }
+
+    /**
+     * Configure the next page state of the result set.
+     * @param  {object} rs the last page results.
+     * @private
+     */
+    function bindNext(rs) {
+      self.hasNext = options.hasNextHandler(rs);
+      if (options.nextHandler) {
+        wrappedNextCall = function() {
+          return options.nextHandler(rs);
+        };
+      } else if (self.hasNext) {
+        self.nextUrl = at(rs, options.nextUrlKey);
+      } else {
+        self.nextUrl = null;
+      }
+    }
+
+    /**
+     * Configure the previous page state of the result set.
+     * @param  {object} rs the last page results.
+     * @private
+     */
+    function bindPrevious(rs) {
+      self.hasPrevious = options.hasPreviousHandler(rs);
+      if (options.previousHandler) {
+        wrappedPreviousCall = function() {
+          return options.previousHandler(rs);
+        };
+      } else if (self.hasPrevious) {
+        self.previousUrl = at(rs, options.previousUrlKey);
+      } else {
+        self.previousUrl = null;
+      }
+    }
+
+    /**
+     * Set the current count of results.
+     * @param  {object} rs the last page results.
+     * @private
+     */
+    function counting(rs) {
+      var c = at(rs, options.countKey);
+      if (angular.isDefined(c)) {
+        self.count = c;
+      }
+    }
+
+    /**
+     * Ensure that we don't mess with query result order.
+     * @param  {Function} fn the next function to run once all pending calls
+     *                       have been resolved.
+     * @return {Promise}     the promise will resolve when this function had run.
+     * @private
+     */
+    function enqueue(fn) {
+      return function() {
+        self.promise = $q
+        .when(self.promise.then(fn))
+        .catch(handleError);
+        self.promise.instance = self;
+        return self.promise;
+      };
+    }
+
+    /**
+     * Bootstrap the pagination.
+     * @param  {HTTPResponse|Promise} res Angular HTTP Response
+     * @return {ResultSet} self for chaining
+     * @private
+     */
+    function initialize(res) {
+      return handleNextResults(res)
+      .then(function() {
+        bindPrevious(res.data);
+        return self;
+      });
+    }
+  }
+}
+
 angular.module('clb-stream')
 .provider('clbResourceLocator', clbResourceLocatorProvider);
 
@@ -5600,6 +5600,98 @@ angular.module('clb-ui-form')
   };
 });
 
+angular.module('clb-ui-loading')
+.directive('clbLoading', clbLoading);
+
+/**
+ * The directive clbLoading displays a simple loading message. If a promise
+ * is given, the loading indicator will disappear once it is resolved.
+ *
+ * Attributes
+ * ----------
+ *
+ * =======================  ===================================================
+ * Name                     Description
+ * =======================  ===================================================
+ * {Promise} [clb-promise]  Hide the loading message upon fulfilment.
+ * {string} [clb-message]   Displayed loading string (default=``'loading...'``)
+ * =======================  ===================================================
+ *
+ * @memberof module:clb-ui-loading
+ * @return {object} Angular directive descriptor
+ * @example <caption>Directive Usage Example</caption>
+ * <hbp-loading hbp-promise="myAsyncFunc()" hbp-message="'Loading My Async Func'">
+ * </hbp-loading>
+ */
+function clbLoading() {
+  return {
+    restrict: 'E',
+    scope: {
+      promise: '=?clbPromise',
+      message: '=?clbMessage'
+    },
+    template:'<div class="clb-loading" ng-if="loading"><span class="glyphicon glyphicon-refresh clb-spinning"></span> {{message}}</div>',
+    link: function(scope) {
+      scope.loading = true;
+      scope.message = scope.message || 'Loading...';
+      if (scope.promise) {
+        var complete = function() {
+          scope.loading = false;
+        };
+        scope.promise.then(complete, complete);
+      }
+    }
+  };
+}
+
+angular.module('clb-ui-loading')
+.directive('clbPerformAction', clbPerformAction);
+
+/**
+ * @namespace clbPerformAction
+ * @memberof module:clb-ui-loading
+ *
+ * @desc
+ * clbPerformAction directive run an action when the given control is clicked.
+ * it can be added as an attribute. While the action is running, the control
+ * is disabled.
+ *
+ * @param {function} clbPerformAction  the code to run when the button is clicked.
+ *                     this function must return a promise.
+ * @param {string}   clbLoadingMessage text replacement for the element content.
+ * @return {object}                      Directive Descriptor
+ * @example <caption>use perform action to disable a button while code is running</caption>
+ * <div ng-controller="myController">
+ *  <input class="btn btn-primary" type="submit" clb-perform-action="doSomething()">
+ * </div>
+ */
+function clbPerformAction() {
+  return {
+    restrict: 'A',
+    scope: {
+      action: '&clbPerformAction'
+    },
+    link: function(scope, element, attrs) {
+      var onComplete = function() {
+        element.html(scope.text);
+        element.attr('disabled', false);
+        element.removeClass('loading');
+      };
+      var run = function() {
+        if (scope.loadingMessage) {
+          element.html(scope.loadingMessage);
+        }
+        element.addClass('loading');
+        element.attr('disabled', true);
+        scope.action().then(onComplete, onComplete);
+      };
+      scope.loadingMessage = attrs.clbLoadingMessage;
+      scope.text = scope.text || element.html();
+      element.on('click', run);
+    }
+  };
+}
+
 angular.module('clb-ui-identity')
 .directive('clbUserAvatar', clbUserAvatar);
 
@@ -5832,96 +5924,355 @@ function clbUsercardCacheTemplate($templateCache) {
   }
 }
 
-angular.module('clb-ui-loading')
-.directive('clbLoading', clbLoading);
+angular.module('clb-ui-stream')
+.directive('clbActivity', clbActivity);
 
 /**
- * The directive clbLoading displays a simple loading message. If a promise
- * is given, the loading indicator will disappear once it is resolved.
+ * @name clbActivity
+ * @desc
+ * ``clb-activity`` directive is displays an activity retrieved by
+ * the HBP Stream service in a common way.
  *
- * Attributes
- * ----------
+ * It try to look up for a detailled description of the event and fallback
+ * to the summary if he cannot.
  *
- * =======================  ===================================================
- * Name                     Description
- * =======================  ===================================================
- * {Promise} [clb-promise]  Hide the loading message upon fulfilment.
- * {string} [clb-message]   Displayed loading string (default=``'loading...'``)
- * =======================  ===================================================
- *
- * @memberof module:clb-ui-loading
- * @return {object} Angular directive descriptor
- * @example <caption>Directive Usage Example</caption>
- * <hbp-loading hbp-promise="myAsyncFunc()" hbp-message="'Loading My Async Func'">
- * </hbp-loading>
+ * @memberof module:clb-ui-stream
+ * @return {object} the directive
  */
-function clbLoading() {
+function clbActivity() {
   return {
-    restrict: 'E',
+    restrict: 'A',
     scope: {
-      promise: '=?clbPromise',
-      message: '=?clbMessage'
+      activity: '=clbActivity'
     },
-    template:'<div class="clb-loading" ng-if="loading"><span class="glyphicon glyphicon-refresh clb-spinning"></span> {{message}}</div>',
-    link: function(scope) {
-      scope.loading = true;
-      scope.message = scope.message || 'Loading...';
-      if (scope.promise) {
-        var complete = function() {
-          scope.loading = false;
-        };
-        scope.promise.then(complete, complete);
+    controller: ActivityController,
+    controllerAs: 'vm',
+    bindToController: true,
+    template:'<div class="clb-activity-metadata"><div class="clb-activity-time" am-time-ago="vm.activity.time"></div><a clb-usercard-popover="vm.activity.actor.data" ng-click="vm.navigate($event, false)"><clb-user-avatar class="clb-activity-avatar" clb-user="vm.activity.actor.data" ng-if="vm.activity.actor.data"></clb-user-avatar></a></div><div class="clb-activity-summary"><span class="clb-activity-link" ng-repeat="p in vm.parts" ng-class="\'clb-activity-link-\' + p.tag"><a ng-if="p.tag && p.ref.type === \'HBPUser\'" clb-usercard-popover="p.ref.id" ng-click="vm.navigate($event, false)">{{p.text}}</a> <a ng-if="p.tag && p.ref.type !== \'HBPUser\'" ng-init="vm.resolveUrl(p)" ng-href="{{p.url}}">{{p.text}}</a> <span ng-if="!p.tag">{{p.text}}</span></span></div>',
+    link: {
+      post: function(scope, elt, attr, ctrl) {
+        elt.addClass('clb-activity').addClass(ctrl.verbClass);
+        scope.$watch('vm.activity.verb', function(newVal) {
+          if (newVal) {
+            elt.addClass('clb-activity-' + newVal.toLowerCase());
+          }
+        });
       }
     }
   };
 }
 
-angular.module('clb-ui-loading')
-.directive('clbPerformAction', clbPerformAction);
-
 /**
- * @namespace clbPerformAction
- * @memberof module:clb-ui-loading
- *
- * @desc
- * clbPerformAction directive run an action when the given control is clicked.
- * it can be added as an attribute. While the action is running, the control
- * is disabled.
- *
- * @param {function} clbPerformAction  the code to run when the button is clicked.
- *                     this function must return a promise.
- * @param {string}   clbLoadingMessage text replacement for the element content.
- * @return {object}                      Directive Descriptor
- * @example <caption>use perform action to disable a button while code is running</caption>
- * <div ng-controller="myController">
- *  <input class="btn btn-primary" type="submit" clb-perform-action="doSomething()">
- * </div>
+ * ViewModel of an activity used to render the clb-activity directive
+ * @param {object} $scope    DI
+ * @param {object} $sce      DI
+ * @param {object} $log      DI
+ * @param {object} $window   DI
+ * @param {object} $q        DI
+ * @param {object} $compile  DI
+ * @param {object} clbResourceLocator DI
+ * @param {object} clbErrorDialog DI
  */
-function clbPerformAction() {
-  return {
-    restrict: 'A',
-    scope: {
-      action: '&clbPerformAction'
-    },
-    link: function(scope, element, attrs) {
-      var onComplete = function() {
-        element.html(scope.text);
-        element.attr('disabled', false);
-        element.removeClass('loading');
-      };
-      var run = function() {
-        if (scope.loadingMessage) {
-          element.html(scope.loadingMessage);
-        }
-        element.addClass('loading');
-        element.attr('disabled', true);
-        scope.action().then(onComplete, onComplete);
-      };
-      scope.loadingMessage = attrs.clbLoadingMessage;
-      scope.text = scope.text || element.html();
-      element.on('click', run);
+function ActivityController(
+  $scope,
+  $sce,
+  $log,
+  $window,
+  $q,
+  $compile,
+  clbResourceLocator,
+  clbErrorDialog
+) {
+  var vm = this;
+  vm.navigate = function(event, data) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!angular.isDefined(data)) {
+      $scope.$emit('clbActivity.interaction', {
+        action: 'usePrimaryNavigation',
+        tag: 'object'
+      });
+      $window.location = vm.primaryLink;
+    } else if (data.ref && data.ref.type && data.ref.id) {
+      $scope.$emit('clbActivity.interaction', {
+        action: 'useSecondaryNavigation',
+        tag: data.tag
+      });
+      clbResourceLocator.urlFor(data.ref, vm.activity)
+      .then(function(url) {
+        $window.location = url;
+      })
+      .catch(function(err) {
+        $scope.$emit('clbActivity.interaction', {
+          action: 'secondaryNavigationFailed',
+          tag: data.tag
+        });
+        clbErrorDialog.open({
+          type: 'Not Found',
+          message: 'The system cannot generate a valid URL ' +
+                   'to display this object.',
+          code: 400,
+          data: {
+            error: err
+          }
+        });
+      });
+    } else {
+      $scope.$emit('clbActivity.interaction', {
+        action: 'openUserDetails',
+        tag: 'actor'
+      });
     }
   };
+
+  vm.resolveUrl = function(data) {
+    clbResourceLocator.urlFor(data.ref, vm.activity)
+    .then(function(url) {
+      data.url = url;
+    });
+  };
+
+  activate();
+
+  /* ------------- */
+
+  /**
+   * Replace references in the summary with proper names and links.
+   *
+   * This is a naive implementation. using an array of string that is
+   * concatenated at the end. The advantage is that I don't have to
+   * sort the references before processing them so the code is a bit
+   * easier to read.
+   * @private
+   * @return {object} the list of parts as object with keys `tag`, `text` and `ref`.
+   */
+  function resolveReferences() {
+    // Using a linked list to segment the text.
+    var root = {
+      // root only has a next property
+      next: {
+        // The node data
+        data: {
+          tag: null,
+          ref: null
+        },
+        indices: [0, vm.activity.summary.length],
+        next: null
+      }
+    };
+
+    // flatten the list of references
+    if (vm.activity.references) {
+      for (var tag in vm.activity.references) {
+        if (Object.prototype.hasOwnProperty.call(
+            vm.activity.references, tag)) {
+          var refs = vm.activity.references[tag];
+          if (!angular.isArray(refs)) {
+            refs = [refs];
+          }
+          for (var i = 0; i < refs.length; i++) {
+            var ref = refs[i];
+            processRef(root, tag, ref.indices);
+          }
+        }
+      }
+    }
+
+    var head = root.next;
+    var parts = [];
+    while (head) {
+      head.data.text = String.prototype.substring.apply(
+        vm.activity.summary, head.indices);
+      // disable object link for 'delete' verb
+      if (vm.activity.verb === 'DELETE' &&
+          head.data.tag === 'object') {
+        head.data.tag = null;
+      }
+      parts.push(head.data);
+      head = head.next;
+    }
+    return parts;
+  }
+
+  /**
+   * Used by resolveReferences.
+   * @private
+   * @param  {object} root         The linked list root
+   * @param  {string} tag          position in the sentence (actor|object|context)
+   * @param  {array}  indices      [startIndex, endIndex]
+   */
+  function processRef(root, tag, indices) {
+    // previous -> head -> next
+
+    var previous = root;
+    var head = root.next;
+    // Find the last node which has an end index greater
+    // than the node to insert. We do not handle the case
+    // where the new node is crossing multiple existing nodes as this would
+    // be invalid data.
+    while (head.next && (
+      indices[0] >= head.indices[1] // cannot be inverted
+                                    // the head indices[1] is +1 after the
+                                    // last char
+    )) {
+      previous = head;
+      head = head.next;
+    }
+
+    // previous -> node|head -> next
+    var node = {
+      next: null,
+      indices: indices,
+      data: {
+        tag: tag,
+        ref: vm.activity[tag]
+      }
+    };
+
+    if (head.indices[0] < indices[0]) {
+      // previous -> head:before -> node
+      // head -> next
+      var before = angular.copy(head);
+      before.indices[1] = indices[0]; // stop where the new part begin
+      before.next = node;
+      previous.next = before;
+      previous = before;
+    } else if (previous) {
+      // previous -> node
+      // head -> next
+      previous.next = node;
+    }
+
+    // previous -> node
+    // head -> next
+    if (head.indices[1] > indices[1]) {
+      // previous -> node -> head -> next
+      head.indices[0] = indices[1];
+      node.next = head;
+    } else {
+      // previous -> node -> next
+      node.next = head.next;
+    }
+  }
+
+  /**
+   * init controller
+   */
+  function activate() {
+    clbResourceLocator.urlFor(vm.activity.object, vm.activity)
+    .then(function(url) {
+      vm.primaryLink = url;
+    })
+    .catch(function(err) {
+      $log.warn('unclickable activity', err);
+    });
+
+    vm.parts = resolveReferences();
+  }
+}
+
+angular.module('clb-ui-stream')
+.directive('clbFeed', clbFeed);
+
+/**
+ * @name clbFeed
+ * @desc
+ * ``clb-feed`` directive displays a feed of activity retrieved by
+ * the HBP Stream service. It handles scrolling and loading of activities.
+ * Each activity is rendered using the ``clb-activity`` directive.
+ *
+ * @memberof module:clb-ui-stream
+ * @return {object} the directive
+ */
+function clbFeed() {
+  return {
+    restrict: 'E',
+    scope: {
+      feedType: '=clbFeedType',
+      feedId: '=clbFeedId'
+    },
+    controller: FeedController,
+    controllerAs: 'vm',
+    bindToController: true,
+    template:'<div ng-if="vm.loadingFeed" class="alert alert-info"><div ng-switch on="vm.feedDate"><div ng-switch-when="null">Loading all activities...</div><div class="animate-switch" ng-switch-default>Loading Feed for {{vm.feedDate}}...</div></div></div><p ng-if="vm.feedDate != null">Selected date: {{vm.feedDate}}</p><ul class="feed list-group" ng-if="!vm.loadingFeed" ng-class="{\'feed-empty\': vm.activities.results.length === 0}"><li ng-if="vm.error" class="list-group-item"><div class="alert alert-error"><strong>Load Error:</strong> {{vm.error}}</div></li><li class="list-group-item" ng-if="!vm.activities && !vm.error"><hbp-loading></hbp-loading></li><li class="list-group-item" ng-if="vm.activities.results.length === 0 && vm.feedDate"><div class="alert alert-info">No activities on {{vm.feedDate}}</div></li><li class="list-group-item" ng-if="vm.activities.results.length === 0 && !vm.feedDate"><div class="alert alert-info">No activities to show</div></li><li class="list-group-item" ng-repeat="a in vm.activities.results track by $index" clb-activity="a"></li><li class="list-group-item" ng-if="vm.activities.hasNext"><a clb-perform-action="vm.activities.next()" class="btn btn-default">Show More</a></li></ul>',
+    link: function(scope, elt) {
+      elt.addClass('clb-feed');
+      var unbind = scope.$on(
+        'clbActivity.interaction',
+        function($event, data) {
+          data.feedType = scope.feedType;
+          scope.$emit('clbFeed.interaction', data);
+        }
+      );
+      scope.$on('$destroy', unbind);
+    }
+  };
+}
+
+/**
+ * ViewModel of an activity used to render the clb-activity directive
+ * @param {object} $rootScope angular injection
+ * @param {object} clbStream DI
+ * @param {object} clbUser DI
+ */
+function FeedController($rootScope, clbStream, clbUser) {
+  var vm = this;
+
+  if (vm.feedType === 'HBPCollab') {
+    vm.pageSize = 15;
+  }
+
+  vm.feedDate = null;
+
+  activate();
+
+  $rootScope.$on('feedDate.changed', function(event, data) {
+    vm.feedDate = data;
+    activate();
+  });
+  /* ------------- */
+
+  function hydrateActors(activities) {  // eslint-disable-line require-jsdoc
+    if (!activities || activities.length === 0) {
+      return;
+    }
+
+    var acc = [];
+    for (var i = 0; i < activities.length; i++) {
+      if (activities[i].actor.type === 'HBPUser') {
+        acc.push(activities[i].actor.id);
+      }
+    }
+    return clbUser.get(acc)
+    .then(function(users) {
+      for (var i = 0; i < activities.length; i++) {
+        var actor = activities[i].actor;
+        if (actor.type === 'HBPUser' && users[actor.id]) {
+          actor.data = users[actor.id];
+        }
+      }
+    });
+  }
+
+  /**
+   * init controller
+   */
+  function activate() {
+    vm.loadingFeed = true;
+    clbStream.getStream(vm.feedType, vm.feedId, {
+      resultsFactory: hydrateActors,
+      date: vm.feedDate,
+      pageSize: vm.pageSize
+    })
+    .then(function(rs) {
+      vm.activities = rs;
+    })
+    .catch(function(err) {
+      vm.error = err.message;
+    }).finally(function() {
+      vm.loadingFeed = false;
+    });
+  }
 }
 
 angular.module('clb-ui-storage')
@@ -6746,357 +7097,6 @@ angular.module('clb-ui-storage')
     }
   };
 });
-
-angular.module('clb-ui-stream')
-.directive('clbActivity', clbActivity);
-
-/**
- * @name clbActivity
- * @desc
- * ``clb-activity`` directive is displays an activity retrieved by
- * the HBP Stream service in a common way.
- *
- * It try to look up for a detailled description of the event and fallback
- * to the summary if he cannot.
- *
- * @memberof module:clb-ui-stream
- * @return {object} the directive
- */
-function clbActivity() {
-  return {
-    restrict: 'A',
-    scope: {
-      activity: '=clbActivity'
-    },
-    controller: ActivityController,
-    controllerAs: 'vm',
-    bindToController: true,
-    template:'<div class="clb-activity-metadata"><div class="clb-activity-time" am-time-ago="vm.activity.time"></div><a clb-usercard-popover="vm.activity.actor.data" ng-click="vm.navigate($event, false)"><clb-user-avatar class="clb-activity-avatar" clb-user="vm.activity.actor.data" ng-if="vm.activity.actor.data"></clb-user-avatar></a></div><div class="clb-activity-summary"><span class="clb-activity-link" ng-repeat="p in vm.parts" ng-class="\'clb-activity-link-\' + p.tag"><a ng-if="p.tag && p.ref.type === \'HBPUser\'" clb-usercard-popover="p.ref.id" ng-click="vm.navigate($event, false)">{{p.text}}</a> <a ng-if="p.tag && p.ref.type !== \'HBPUser\'" ng-init="vm.resolveUrl(p)" ng-href="{{p.url}}">{{p.text}}</a> <span ng-if="!p.tag">{{p.text}}</span></span></div>',
-    link: {
-      post: function(scope, elt, attr, ctrl) {
-        elt.addClass('clb-activity').addClass(ctrl.verbClass);
-        scope.$watch('vm.activity.verb', function(newVal) {
-          if (newVal) {
-            elt.addClass('clb-activity-' + newVal.toLowerCase());
-          }
-        });
-      }
-    }
-  };
-}
-
-/**
- * ViewModel of an activity used to render the clb-activity directive
- * @param {object} $scope    DI
- * @param {object} $sce      DI
- * @param {object} $log      DI
- * @param {object} $window   DI
- * @param {object} $q        DI
- * @param {object} $compile  DI
- * @param {object} clbResourceLocator DI
- * @param {object} clbErrorDialog DI
- */
-function ActivityController(
-  $scope,
-  $sce,
-  $log,
-  $window,
-  $q,
-  $compile,
-  clbResourceLocator,
-  clbErrorDialog
-) {
-  var vm = this;
-  vm.navigate = function(event, data) {
-    event.preventDefault();
-    event.stopPropagation();
-    if (!angular.isDefined(data)) {
-      $scope.$emit('clbActivity.interaction', {
-        action: 'usePrimaryNavigation',
-        tag: 'object'
-      });
-      $window.location = vm.primaryLink;
-    } else if (data.ref && data.ref.type && data.ref.id) {
-      $scope.$emit('clbActivity.interaction', {
-        action: 'useSecondaryNavigation',
-        tag: data.tag
-      });
-      clbResourceLocator.urlFor(data.ref, vm.activity)
-      .then(function(url) {
-        $window.location = url;
-      })
-      .catch(function(err) {
-        $scope.$emit('clbActivity.interaction', {
-          action: 'secondaryNavigationFailed',
-          tag: data.tag
-        });
-        clbErrorDialog.open({
-          type: 'Not Found',
-          message: 'The system cannot generate a valid URL ' +
-                   'to display this object.',
-          code: 400,
-          data: {
-            error: err
-          }
-        });
-      });
-    } else {
-      $scope.$emit('clbActivity.interaction', {
-        action: 'openUserDetails',
-        tag: 'actor'
-      });
-    }
-  };
-
-  vm.resolveUrl = function(data) {
-    clbResourceLocator.urlFor(data.ref, vm.activity)
-    .then(function(url) {
-      data.url = url;
-    });
-  };
-
-  activate();
-
-  /* ------------- */
-
-  /**
-   * Replace references in the summary with proper names and links.
-   *
-   * This is a naive implementation. using an array of string that is
-   * concatenated at the end. The advantage is that I don't have to
-   * sort the references before processing them so the code is a bit
-   * easier to read.
-   * @private
-   * @return {object} the list of parts as object with keys `tag`, `text` and `ref`.
-   */
-  function resolveReferences() {
-    // Using a linked list to segment the text.
-    var root = {
-      // root only has a next property
-      next: {
-        // The node data
-        data: {
-          tag: null,
-          ref: null
-        },
-        indices: [0, vm.activity.summary.length],
-        next: null
-      }
-    };
-
-    // flatten the list of references
-    if (vm.activity.references) {
-      for (var tag in vm.activity.references) {
-        if (Object.prototype.hasOwnProperty.call(
-            vm.activity.references, tag)) {
-          var refs = vm.activity.references[tag];
-          if (!angular.isArray(refs)) {
-            refs = [refs];
-          }
-          for (var i = 0; i < refs.length; i++) {
-            var ref = refs[i];
-            processRef(root, tag, ref.indices);
-          }
-        }
-      }
-    }
-
-    var head = root.next;
-    var parts = [];
-    while (head) {
-      head.data.text = String.prototype.substring.apply(
-        vm.activity.summary, head.indices);
-      // disable object link for 'delete' verb
-      if (vm.activity.verb === 'DELETE' &&
-          head.data.tag === 'object') {
-        head.data.tag = null;
-      }
-      parts.push(head.data);
-      head = head.next;
-    }
-    return parts;
-  }
-
-  /**
-   * Used by resolveReferences.
-   * @private
-   * @param  {object} root         The linked list root
-   * @param  {string} tag          position in the sentence (actor|object|context)
-   * @param  {array}  indices      [startIndex, endIndex]
-   */
-  function processRef(root, tag, indices) {
-    // previous -> head -> next
-
-    var previous = root;
-    var head = root.next;
-    // Find the last node which has an end index greater
-    // than the node to insert. We do not handle the case
-    // where the new node is crossing multiple existing nodes as this would
-    // be invalid data.
-    while (head.next && (
-      indices[0] >= head.indices[1] // cannot be inverted
-                                    // the head indices[1] is +1 after the
-                                    // last char
-    )) {
-      previous = head;
-      head = head.next;
-    }
-
-    // previous -> node|head -> next
-    var node = {
-      next: null,
-      indices: indices,
-      data: {
-        tag: tag,
-        ref: vm.activity[tag]
-      }
-    };
-
-    if (head.indices[0] < indices[0]) {
-      // previous -> head:before -> node
-      // head -> next
-      var before = angular.copy(head);
-      before.indices[1] = indices[0]; // stop where the new part begin
-      before.next = node;
-      previous.next = before;
-      previous = before;
-    } else if (previous) {
-      // previous -> node
-      // head -> next
-      previous.next = node;
-    }
-
-    // previous -> node
-    // head -> next
-    if (head.indices[1] > indices[1]) {
-      // previous -> node -> head -> next
-      head.indices[0] = indices[1];
-      node.next = head;
-    } else {
-      // previous -> node -> next
-      node.next = head.next;
-    }
-  }
-
-  /**
-   * init controller
-   */
-  function activate() {
-    clbResourceLocator.urlFor(vm.activity.object, vm.activity)
-    .then(function(url) {
-      vm.primaryLink = url;
-    })
-    .catch(function(err) {
-      $log.warn('unclickable activity', err);
-    });
-
-    vm.parts = resolveReferences();
-  }
-}
-
-angular.module('clb-ui-stream')
-.directive('clbFeed', clbFeed);
-
-/**
- * @name clbFeed
- * @desc
- * ``clb-feed`` directive displays a feed of activity retrieved by
- * the HBP Stream service. It handles scrolling and loading of activities.
- * Each activity is rendered using the ``clb-activity`` directive.
- *
- * @memberof module:clb-ui-stream
- * @return {object} the directive
- */
-function clbFeed() {
-  return {
-    restrict: 'E',
-    scope: {
-      feedType: '=clbFeedType',
-      feedId: '=clbFeedId'
-    },
-    controller: FeedController,
-    controllerAs: 'vm',
-    bindToController: true,
-    template:'<div ng-if="vm.loadingFeed" class="alert alert-info"><div ng-switch on="vm.feedDate"><div ng-switch-when="null">Loading all activities...</div><div class="animate-switch" ng-switch-default>Loading Feed for {{vm.feedDate}}...</div></div></div><p ng-if="vm.feedDate != null">Selected date: {{vm.feedDate}}</p><ul class="feed list-group" ng-if="!vm.loadingFeed" ng-class="{\'feed-empty\': vm.activities.results.length === 0}"><li ng-if="vm.error" class="list-group-item"><div class="alert alert-error"><strong>Load Error:</strong> {{vm.error}}</div></li><li class="list-group-item" ng-if="!vm.activities && !vm.error"><hbp-loading></hbp-loading></li><li class="list-group-item" ng-if="vm.activities.results.length === 0 && vm.feedDate"><div class="alert alert-info">No activities on {{vm.feedDate}}</div></li><li class="list-group-item" ng-if="vm.activities.results.length === 0 && !vm.feedDate"><div class="alert alert-info">No activities to show</div></li><li class="list-group-item" ng-repeat="a in vm.activities.results track by $index" clb-activity="a"></li><li class="list-group-item" ng-if="vm.activities.hasNext"><a clb-perform-action="vm.activities.next()" class="btn btn-default">Show More</a></li></ul>',
-    link: function(scope, elt) {
-      elt.addClass('clb-feed');
-      var unbind = scope.$on(
-        'clbActivity.interaction',
-        function($event, data) {
-          data.feedType = scope.feedType;
-          scope.$emit('clbFeed.interaction', data);
-        }
-      );
-      scope.$on('$destroy', unbind);
-    }
-  };
-}
-
-/**
- * ViewModel of an activity used to render the clb-activity directive
- * @param {object} $rootScope angular injection
- * @param {object} clbStream DI
- * @param {object} clbUser DI
- */
-function FeedController($rootScope, clbStream, clbUser) {
-  var vm = this;
-
-  if (vm.feedType === 'HBPCollab') {
-    vm.pageSize = 15;
-  }
-
-  vm.feedDate = null;
-
-  activate();
-
-  $rootScope.$on('feedDate.changed', function(event, data) {
-    vm.feedDate = data;
-    activate();
-  });
-  /* ------------- */
-
-  function hydrateActors(activities) {  // eslint-disable-line require-jsdoc
-    if (!activities || activities.length === 0) {
-      return;
-    }
-
-    var acc = [];
-    for (var i = 0; i < activities.length; i++) {
-      if (activities[i].actor.type === 'HBPUser') {
-        acc.push(activities[i].actor.id);
-      }
-    }
-    return clbUser.get(acc)
-    .then(function(users) {
-      for (var i = 0; i < activities.length; i++) {
-        var actor = activities[i].actor;
-        if (actor.type === 'HBPUser' && users[actor.id]) {
-          actor.data = users[actor.id];
-        }
-      }
-    });
-  }
-
-  /**
-   * init controller
-   */
-  function activate() {
-    vm.loadingFeed = true;
-    clbStream.getStream(vm.feedType, vm.feedId, {
-      resultsFactory: hydrateActors,
-      date: vm.feedDate,
-      pageSize: vm.pageSize
-    })
-    .then(function(rs) {
-      vm.activities = rs;
-    })
-    .catch(function(err) {
-      vm.error = err.message;
-    }).finally(function() {
-      vm.loadingFeed = false;
-    });
-  }
-}
 
 })();
 
