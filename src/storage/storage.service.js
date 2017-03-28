@@ -473,7 +473,7 @@ function clbStorage(
   function getContent(id, customConfig) {
     var config = {
       method: 'GET',
-      url: fileUrl + '/' + id + '/',
+      url: fileUrl + '/' + id + '/content/',
       transformResponse: function(data) {
         return data;
       }
