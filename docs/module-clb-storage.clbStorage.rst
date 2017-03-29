@@ -220,10 +220,10 @@ Function: ``getContent``
 
 Retrieves the content of a file given its id.
 
-.. js:function:: getContent(id[, customConfig])
+.. js:function:: getContent(entity[, customConfig])
 
     
-    :param string id: FileEntity UUID
+    :param object entity: can be either a FileEntity or a UUID (string)
     :param object customConfig: contains extra configuration
     :return Promise: The raw content
     
