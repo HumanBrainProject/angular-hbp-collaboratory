@@ -715,5 +715,53 @@ describe('clbStorage', function() {
         expect(status).toEqual(204);
       });
     });
+
+    describe('getContent', function() {
+      var content = 'abcd';
+      var entity = {
+        uuid: '12345',
+        entity_type: 'folder',
+        name: 'my folder'
+      };
+
+      it('should accept a uuid', function() {
+        var result;
+        backend.expectGET(baseUrl('file/12345/content/'))
+                    .respond(200, content);
+        // when
+        service.getContent(entity.uuid)
+          .then(function(data) {
+            result = data;
+          });
+        backend.flush(1);
+
+        // then
+        expect(result).toEqual(content);
+      });
+
+      it('should accept an entity', function() {
+        var result;
+        backend.expectGET(baseUrl('file/12345/content/'))
+                    .respond(200, content);
+        // when
+        service.getContent(entity)
+          .then(function(data) {
+            result = data;
+          });
+        backend.flush(1);
+
+        // then
+        expect(result).toEqual(content);
+      });
+
+      it('should complain if you provide something else', function() {
+        // when
+        expect(function() {
+          service.getContent({some_id: '123'});
+        })
+        // then
+        .toThrowError('`entity` parameter is not valid');
+      });
+    });
   });
 });

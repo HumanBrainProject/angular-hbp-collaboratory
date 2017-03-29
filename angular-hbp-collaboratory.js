@@ -4741,14 +4741,21 @@ function clbStorage(
    *
    * @function
    * @memberof module:clb-storage.clbStorage
-   * @param  {string} id FileEntity UUID
+   * @param  {object} entity can be either a FileEntity or a UUID (string)
    * @param  {object} [customConfig] contains extra configuration
    * @return {Promise}   The raw content
    */
-  function getContent(id, customConfig) {
+  function getContent(entity, customConfig) {
+    var uuid = angular.isString(entity) ? entity : entity.uuid;
+    if (!uuid) {
+      throw clbError.error({
+        type: 'InvalidArgument',
+        message: '`entity` parameter is not valid'
+      });
+    }
     var config = {
       method: 'GET',
-      url: fileUrl + '/' + id + '/content/',
+      url: fileUrl + '/' + uuid + '/content/',
       transformResponse: function(data) {
         return data;
       }
