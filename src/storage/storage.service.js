@@ -100,11 +100,11 @@ function clbStorage(
       }));
     }
     $log.debug('clbStorage.getEntity using locator', locator);
-    if (angular.isString(locator) && uuid4.validate(locator)) {
+    if (angular.isString(locator) && (uuid4.validate(locator) || locator.match(/^HPC/))) {
       return getEntityByUUID(locator);
     }
     if (angular.isObject(locator)) {
-      if (uuid4.validate(locator.uuid)) {
+      if (locator.uuid && (uuid4.validate(locator.uuid) || locator.uuid.match(/^HPC/))) {
         return getEntityByUUID(locator.uuid);
       }
       if (locator.ctx && uuid4.validate(locator.ctx)) {
