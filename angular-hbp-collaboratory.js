@@ -4865,11 +4865,18 @@ function clbStorage(
     }
     var params = {
       entity_type: options.accept ? options.accept : null,
-      ordering: options.sort ? options.sort : 'name',
       page_size: options.pageSize > 0 ? options.pageSize : null,
-      page: options.page > 0 ? options.page : null,
-      hpc: options.hpc === true ? true : null
+      page: options.page > 0 ? options.page : null
     };
+
+    if (options.hpc) {
+      if (options.sort) {
+        $log.warn('Ordering not supported for HPC entities, it will be ignored');
+      }
+      params.hpc = options.hpc === true ? true : null;
+    } else {
+      params.ordering = options.sort ? options.sort : 'name';
+    }
 
     var resultSetOptions = {};
     if (options.resolveUserId) {
