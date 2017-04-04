@@ -1,6 +1,7 @@
 /* eslint camelcase:0 */
 
 describe('clbStorage', function() {
+  var $rootScope;
   var $q;
   var backend;
   var service;
@@ -21,10 +22,11 @@ describe('clbStorage', function() {
 
   beforeEach(inject(function(_$q_,
                                 $httpBackend,
-                                $rootScope,
+                                _$rootScope_,
                                 clbStorage,
                                 clbEnv,
                                 _clbUser_) {
+    $rootScope = _$rootScope_;
     $q = _$q_;
     backend = $httpBackend;
     service = clbStorage;
@@ -98,12 +100,40 @@ describe('clbStorage', function() {
         backend.flush(1);
         expect(actual).toDeepEqual(entity);
       });
+      it('accept an HPC entity id as string', function() {
+        entity.uuid = 'HPC/JUQUEEN';
+        backend.expectGET(entityUrl(entity.uuid))
+                    .respond(200, entity);
+        service.getEntity(entity.uuid).then(assign);
+        backend.flush(1);
+        expect(actual).toDeepEqual(entity);
+      });
+      it('does not accept random strings as ids', function() {
+        entity.uuid = 'HPAC/JUQUEEN';
+        service.getEntity(entity.uuid).then(assign).catch(assign);
+        $rootScope.$apply();
+        expect(actual).toBeHbpError();
+      });
       it('accept an entity descriptor', function() {
         backend.expectGET(entityUrl(entity.uuid))
                     .respond(200, entity);
         service.getEntity(entity).then(assign);
         backend.flush(1);
         expect(actual).toDeepEqual(entity);
+      });
+      it('accept an HPC entity descriptor', function() {
+        entity.uuid = 'HPC/JUQUEEN';
+        backend.expectGET(entityUrl(entity.uuid))
+                    .respond(200, entity);
+        service.getEntity(entity).then(assign);
+        backend.flush(1);
+        expect(actual).toDeepEqual(entity);
+      });
+      it('does not accept a non HPC entity descriptor', function() {
+        entity.uuid = 'HPAC/JUQUEEN';
+        service.getEntity(entity.uuid).then(assign).catch(assign);
+        $rootScope.$apply();
+        expect(actual).toBeHbpError();
       });
       it('forward any exception', function() {
         backend.expectGET(entityUrl(entity.uuid))
