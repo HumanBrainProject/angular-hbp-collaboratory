@@ -560,6 +560,7 @@ function clbStorage(
    * @param {int} [options.page] The number of the page to return.
    * @param {int} [options.pageSize] The number of results per page. Default is provided by the service. Set to 0 to fetch all the records.
    * @param {boolean} [options.resolveUserId] if true, resolve user ids to user names (default: false)
+   * @param {boolean} [options.hpc] if true, the result will contain only the HPC projects/sites (default: false)
    * @return {Promise} When fulfilled, return a paginated result set. You can also access it immediately using ``promise.instance``
    */
   function getChildren(parent, options) {
@@ -591,7 +592,8 @@ function clbStorage(
       entity_type: options.accept ? options.accept : null,
       ordering: options.sort ? options.sort : 'name',
       page_size: options.pageSize > 0 ? options.pageSize : null,
-      page: options.page > 0 ? options.page : null
+      page: options.page > 0 ? options.page : null,
+      hpc: options.hpc === true ? true : null
     };
 
     var resultSetOptions = {};
