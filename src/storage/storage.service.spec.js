@@ -308,6 +308,28 @@ describe('clbStorage', function() {
         // tests in common with getProjects
         testGetProjectsList(service.getChildren);
       });
+
+      it('lists HPC projects', function() {
+        var hpcProjectEntity;
+        beforeEach(function() {
+          hpcProjectEntity = {
+            uuid: 'HBP/JUQUEEN',
+            name: 'HBP-JUQUEEN',
+            entity_type: 'project'
+          };
+        });
+        it('retrieve results', function() {
+          backend.expectGET(baseUrl('project/?hpc=true&ordering=name'))
+                      .respond({
+                        results: [hpcProjectEntity],
+                        hasMore: false
+                      });
+          service.getProjects({hpc: true}).then(assign);
+          backend.flush(1);
+          expect(actual.hasNext).toBe(false);
+          expect(actual.results).toEqual([hpcProjectEntity]);
+        });
+      });
     });
 
     describe('from a folder', function() {
