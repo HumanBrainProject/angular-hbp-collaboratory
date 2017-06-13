@@ -741,7 +741,7 @@ function clbStorage(
           d.notify(event);
         }
       }).then(
-        function(entity) {
+        function() {
           d.promise.abort = function() {
             deleteEntity(entity).then(function() {
               dAbort.resolve();
