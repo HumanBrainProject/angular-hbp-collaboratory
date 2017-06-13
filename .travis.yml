@@ -1,3 +1,14 @@
+# Travis needs this config to work with Node>=4
+# See https://github.com/travis-ci/travis-ci/issues/4771
+env:
+  - CXX=g++-4.8
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-4.8
+# End of config for Node>=4
 language: node_js
 before_script:
   - npm install -g bower
