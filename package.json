@@ -9,6 +9,7 @@
     "eslint-config-google": "~0.4.0",
     "eslint-config-xo": "~0.11.0",
     "eslint-plugin-jasmine": "^1.6.0",
+    "fibers": "<2.0.0",
     "gulp": "^3.9.1",
     "gulp-angular-embed-templates": "^2.2.0",
     "gulp-concat": "^2.6.0",
