@@ -341,7 +341,10 @@ function clbStorage(
    */
   function deleteMetadata(entity, metadataKeys) {
     var metadataUrl = buildEntityUrl(entity) + 'metadata/';
-    return clbAuthHttp.delete(metadataUrl, {data: {keys: metadataKeys}})
+    return clbAuthHttp.delete(metadataUrl, {
+      data: {keys: metadataKeys},
+      headers: {'Content-Type': 'application/json;charset=UTF-8'}
+    })
     .then(function(response) {
       return response.data;
     })
@@ -520,9 +523,9 @@ function clbStorage(
       var permissionsUrl = collabUrl + '/collab/' + collab.data.collab_id + '/permissions/';
       return clbAuthHttp.get(permissionsUrl).then(function(permissions) {
         var access = {
-          canRead: permissions.VIEW,
-          canWrite: permissions.UPDATE,
-          canManage: permissions.DELETE
+          canRead: permissions.data.VIEW,
+          canWrite: permissions.data.UPDATE,
+          canManage: permissions.data.DELETE
         };
         return access;
       });
