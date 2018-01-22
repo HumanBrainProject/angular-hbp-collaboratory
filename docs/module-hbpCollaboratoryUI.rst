@@ -27,13 +27,4 @@ sub-modules instead.
 
 
 
-.. _module-hbpCollaboratoryUI.UUID:
-
-
-Typedef: ``UUID``
-=================
-
-A string formatted as a valid UUID4
-
-
 
