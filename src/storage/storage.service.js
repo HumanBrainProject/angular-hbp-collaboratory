@@ -322,7 +322,7 @@ function clbStorage(
    */
   function addMetadata(entity, metadata) {
     var metadataUrl = buildEntityUrl(entity) + 'metadata/';
-    return clbAuthHttp.post(metadataUrl, metadata)
+    return clbAuthHttp.put(metadataUrl, metadata)
     .then(function(response) {
       return response.data;
     })
