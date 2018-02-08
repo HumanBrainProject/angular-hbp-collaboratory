@@ -409,7 +409,7 @@ describe('clbStorage', function() {
   describe('metadata', function() {
     describe('setContextMetadata(entity, contextId)', function() {
       it('should let you define a metadata', function() {
-        backend.expectPOST(
+        backend.expectPUT(
                     baseUrl('file/' + entity.uuid + '/metadata/'), {
                       'ctx_30FF9E92-B994-41D2-B6F9-9D03BC8C70AD': 1
                     }
@@ -418,7 +418,7 @@ describe('clbStorage', function() {
         backend.flush();
       });
       it('return a promise', function() {
-        backend.expectPOST(
+        backend.expectPUT(
                     baseUrl('file/' + entity.uuid + '/metadata/'), {
                       'ctx_30FF9E92-B994-41D2-B6F9-9D03BC8C70AD': 1
                     }
@@ -447,7 +447,7 @@ describe('clbStorage', function() {
         };
         service.updateContextMetadata(newEntity, entity, contextId);
 
-        backend.expectPOST(
+        backend.expectPUT(
                     baseUrl('file/new/metadata/'), {
                       'ctx_30FF9E92-B994-41D2-B6F9-9D03BC8C70AD': 1
                     }
