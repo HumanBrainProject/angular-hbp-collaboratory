@@ -45,6 +45,13 @@ Install:
    bower install
 
 
+Rebuilding hbp-angular-collaboratory.js file:
+
+.. code-block:: bash
+
+   gulp js
+
+
 Install this pre-commit hook to ensure your code is green before a committing:
 
 .. code-block:: bash
