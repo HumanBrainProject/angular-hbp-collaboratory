@@ -1,4 +1,5 @@
 /* eslint camelcase: 0 */
+/* eslint-env browser */
 
 /**
  * @namespace clbCollabApp
@@ -49,6 +50,23 @@ angular.module('clb-collab')
   };
 
   /**
+   * This is used to "link" an app to a development environment by
+   * overriding the settings in the localStorage.
+   * Eg: in the console, run
+   * ```localStorage.setItem('clb', JSON.stringify({collab_debug_apps:
+   *      { 4: {runUrl: 'http://localhost:8090/show',
+   *            editUrl: 'http://localhost:8090/edit'}}}))
+   * ```
+   *
+   * @param {integer} id  app to debug's id
+   * @return  {App} partial app configuration.
+   **/
+  var getDebugApp = function(id) {
+    var hbpLocalStorage = JSON.parse(localStorage.getItem('clb')) || {};
+    return (hbpLocalStorage.collab_debug_apps || {})[id];
+  };
+
+  /**
    * Create an app instance from a server representation.
    * @memberof module:clb-collab.App
    * @param  {object} json converted from the server JSON string
@@ -56,7 +74,7 @@ angular.module('clb-collab')
    */
   App.fromJson = function(json) {
     /* jshint camelcase: false */
-    return new App({
+    var myApp = new App({
       id: json.id,
       deleted: json.deleted,
       description: json.description,
@@ -65,6 +83,14 @@ angular.module('clb-collab')
       title: json.title,
       createdBy: json.created_by
     });
+    var debugParams = getDebugApp(json.id);
+    if (debugParams !== undefined) {
+      debugParams.debug = true;
+      Object.keys(debugParams).forEach(function(key) {
+        myApp[key] = debugParams[key];
+      });
+    }
+    return myApp;
   };
 
   appsCache.put('__collab_folder__', {
