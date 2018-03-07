@@ -1,6 +1,7 @@
 {
   "main": "main.js",
-  "version": "0.4.11",
+  "name": "angular-hbp-collaboratory",
+  "version": "0.4.12",
   "scripts": {
     "test": "gulp"
   },
