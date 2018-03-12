@@ -84,8 +84,7 @@ angular.module('clb-collab')
       createdBy: json.created_by
     });
     var debugParams = getDebugApp(json.id);
-    if (debugParams !== undefined) {
-      debugParams.debug = true;
+    if (debugParams !== undefined && debugParams.debug) {
       Object.keys(debugParams).forEach(function(key) {
         myApp[key] = debugParams[key];
       });
