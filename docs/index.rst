@@ -155,7 +155,7 @@ Once the refactoring of module is done, there is the refactoring of methods::
 clbUser.isHbpMember is no more because the accreditation multiply. You should
 instead make a call like:
 
-   clbUser.isHbpMember() -> clbUser.isGroupMember(['hbp-accred-sga1']);
+   clbUser.isHbpMember() -> clbUser.isGroupMember(['hbp-member']);
 
 At this point, your javascript code should rely only on
 ``angular-hbp-collaboratory``, with the exception of the UI. Your application
